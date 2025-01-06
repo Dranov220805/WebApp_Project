@@ -1,30 +1,25 @@
-/vendor/
-node_modules/
-npm-debug.log
-yarn-error.log
+# CakePHP 3
 
-# Laravel 4 specific
-bootstrap/compiled.php
-app/storage/
+/vendor/*
+/config/app.php
 
-# Laravel 5 & Lumen specific
-public/storage
-public/hot
+/tmp/cache/models/*
+!/tmp/cache/models/empty
+/tmp/cache/persistent/*
+!/tmp/cache/persistent/empty
+/tmp/cache/views/*
+!/tmp/cache/views/empty
+/tmp/sessions/*
+!/tmp/sessions/empty
+/tmp/tests/*
+!/tmp/tests/empty
 
-# Laravel 5 & Lumen specific with changed public path
-public_html/storage
-public_html/hot
+/logs/*
+!/logs/empty
 
-storage/*.key
-.env
-Homestead.yaml
-Homestead.json
-/.vagrant
-.phpunit.result.cache
+# CakePHP 2
 
-/public/build
-/storage/pail
-.env.backup
-.env.production
-.phpactor.json
-auth.json
+/app/tmp/*
+/app/Config/core.php
+/app/Config/database.php
+/vendors/*
