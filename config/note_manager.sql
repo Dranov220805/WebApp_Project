@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Jan 06, 2025 at 04:21 PM
+-- Generation Time: Jan 06, 2025 at 04:39 PM
 -- Server version: 9.1.0
 -- PHP Version: 8.2.8
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `note_managemer`
+-- Database: `note_manager`
 --
 
 -- --------------------------------------------------------
@@ -34,6 +34,13 @@ CREATE TABLE `accounts` (
   `email` varchar(40) NOT NULL,
   `role` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `accounts`
+--
+
+INSERT INTO `accounts` (`id`, `name`, `password`, `email`, `role`) VALUES
+(1, 'Long', '123456', 'example@gmail.com', 1);
 
 --
 -- Indexes for dumped tables

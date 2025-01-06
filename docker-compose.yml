@@ -10,12 +10,12 @@ services:
   db:
     image: mysql:latest
     environment:
-      - MYSQL_DATABASE=note_managemer # database name here
+      - MYSQL_DATABASE=note_manager # database name here
       - MYSQL_USER=php_docker # username for phpmyadmin
       - MYSQL_PASSWORD=password # password for phpmyadmin / this should be an empty var
       - MYSQL_ALLOW_EMPTY_PASSWORD=1 # equivalent to True
     volumes:
-      - "./config/docker-entrypoint-initdb.d" # sync persistent sql files with container
+      - "./config:/docker-entrypoint-initdb.d" # sync persistent sql files with container
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     ports:
