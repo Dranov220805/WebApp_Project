@@ -17,7 +17,7 @@ $connect = mysqli_connect(
     'note_manager' # db table
 );
 
-$table_name = "php_docker_table";
+$table_name = "accounts";
 
 $query = "SELECT * FROM $table_name";
 
