@@ -19,41 +19,33 @@ class Account{
         return $this->account_id;
     }
 
-
     public function setAccountId($account_id) {
         $this->account_id = $account_id;
     }
-
 
     public function getAccountName() {
         return $this->account_name;
     }
 
-
     public function setAccountName($account_name) {
         $this->account_name = $account_name;
     }
-
 
     public function getAccountPassword() {
         return $this->account_password;
     }
 
-
     public function setAccountPassword($account_password) {
         $this->account_password = $account_password;
     }
-
 
     public function getAccountRole() {
         return $this->account_role;
     }
 
-
     public function setAccountRole($account_role) {
         $this->account_role = $account_role;
     }
-
 
     public function getAccountEmail() {
         return $this->account_email;
