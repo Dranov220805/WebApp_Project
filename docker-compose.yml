@@ -34,7 +34,7 @@ services:
     ports:
       - "8080:80"              # Map port 80 của container tới port 8080 trên máy
     volumes:
-      - ./src:/var/www/html    # Đồng bộ mã nguồn
+      - "./:/var/www/html"    # sync project dir with container web dir / Đồng bộ mã nguồn
     environment:
       - APACHE_RUN_USER=www-data
       - APACHE_RUN_GROUP=www-data
@@ -49,8 +49,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: rootpass   # root password
       MYSQL_DATABASE: note_manager          # default database name
-      MYSQL_USER: user                # default user name
-      MYSQL_PASSWORD: userpass        # password for user
+      MYSQL_USER: user               # default user name
+      MYSQL_PASSWORD: userpass     # password for user
     volumes:
       - "./config:/docker-entrypoint-initdb.d" # sync persistent sql files with container
     ports:
@@ -65,6 +65,6 @@ services:
       - "8081:80"              # Map port 80 của phpMyAdmin tới 8081
     environment:
       PMA_HOST: mysql          # MySQL Host (trùng với tên service)
-      MYSQL_ROOT_PASSWORD: rootpass # root password
+      MYSQL_ROOT_PASSWORD: rootpass       # root password
     depends_on:
       - mysql
