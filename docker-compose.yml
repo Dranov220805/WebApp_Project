@@ -64,7 +64,7 @@ services:
     ports:
       - "8081:80"              # Map port 80 của phpMyAdmin tới 8081
     environment:
-      PMA_HOST: mysql          # Host của MySQL (trùng với tên service)
-      MYSQL_ROOT_PASSWORD: rootpass # Mật khẩu root
+      PMA_HOST: mysql          # MySQL Host (trùng với tên service)
+      MYSQL_ROOT_PASSWORD: rootpass # root password
     depends_on:
       - mysql
