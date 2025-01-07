@@ -1,25 +1,70 @@
 #version: '3' # docker version
+#services:
+#  www:
+#    image: php:apache
+#    volumes:
+#      - "./:/var/www/html" # sync project dir with container web dir
+#    ports:
+#      - 80:80
+#      - 443:443 # for future ssl traffic
+#  db:
+#    image: mysql:latest
+#    environment:
+#      - MYSQL_DATABASE=note_manager # database name here
+#      - MYSQL_USER=php_docker # username for phpmyadmin
+#      - MYSQL_PASSWORD=password # password for phpmyadmin / this should be an empty var
+#      - MYSQL_ALLOW_EMPTY_PASSWORD=1 # equivalent to True
+#    volumes:
+#      - "./config:/docker-entrypoint-initdb.d" # sync persistent sql files with container
+#  phpmyadmin:
+#    image: phpmyadmin/phpmyadmin
+#    ports:
+#      - 8001:80
+#    environment:
+#      - PMA_HOST=db
+#      - PHA_PORT=3306
+
+version: '3.8'
 services:
-  www:
-    image: php:apache
-    volumes:
-      - "./:/var/www/html" # sync project dir with container web dir
+  # PHP + Apache Service
+  php-apache:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - 80:80
-      - 443:443 # for future ssl traffic
-  db:
-    image: mysql:latest
+      - "8080:80"              # Map port 80 của container tới port 8080 trên máy
+    volumes:
+      - ./src:/var/www/html    # Đồng bộ mã nguồn
     environment:
-      - MYSQL_DATABASE=note_manager # database name here
-      - MYSQL_USER=php_docker # username for phpmyadmin
-      - MYSQL_PASSWORD=password # password for phpmyadmin / this should be an empty var
-      - MYSQL_ALLOW_EMPTY_PASSWORD=1 # equivalent to True
+      - APACHE_RUN_USER=www-data
+      - APACHE_RUN_GROUP=www-data
+    depends_on:
+      - mysql                  # PHP phụ thuộc vào MySQL
+
+  # MySQL Service
+  mysql:
+    image: mysql:8.0           # Sử dụng MySQL phiên bản 8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass   # root password
+      MYSQL_DATABASE: note_manager          # default database name
+      MYSQL_USER: user                # default user name
+      MYSQL_PASSWORD: userpass        # password for user
     volumes:
       - "./config:/docker-entrypoint-initdb.d" # sync persistent sql files with container
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
     ports:
-      - 8001:80
+      - "3306:3306"            # Map port 3306
+
+  # phpMyAdmin Service
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"              # Map port 80 của phpMyAdmin tới 8081
     environment:
-      - PMA_HOST=db
-      - PHA_PORT=3306
+      PMA_HOST: mysql          # Host của MySQL (trùng với tên service)
+      MYSQL_ROOT_PASSWORD: rootpass # Mật khẩu root
+    depends_on:
+      - mysql

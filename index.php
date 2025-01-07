@@ -11,9 +11,9 @@
 <?php
 
 $connect = mysqli_connect(
-    'db', # service name
-    'php_docker', # username
-    'password', # password
+    'mysql', # service name
+    'user', # username
+    'userpass', # password
     'note_manager' # db table
 );
 

@@ -40,7 +40,8 @@ CREATE TABLE `accounts` (
 --
 
 INSERT INTO `accounts` (`id`, `name`, `password`, `email`, `role`) VALUES
-(1, 'Long', '123456', 'example@gmail.com', 1);
+(1, 'Long', '123456', 'example@gmail.com', 1),
+(2, 'David', '123456', 'example@gmail.com', 2);
 
 --
 -- Indexes for dumped tables
