@@ -4,22 +4,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f619f953-5ec0-4ff9-97f5-4302da21b2a7" name="Changes" comment="modify docker compose">
+    <list default="true" id="f619f953-5ec0-4ff9-97f5-4302da21b2a7" name="Changes" comment="BE: add login function">
+      <change afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/controllers/SiteController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/middlewares/SiteMiddleWare.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/pattern/index.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/pattern/singleton/CacheManager.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/pattern/singleton/index.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/services/SiteService.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/route/error.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/route/log.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/route/site.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/views/error/404.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/views/error/maintain.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/views/layout/partials/preprocess_footer.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/views/layout/partials/views_content.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/views/log/login.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/LogController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/LogController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/middlewares/LogMiddleWare.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/middlewares/LogMiddleWare.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/repository/AccountRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/repository/AccountRepository.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/repository/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/repository/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/AccountService.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/AccountService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/DatabaseManager.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/DatabaseManager.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/route/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/route/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/layout/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/views/layout/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/layout/partials/footer.php" beforeDir="false" afterPath="$PROJECT_DIR$/views/layout/partials/footer.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/layout/partials/header.php" beforeDir="false" afterPath="$PROJECT_DIR$/views/layout/partials/header.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/layout/partials/navbar.php" beforeDir="false" afterPath="$PROJECT_DIR$/views/layout/partials/navbar.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/layout/partials/overlay_loading.php" beforeDir="false" afterPath="$PROJECT_DIR$/views/layout/partials/overlay_loading.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/layout/partials/toast.php" beforeDir="false" afterPath="$PROJECT_DIR$/views/layout/partials/toast.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,6 +36,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Dockerfile" />
+        <option value="TypeScript File" />
       </list>
     </option>
   </component>
@@ -85,27 +89,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Docker.Dockerfile.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.docker compose.yml.www: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Dranov220805&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Projects/Personal Projects/WebApp_Project/data&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Docker.Dockerfile.executor": "Run",
+    "Docker.docker compose.yml.www: Compose Deployment.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "Dranov220805",
+    "last_opened_file_path": "D:/Projects/Personal Projects/WebApp_Project/data",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\PhpStorm 2024.2.4\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;mysql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mysql"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Projects\Personal Projects\WebApp_Project\data" />
@@ -197,6 +202,7 @@
       <workItem from="1740009285687" duration="680000" />
       <workItem from="1740152071956" duration="5853000" />
       <workItem from="1740158347264" duration="878000" />
+      <workItem from="1740159246008" duration="652000" />
     </task>
     <task id="LOCAL-00001" summary="organize folder">
       <option name="closed" value="true" />
@@ -358,7 +364,15 @@
       <option name="project" value="LOCAL" />
       <updated>1736686398006</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="BE: add login function">
+      <option name="closed" value="true" />
+      <created>1740159289036</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1740159289036</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -372,6 +386,7 @@
     <MESSAGE value="update deploy docker" />
     <MESSAGE value="modify .htaccess" />
     <MESSAGE value="modify docker compose" />
-    <option name="LAST_COMMIT_MESSAGE" value="modify docker compose" />
+    <MESSAGE value="BE: add login function" />
+    <option name="LAST_COMMIT_MESSAGE" value="BE: add login function" />
   </component>
 </project>
