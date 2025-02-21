@@ -29,7 +29,6 @@ while($i = mysqli_fetch_assoc($response))
     echo "<p>".$i['id']."</p>";
     echo "<p>".$i['name']."</p>";
     echo "<p>".$i['password']."</p>";
-    echo "<p>".$i['email']."</p>";
     echo "<p>".$i['role']."</p>";
     echo "<hr>";
 }
