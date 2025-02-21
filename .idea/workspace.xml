@@ -5,9 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f619f953-5ec0-4ff9-97f5-4302da21b2a7" name="Changes" comment="modify docker compose">
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/LogController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/LogController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/middlewares/LogMiddleWare.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/middlewares/LogMiddleWare.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/repository/AccountRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/repository/AccountRepository.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/repository/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/repository/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/AccountService.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/AccountService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/index.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/route/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/route/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/layout/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/views/layout/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/layout/partials/footer.php" beforeDir="false" afterPath="$PROJECT_DIR$/views/layout/partials/footer.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/layout/partials/header.php" beforeDir="false" afterPath="$PROJECT_DIR$/views/layout/partials/header.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/layout/partials/navbar.php" beforeDir="false" afterPath="$PROJECT_DIR$/views/layout/partials/navbar.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/layout/partials/overlay_loading.php" beforeDir="false" afterPath="$PROJECT_DIR$/views/layout/partials/overlay_loading.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/layout/partials/toast.php" beforeDir="false" afterPath="$PROJECT_DIR$/views/layout/partials/toast.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,27 +85,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Docker.Dockerfile.executor": "Run",
-    "Docker.docker compose.yml.www: Compose Deployment.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "Dranov220805",
-    "last_opened_file_path": "D:/Projects/Personal Projects/WebApp_Project/data",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Docker.Dockerfile.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.docker compose.yml.www: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Dranov220805&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Projects/Personal Projects/WebApp_Project/data&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Projects\Personal Projects\WebApp_Project\data" />
@@ -184,6 +196,7 @@
       <workItem from="1737290594541" duration="908000" />
       <workItem from="1740009285687" duration="680000" />
       <workItem from="1740152071956" duration="5853000" />
+      <workItem from="1740158347264" duration="878000" />
     </task>
     <task id="LOCAL-00001" summary="organize folder">
       <option name="closed" value="true" />
