@@ -77,7 +77,7 @@ CREATE TABLE `Note` (
   `content` TEXT NOT NULL,
   `createDate` DATETIME NOT NULL,
   `isDeleted` BOOLEAN NOT NULL,
-  `isProtected` BOOLEAN NOT NULL,
+  `isProtected` BOOLEAN NOT NULL
 );
 
 --
@@ -88,7 +88,7 @@ CREATE TABLE `NoteSharing` (
   `noteSharingId` CHAR(36) NOT NULL PRIMARY KEY,
   `noteId` CHAR(36) NOT NULL,
   `timeShared` DATETIME NOT NULL,
-  `canEdit` BOOLEAN NOT NULL,
+  `canEdit` BOOLEAN NOT NULL
 );
 
 --
@@ -99,7 +99,7 @@ CREATE TABLE `NoteLabel` (
   `noteLabelId` CHAR(36) NOT NULL PRIMARY KEY,
   `noteId` CHAR(36) NOT NULL,
   `labelName` NVARCHAR(200) NOT NULL,
-  `isDeleted` BOOLEAN NOT NULL,
+  `isDeleted` BOOLEAN NOT NULL
 );
 
 --
@@ -111,7 +111,7 @@ CREATE TABLE `NoteProtect` (
   `noteId` CHAR(36) NOT NULL,
   `password` VARCHAR(200) NOT NULL,
   `isEnabled` BOOLEAN NOT NULL,
-  `isDeleted` BOOLEAN NOT NULL,
+  `isDeleted` BOOLEAN NOT NULL
 );
 
 --
@@ -123,7 +123,7 @@ CREATE TABLE `Modification` (
   `noteId` CHAR(36) NOT NULL,
   `isPinned` BOOLEAN NOT NULL,
   `pinnedTime` DATETIME NOT NULL,
-  `isShared` BOOLEAN NOT NULL,
+  `isShared` BOOLEAN NOT NULL
 ); 
 
 --
@@ -135,7 +135,7 @@ CREATE TABLE `Image` (
   `noteId` CHAR(36) NOT NULL,
   `title` NVARCHAR(200) NOT NULL,
   `imageLink` NVARCHAR(200) NOT NULL,
-  `isDeleted` BOOLEAN NOT NULL,
+  `isDeleted` BOOLEAN NOT NULL
 );
 
 --
@@ -148,7 +148,7 @@ CREATE TABLE `LogNote` (
   `content` TEXT NOT NULL,
   `process` NVARCHAR(200) NOT NULL,
   `updateTime` DATETIME NOT NULL,
-  `flag` VARCHAR(200) NOT NULL,
+  `flag` VARCHAR(200) NOT NULL
 );
 
 --
