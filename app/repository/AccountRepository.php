@@ -7,20 +7,20 @@ class AccountRepository{
     }
 
     public function getAccountByUsernameAndPassword($account_username, $account_password): Account{
-        $sql = "SELECT * FROM `account` 
-         WHERE account_username = ? AND account_password = ?";
+        $sql = "SELECT * FROM `Account` 
+         WHERE `userName` = ? AND `password` = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("ss", $account_username, $account_password);
         $stmt->execute();
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
-        return new Account($row['account_id'], $row['account_username'],
-            $row['account_password'], $row['person_id'], $row['role_id']);
+        return new Account($row['accountId'], $row['userName'],
+            $row['password'], $row['email'], $row['roleId']);
     }
 
     public function checkAccountByUsernameAndPassword($account_username, $account_password): bool{
-        $sql = "SELECT * from `account` 
-                WHERE `account_username` = ? AND `account_password` = ?";
+        $sql = "SELECT * from `Account` 
+                WHERE `userName` = ? AND `password` = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param('ss', $account_username, $account_password);
         $stmt->execute();
@@ -32,7 +32,7 @@ class AccountRepository{
     }
 
     public function getRoleByUserNameAndPassword($account_username, $account_password): string {
-        $sql = "SELECT `role`.`role_name` from `account` acc, `role` role
+        $sql = "SELECT `role`.`roleName` from `account` acc, `role` role
                 WHERE `acc`.`account_username` = ? AND `acc`.`account_password` = ? 
                   AND `role`.`role_id` = `acc`.`role_id`";
         $stmt = $this->conn->prepare($sql);

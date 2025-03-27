@@ -18,8 +18,7 @@ class LogController{
         if($this->accountService->checkLogin($username, $pwd)){
             echo json_encode(array(
                 'status' => true,
-                'role_name' => $_SESSION['role_name'],
-                'message' => 'IT-Zone chúc bạn có 1 chuyến đi vui vẻ'
+                'message' => 'Đăng nhập thành công'
             ));
         } else{
             echo json_encode(array(
