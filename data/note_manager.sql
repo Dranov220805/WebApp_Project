@@ -16,10 +16,8 @@
 -- Database: `note_manager`
 --
 
-IF NOT EXISTS note_manager;
-CREATE DATABASE note_manager;
+CREATE DATABASE IF NOT EXISTS note_manager;
 
-GO
 USE note_manager;
 
 -- --------------------------------------------------------
@@ -33,7 +31,7 @@ CREATE TABLE `Account` (
   `userName` VARCHAR(200) NOT NULL,
   `password` VARCHAR(200) NOT NULL,
   `isDeleted` BOOLEAN NOT NULL,
-  `tokenExpiration` VARCHAR(200) NOT NULL,
+  `tokenExpiration` DATETIME NOT NULL,
   `email` VARCHAR(200) NOT NULL,
   `roleId` INT NOT NULL
 );
@@ -49,7 +47,7 @@ CREATE TABLE `Preference` (
   `noteFont` VARCHAR(200) NOT NULL,
   `noteColor` VARCHAR(200) NOT NULL,
   `font` VARCHAR(200) NOT NULL,
-  `isDarkTheme` BOOLEAN NOT NULL,
+  `isDarkTheme` BOOLEAN NOT NULL
 );
 
 --
