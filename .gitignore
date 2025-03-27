@@ -26,3 +26,4 @@
 
 #Ignore push env variable to github
 .env
+.idea
