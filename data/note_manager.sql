@@ -1,7 +1,6 @@
 -- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
---
 -- Host: db
 -- Generation Time: Jan 06, 2025 at 04:39 PM
 -- Server version: 9.1.0
@@ -12,34 +11,24 @@
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
---
 -- Database: `note_manager`
---
-
 CREATE DATABASE IF NOT EXISTS note_manager;
-
 USE note_manager;
 
 -- --------------------------------------------------------
 
---
 -- Table structure for table `Account`
---
-
 CREATE TABLE `Account` (
   `accountId` CHAR(36) NOT NULL PRIMARY KEY,
   `userName` VARCHAR(200) NOT NULL,
   `password` VARCHAR(200) NOT NULL,
-  `isDeleted` BOOLEAN NOT NULL,
-  `tokenExpiration` DATETIME NOT NULL,
+  `isDeleted` BOOLEAN NOT NULL DEFAULT FALSE,
+  `tokenExpiration` DATETIME NOT NULL DEFAULT NOW(),
   `email` VARCHAR(200) NOT NULL,
   `roleId` INT NOT NULL
 );
 
---
 -- Table structure for table `Preference`
---
-
 CREATE TABLE `Preference` (
   `preferenceId` CHAR(36) NOT NULL PRIMARY KEY,
   `accountId` CHAR(36) NOT NULL,
@@ -47,113 +36,87 @@ CREATE TABLE `Preference` (
   `noteFont` VARCHAR(200) NOT NULL,
   `noteColor` VARCHAR(200) NOT NULL,
   `font` VARCHAR(200) NOT NULL,
-  `isDarkTheme` BOOLEAN NOT NULL
+  `isDarkTheme` BOOLEAN NOT NULL DEFAULT FALSE
 );
 
---
 -- Table structure for table `Users`
---
-
 CREATE TABLE `Users` (
   `userId` CHAR(36) NOT NULL PRIMARY KEY,
   `accountId` CHAR(36) NOT NULL,
-  `firstName` NVARCHAR(200) NOT NULL,
-  `lastName` NVARCHAR(200) NOT NULL,
+  `firstName` VARCHAR(200) NOT NULL,
+  `lastName` VARCHAR(200) NOT NULL,
   `email` VARCHAR(200) NOT NULL,
   `phone` VARCHAR(200) NOT NULL,
-  `address` NVARCHAR(200) NOT NULL,
-  `profilePicture` NVARCHAR(200) NOT NULL,
-  `isDeleted` BOOLEAN NOT NULL
-);  
+  `address` VARCHAR(200) NOT NULL,
+  `profilePicture` VARCHAR(200) NOT NULL,
+  `isDeleted` BOOLEAN NOT NULL DEFAULT FALSE
+);
 
--- 
 -- Table structure for table `Note`
---
-
 CREATE TABLE `Note` (
   `noteId` CHAR(36) NOT NULL PRIMARY KEY,
   `accountId` CHAR(36) NOT NULL,
-  `title` NVARCHAR(200) NOT NULL,
+  `title` VARCHAR(200) NOT NULL,
   `content` TEXT NOT NULL,
-  `createDate` DATETIME NOT NULL,
-  `isDeleted` BOOLEAN NOT NULL,
-  `isProtected` BOOLEAN NOT NULL
+  `createDate` DATETIME NOT NULL DEFAULT NOW(),
+  `isDeleted` BOOLEAN NOT NULL DEFAULT FALSE,
+  `isProtected` BOOLEAN NOT NULL DEFAULT FALSE
 );
 
---
 -- Table structure for table `NoteSharing`
---
-
 CREATE TABLE `NoteSharing` (
   `noteSharingId` CHAR(36) NOT NULL PRIMARY KEY,
   `noteId` CHAR(36) NOT NULL,
-  `timeShared` DATETIME NOT NULL,
-  `canEdit` BOOLEAN NOT NULL
+  `timeShared` DATETIME NOT NULL DEFAULT NOW(),
+  `canEdit` BOOLEAN NOT NULL DEFAULT FALSE
 );
 
---
 -- Table structure for table `NoteLabel`
--- 
-
 CREATE TABLE `NoteLabel` (
   `noteLabelId` CHAR(36) NOT NULL PRIMARY KEY,
   `noteId` CHAR(36) NOT NULL,
-  `labelName` NVARCHAR(200) NOT NULL,
-  `isDeleted` BOOLEAN NOT NULL
+  `labelName` VARCHAR(200) NOT NULL,
+  `isDeleted` BOOLEAN NOT NULL DEFAULT FALSE
 );
 
---
 -- Table structure for table `NoteProtect`
---
-
 CREATE TABLE `NoteProtect` (
   `noteProtectId` CHAR(36) NOT NULL PRIMARY KEY,
   `noteId` CHAR(36) NOT NULL,
   `password` VARCHAR(200) NOT NULL,
-  `isEnabled` BOOLEAN NOT NULL,
-  `isDeleted` BOOLEAN NOT NULL
+  `isEnabled` BOOLEAN NOT NULL DEFAULT FALSE,
+  `isDeleted` BOOLEAN NOT NULL DEFAULT FALSE
 );
 
---
 -- Table structure for table `Modification`
---
-
 CREATE TABLE `Modification` (
   `modifyId` CHAR(36) NOT NULL PRIMARY KEY,
   `noteId` CHAR(36) NOT NULL,
-  `isPinned` BOOLEAN NOT NULL,
-  `pinnedTime` DATETIME NOT NULL,
-  `isShared` BOOLEAN NOT NULL
-); 
+  `isPinned` BOOLEAN NOT NULL DEFAULT FALSE,
+  `pinnedTime` DATETIME DEFAULT NULL,
+  `isShared` BOOLEAN NOT NULL DEFAULT FALSE
+);
 
---
 -- Table structure for table `Image`
---
-
 CREATE TABLE `Image` (
   `imageId` CHAR(36) NOT NULL PRIMARY KEY,
   `noteId` CHAR(36) NOT NULL,
-  `title` NVARCHAR(200) NOT NULL,
-  `imageLink` NVARCHAR(200) NOT NULL,
-  `isDeleted` BOOLEAN NOT NULL
+  `title` VARCHAR(200) NOT NULL,
+  `imageLink` VARCHAR(200) NOT NULL,
+  `isDeleted` BOOLEAN NOT NULL DEFAULT FALSE
 );
 
---
 -- Table structure for table `LogNote`
---
-
 CREATE TABLE `LogNote` (
   `logNoteId` CHAR(36) NOT NULL PRIMARY KEY,
   `noteId` CHAR(36) NOT NULL,
   `content` TEXT NOT NULL,
-  `process` NVARCHAR(200) NOT NULL,
-  `updateTime` DATETIME NOT NULL,
-  `flag` VARCHAR(200) NOT NULL
+  `process` VARCHAR(200) NOT NULL,
+  `updateTime` DATETIME NOT NULL DEFAULT NOW(),
+  `flag` VARCHAR(20) NOT NULL
 );
 
---
--- Indexes for dumped tables
---
+-- --------------------------------------------------------
 
 -- Enable UUID function in MySQL
 SET @uuid1 = UUID();
@@ -263,6 +226,8 @@ VALUES
   (UUID(), @uuid4, 'Workout Poster', 'workout_plan.png', FALSE),
   (UUID(), @uuid5, 'Italy Travel Map', 'vacation_map.png', FALSE);
 
+
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */; 
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
