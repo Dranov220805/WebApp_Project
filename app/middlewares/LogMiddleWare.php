@@ -8,7 +8,7 @@ class LogMiddleWare{
     }
 
     public function login(){
-        if (isset($_SESSION['person_id']) && isset($_SESSION['role_name'])) {
+        if (isset($_SESSION['roleId'])) {
             header('location: /');
         } else {
             $this->logController->login();

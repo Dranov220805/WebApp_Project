@@ -32,16 +32,15 @@ class AccountRepository{
     }
 
     public function getRoleByUserNameAndPassword($account_username, $account_password): string {
-        $sql = "SELECT `role`.`roleName` from `account` acc, `role` role
-                WHERE `acc`.`account_username` = ? AND `acc`.`account_password` = ? 
-                  AND `role`.`role_id` = `acc`.`role_id`";
+        $sql = "SELECT `roleId` from `Account`
+                WHERE `userName` = ? AND `password` = ? ";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param('ss', $account_username, $account_password);
         $stmt->execute();
 
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
-        $role_name = $row["role_name"];
+        $role_name = $row["roleId"];
 
         $stmt->close();
         return $role_name;

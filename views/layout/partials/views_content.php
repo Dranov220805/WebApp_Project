@@ -6,6 +6,8 @@
         include "./views/site/home.php";
     } else if($content == 'location'){
         include "./views/location/location.php";
+    } else if($content == 'home-user'){
+        include "./views/home-user/home-user.php";
     } // guard
     else if($content == 'guard'){
         include "./views/guard/guard.php";

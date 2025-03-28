@@ -9,12 +9,14 @@ class AccountService{
     public function checkLogin($account_username, $account_password): bool{
         if($this->accountRepository->checkAccountByUsernameAndPassword($account_username,$account_password)){
             $account = $this->accountRepository->getAccountByUsernameAndPassword($account_username,$account_password);
+            $_SESSION['accountId'] = $account->getAccountId();
+            $_SESSION['roleId'] = $this->getRoleByUsernameAndPassword($account_username,$account_password);
             return true;
         }
         return false;
     }
 
-    public function getRoleByUsernameAndPassword($account_username, $account_password): string{
+    public function getRoleByUsernameAndPassword($account_username, $account_password): int{
         return $this->accountRepository->getRoleByUsernameAndPassword($account_username, $account_password);
     }
 }

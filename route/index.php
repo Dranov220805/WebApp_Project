@@ -5,5 +5,6 @@
     else {
         include "./route/site.php";
         include "./route/log.php";
+        include "./route/homeUser.php";
     }
 ?>

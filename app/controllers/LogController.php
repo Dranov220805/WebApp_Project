@@ -18,6 +18,7 @@ class LogController{
         if($this->accountService->checkLogin($username, $pwd)){
             echo json_encode(array(
                 'status' => true,
+                'roleId' => $_SESSION['roleId'],
                 'message' => 'Đăng nhập thành công'
             ));
         } else{
@@ -38,7 +39,7 @@ class LogController{
     public function logout()
     {
         session_destroy();
-        header('location: /');
+        header('location: /log/login');
     }
 }
 

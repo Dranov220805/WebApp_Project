@@ -20,7 +20,7 @@
         'justify-content: space-around;': ''?>"
          class="footer-control w-100">
         <?php
-            if($_SESSION['role_name'] == 'mentor'){
+            if($_SESSION['roleId'] == '1'){
         ?>
             <a href="/mentor" class="footer-control__home loading-item footer-control__link <?= $link_home ?>">
                 <img src="/public/img/icon/majesticons_home-line.png" alt="">
@@ -32,7 +32,7 @@
                 <span class="<?= $span_rule ?>">Rule</span>
             </a>
         <?php
-        } else if($_SESSION['role_name'] == 'guard'){
+        } else if($_SESSION['roleId'] == '2'){
         ?>
                 <a href="/guard" class="footer-control__home loading-item footer-control__link <?= $link_home ?>">
                     <img src="/public/img/icon/majesticons_home-line.png" alt="">
@@ -47,7 +47,7 @@
                     <span class="<?= $span_rule ?>">Rule</span>
                 </a>
         <?php
-            } else if($_SESSION['role_name'] == 'support') {
+            } else if($_SESSION['roleId'] == '3') {
         ?>
                 <a href="/support" class="footer-control__home loading-item footer-control__link <?= $link_home ?>">
                     <img src="/public/img/icon/majesticons_home-line.png" alt="">
@@ -66,7 +66,7 @@
                     <span class="<?= $span_team ?>">Team</span>
                 </a>
         <?php
-            } else if($_SESSION['role_name'] == 'team'){
+            } else if($_SESSION['roleId'] == '4'){
         ?>
                 <a href="/team/game-mentor" class="footer-control__home loading-item footer-control__link <?= $link_home ?>">
                     <img src="/public/img/icon/majesticons_home-line.png" alt="">
