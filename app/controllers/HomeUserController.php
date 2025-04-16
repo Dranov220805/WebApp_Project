@@ -9,6 +9,12 @@ class HomeUserController{
 
     public function index() {
         $content = 'home-user';
+        $footer = 'home';
+        include "./views/layout/index.php";
+    }
+    public function homeAccount() {
+        $content = 'home-user-account';
+        $footer = 'home';
         include "./views/layout/index.php";
     }
 }

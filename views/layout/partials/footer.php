@@ -16,7 +16,7 @@
 ?>
 
 <footer class="footer">
-    <div style="<?=$_SESSION['role_name'] == 'mentor' ?
+    <div style="<?=$_SESSION['roleId'] == '1' ?
         'justify-content: space-around;': ''?>"
          class="footer-control w-100">
         <?php

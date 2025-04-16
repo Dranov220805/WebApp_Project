@@ -8,7 +8,13 @@
         include "./views/location/location.php";
     } else if($content == 'home-user'){
         include "./views/home-user/home-user.php";
-    } // guard
+    } else if($content == 'home-user-account') {
+        include "./views/home-user/home-user-account.php";
+    }
+    else if($content == 'register') {
+        include "./views/log/register.php";
+    }
+    // guard
     else if($content == 'guard'){
         include "./views/guard/guard.php";
     } else if($content == 'guard-question'){
@@ -46,10 +52,6 @@
     } else if($content == 'mentor-rule'){
         include "./views/mentor/mentor_rule.php";
     }
-//    else if($content == 'mentor-member'){
-//        include "./views/mentor/mentor_member.php";
-//    }
-    // no route
 
 
 ?>

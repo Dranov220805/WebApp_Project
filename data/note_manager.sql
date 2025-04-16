@@ -28,6 +28,17 @@ CREATE TABLE `Account` (
   `roleId` INT NOT NULL
 );
 
+
+CREATE TABLE refresh_tokens (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `accountId` CHAR(36) NOT NULL,
+    `token` TEXT NOT NULL,
+    `expiresAt` DATETIME NOT NULL,
+    `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `lastUsedAt` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `revoked` BOOLEAN DEFAULT FALSE
+);
+
 -- Table structure for table `Preference`
 CREATE TABLE `Preference` (
   `preferenceId` CHAR(36) NOT NULL PRIMARY KEY,
@@ -115,6 +126,7 @@ CREATE TABLE `LogNote` (
   `updateTime` DATETIME NOT NULL DEFAULT NOW(),
   `flag` VARCHAR(20) NOT NULL
 );
+
 
 -- --------------------------------------------------------
 

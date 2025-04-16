@@ -31,7 +31,6 @@ class LogController{
 
 //    [GET] /log/login
     public function login(){
-
         include "./views/log/login.php";
     }
 

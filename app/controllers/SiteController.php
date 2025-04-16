@@ -22,7 +22,8 @@ class SiteController{
 //        $team_member = $this->personService->getTeamMemberByTeamIdOrMentorId('MEN0000002', 'mentor');
 
 //        $content = 'home';
-        include "./views/site/home.php";
+//        include "./views/site/home.php";
+        include "./views/log/login.php";
     }
 
 //    [POST] /student

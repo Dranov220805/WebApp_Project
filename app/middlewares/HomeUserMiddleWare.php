@@ -14,4 +14,11 @@ class HomeUserMiddleWare {
             $this->homeUserController->index();
         }
     }
+    public function userAccount() {
+        if (!isset($_SESSION['roleId'])) {
+            header('location:/');
+        } else {
+            $this->homeUserController->homeAccount();
+        }
+    }
 }
