@@ -27,4 +27,5 @@
 #Ignore push env variable to github
 .env
 .idea
-/.idea
+./idea
+.\idea
