@@ -8,11 +8,6 @@ class RegisterMiddleWare {
     }
 
     public function index() {
-        if (!isset($_SESSION['roleId'])) {
-            header('location: /');
-        }
-        else {
-            $this->registerController->index();
-        }
+        $this->registerController->index();
     }
 }

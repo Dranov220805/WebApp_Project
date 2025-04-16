@@ -1,0 +1,41 @@
+body {
+    background-color: #f9fafb;
+    padding-top: 40px;
+    font-weight: 500;
+}
+
+.login-section-2 {
+    width: 40%;
+    min-width: 400px;
+}
+
+.login-section-2__form--link-signup {
+    text-decoration: none;
+    color: black;
+}
+
+.login-section-2__form--link-signup:hover {
+    text-decoration: underline;
+}
+
+.login-section-2__form--link-forgot-password {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+#login-section-2__form--remember-me {
+    display: flex;
+    justify-content: flex-start;
+}
+
+#login-section-2__form--forgot_password {
+    display: flex;
+    text-decoration: none;
+    color: black;
+    justify-content: flex-end;
+}
+
+#login-section-2__form--forgot_password:hover {
+    text-decoration: underline;
+}

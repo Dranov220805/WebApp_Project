@@ -1,7 +1,7 @@
 <?php
 
-include "./app/controllers/AuthController.php";
-include "./app/middlewares/AuthMiddleWare.php";
+include "./app/controllers/RegisterController.php";
+include "./app/middlewares/RegisterMiddleWare.php";
 $registerController = new RegisterController();
 $registerMiddleWare = new RegisterMiddleware();
 

@@ -1,6 +1,7 @@
 import site from './site.js';
 // import log from "./log.js";
 import auth from './auth.js';
+import reg from './reg.js';
 
 // site.index();
 // site.ajaxTest();
@@ -15,6 +16,11 @@ window.enableButton = () => {
 window.togglePassword = () => {
     auth.togglePassword();
 }
+
+window.toggleConfirmPassword = () => {
+    reg.toggleConfirmPassword();
+}
+
 window.checkLogin = () => {
     auth.checkLogin()
 }

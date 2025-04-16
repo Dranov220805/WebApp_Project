@@ -18,15 +18,15 @@ class Auth {
         const passwordInput = document.getElementById("password-input").value;
         const loginButton = document.getElementById("login-button");
 
-        if (emailInput === "" || passwordInput === "") {
-            loginButton.disabled = true;
-            loginButton.style.backgroundColor = "#4b5563";
-            loginButton.style.color = "white";
-            loginButton.style.fontWeight = "500";
-        } else {
-            loginButton.disabled = false;
-            loginButton.style.background = "#5771ff"; // Replace with actual color values
-        }
+        // if (emailInput === "" || passwordInput === "") {
+        //     loginButton.disabled = true;
+        //     loginButton.style.backgroundColor = "#4b5563";
+        //     loginButton.style.color = "white";
+        //     loginButton.style.fontWeight = "500";
+        // } else {
+        //     loginButton.disabled = false;
+        //     loginButton.style.background = "#5771ff"; // Replace with actual color values
+        // }
     }
 
     checkLogin = () => {

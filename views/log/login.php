@@ -1,5 +1,4 @@
 <?php
-
 ?>
 
 <!doctype html>
@@ -46,17 +45,19 @@ include "./views/layout/partials/header.php";
                     </figure>
 
                     <h1 class="text-center h4 mb-1 login-section-2__form--greeting">Welcome to Pernote</h1>
-                    <h2 class="text-center h6 text-muted mb-4 login-section-2__form--greeting-2">Sign in to access your notes</h2>
+                    <h2 class="text-center h6 text-muted mb-4 login-section-2__form--greeting-2">Sign in to access your Pernote</h2>
 
                     <div class="mb-3">
                         <label for="email" class="form-label">Email:</label>
-                        <input type="text" class="form-control login-section-2__form--input-box" id="email-input" placeholder="example@gmail.com" oninput="enableButton()" onclick="enableButton()">
+                        <input type="email" class="form-control login-section-2__form--input-box" id="email-input" placeholder="example@gmail.com" required>
+<!--                        <input type="text" class="form-control login-section-2__form--input-box" id="email-input" placeholder="example@gmail.com" oninput="enableButton()" onclick="enableButton()">-->
                     </div>
 
                     <div class="mb-3">
                         <label for="password-input" class="form-label">Password:</label>
                         <div class="input-group">
-                            <input type="password" class="form-control login-section-2__form--input-box" id="password-input" placeholder="Password" oninput="enableButton()" onclick="enableButton()">
+                            <input type="password" class="form-control login-section-2__form--input-box" id="password-input" placeholder="Password">
+<!--                            <input type="password" class="form-control login-section-2__form--input-box" id="password-input" placeholder="Password" oninput="enableButton()" onclick="enableButton()">-->
                             <span class="input-group-text bg-white">
                                 <i id="toggle-password" class="fa-regular fa-eye-slash" onclick="togglePassword()" style="cursor: pointer;"></i>
                             </span>
@@ -76,7 +77,7 @@ include "./views/layout/partials/header.php";
                     </div>
 
                     <p class="text-center">Don't have an account?
-                        <a href="/log/register" id="register-button" class="login-section-2__form--link-signup">Sign up</a>
+                        <a href="/reg/register" id="register-button" class="login-section-2__form--link-signup">Sign up</a>
                     </p>
                 </form>
             </div>

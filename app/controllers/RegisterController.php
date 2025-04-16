@@ -9,6 +9,6 @@ class RegisterController {
     public function index() {
         $content = 'register';
         $footer = 'home';
-        include "views/layout/index.php";
+        include "views/log/register.php";
     }
 }
