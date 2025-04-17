@@ -38,7 +38,7 @@
             </button>
             <!-- Your button with a popover -->
             <button type="button" class="btn" data-bs-toggle="popover" data-bs-html="true" title="User Info"
-                    data-bs-content="<strong>Name:</strong> <?=$_SESSION['userName']?><br><strong>Email:</strong> example@gmail.com <br><strong>Role:</strong> <?=$_SESSION['roleId']?>"
+                    data-bs-content="<strong>Name:</strong> <?=$_SESSION['userName']?><br><strong>Email:</strong> <?=$_SESSION['email']?> <br><strong>Role:</strong> <?=$_SESSION['roleId']?>"
                     style="background: none; border: none; cursor: pointer; padding: 8px; margin-left: 8px;">
                 <i class="navbar__item--icon fa-regular fa-circle-user"></i>
             </button>
