@@ -15,75 +15,59 @@ class HomeUser {
         const searchInput = document.getElementById('search-input');
         let searchExpanded = false;
 
-        // toggleSidebar for desktop
+        // toggleSidebar function
         const toggleSidebar = () => {
-            // toggleSidebar for width <= 780px
             if (window.innerWidth <= 780) {
+                // Mobile behavior - slide in/out
                 if (sidebarVisible) {
                     sidebar.style.transform = 'translateX(-100%)';
                     content.style.marginLeft = '0';
                     document.body.classList.remove('sidebar-visible');
                 } else {
                     sidebar.style.transform = 'translateX(0)';
-                    // content.style.marginLeft = window.innerWidth >= 768 ? '280px' : '0';
-                    // content.style.width = '100%';
                     content.style.marginLeft = '0';
-                    content.style.width = '100%';
                     document.body.classList.add('sidebar-visible');
                 }
-                sidebarVisible = !sidebarVisible;
             } else {
-                // toggleSidebar for desktop width
+                // Desktop behavior - expand/collapse
                 if (sidebarVisible) {
-                    sidebar.style.transform = 'translateX(-100%)';
-                    content.style.marginLeft = '0';
-                    content.style.width = '100%';
-                    document.body.classList.remove('sidebar-visible');
+                    sidebar.classList.remove('expanded');
+                    sidebar.classList.add('collapsed');
+                    content.style.marginLeft = '80px'; // Match collapsed width
                 } else {
-                    sidebar.style.transform = 'translateX(0)';
-                    content.style.transform = 'translateX(+220)';
-                    content.style.marginLeft = window.innerWidth >= 768 ? '280px' : '0';
-                    // content.style.marginLeft = '280';
-                    content.style.width = '85%';
-                    document.body.classList.add('sidebar-visible');
+                    sidebar.classList.remove('collapsed');
+                    sidebar.classList.add('expanded');
+                    content.style.marginLeft = '240px'; // Match expanded width
                 }
-                sidebarVisible = !sidebarVisible;
             }
+            sidebarVisible = !sidebarVisible;
         };
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth <= 780) {
+                // Mobile layout
+                content.style.marginLeft = '0';
+                if (!sidebarVisible) {
+                    sidebar.style.transform = 'translateX(-100%)';
+                }
+            } else {
+                // Desktop layout
+                sidebar.style.transform = 'translateX(0)';
+                content.style.marginLeft = sidebar.classList.contains('collapsed') ? '60px' : '280px';
+            }
+        });
+
+        // Initialize sidebar state
+        if (window.innerWidth <= 780) {
+            sidebar.style.transform = 'translateX(-100%)';
+        } else {
+            content.style.marginLeft = '60px';
+        }
 
         const toggleSearch = () => {
             // Optional
         };
-
-
-        sidebarItems.forEach(item => {
-            item.addEventListener('mouseenter', () => {
-                if (!item.classList.contains('active')) {
-                    item.style.backgroundColor = '#f1f3f4';
-                    item.style.transform = '0.3s ease-in-out';
-                }
-            });
-
-            item.addEventListener('mouseleave', () => {
-                if (!item.classList.contains('active')) {
-                    item.style.backgroundColor = '';
-                }
-            });
-
-            item.addEventListener('click', () => {
-                sidebarItems.forEach(si => {
-                    si.classList.remove('active');
-                    si.style.backgroundColor = '#4D55CC';
-                    si.querySelector('svg')?.setAttribute('fill', '#9aa0a6');
-                    si.querySelector('span')?.style.setProperty('color', '#9aa0a6');
-                });
-
-                item.classList.add('active');
-                item.style.backgroundColor = '#ffb435';
-                item.querySelector('svg')?.setAttribute('fill', '#e8eaed');
-                item.querySelector('span')?.style.setProperty('color', '#e8eaed');
-            });
-        });
 
         sidebarToggle?.addEventListener('click', toggleSidebar);
         searchIcon?.addEventListener('click', toggleSearch);

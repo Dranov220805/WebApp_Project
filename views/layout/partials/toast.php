@@ -1,17 +1,20 @@
 <?php
 ?>
+<!-- Toast Container -->
 <div id="toast"
-    class="bs-toast d-none toast fade show"
-    role="alert"
-    aria-live="assertive"
-    aria-atomic="true"
+     class="toast d-none position-fixed top-50 start-50 translate-middle fade show"
+     role="alert"
+     aria-live="assertive"
+     aria-atomic="true"
+     style="z-index: 1055; min-width: 300px;"
 >
-    <div class="toast-body position-relative w-100 d-flex flex-direction-column justify-content-center align-items-center">
+    <div class="toast-body position-relative w-100 d-flex flex-column justify-content-center align-items-center text-center">
         <span id="toast-message">Sample Response</span>
-        <div class="toast-icon" id="toast-close">
+        <div class="toast-icon mt-2" id="toast-close" style="cursor: pointer;">
             <i class="toast-icon--inner fa-regular fa-rectangle-xmark"></i>
         </div>
-        <img style="width: 30px" class="toast-body__cloud" src="/public/img/icon/icon-cloud.png" alt="">
+        <img style="width: 30px; margin-top: 8px;" class="toast-body__cloud" src="/public/img/icon/icon-cloud.png" alt="">
     </div>
 </div>
+
 

@@ -1,6 +1,4 @@
 .sidebar {
-    width: 280px;
-    min-width: 50px;
     height: calc(100vh - 56px);
     background-color: #ffffff;
     border-right: 1px solid #e0e0e0;
@@ -8,11 +6,116 @@
     left: 0;
     top: 70px;
     z-index: 100;
-    transition: transform 0.3s ease;
+    transition: width 0.3s ease;
     overflow-y: auto;
-    transform: translateX(-100%);
     color: #e8eaed;
+    margin-left: 10px;
 }
+
+/* Collapsed sidebar state */
+.sidebar.collapsed {
+    width: 80px;
+}
+
+/* Expanded sidebar state */
+.sidebar.expanded {
+    width: 280px;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    background-color: #ffffff;
+    height: 50px;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: background-color 0.3s ease;
+    transition: width 0.3s ease;
+}
+
+.sidebar-item:active {
+    background-color: #bdbdbd;
+}
+
+.sidebar-item:hover {
+    background-color: #f1f3f4;
+}
+
+.sidebar__item--icon {
+    color: #000000;
+    font-size: 24px;
+    min-width: 40px;
+    display: flex;
+    justify-content: center;
+    margin-left: 4px;
+}
+
+.sidebar__item--title {
+    color: #000000;
+    font-size: 18px;
+    transition: opacity 0.2s ease;
+    margin-left: 8px;
+    margin-top: 5px;
+}
+
+/* Hide titles when sidebar is collapsed */
+.sidebar.collapsed .sidebar__item--title {
+    opacity: 0;
+    width: 0;
+}
+
+/*!* Center icons when collapsed *!*/
+/*.sidebar.collapsed .sidebar-item {*/
+/*    justify-content: center;*/
+/*    padding: 8px 0;*/
+/*}*/
+
+/*!* Reset padding when expanded *!*/
+/*.sidebar.expanded .sidebar-item {*/
+/*    justify-content: flex-start;*/
+/*    padding: 8px 24px 8px 16px;*/
+/*}*/
+
+/* Content area adjustment */
+.content {
+    transition: margin-left 0.3s ease;
+}
+
+.note-sheet {
+    max-width: 500px;
+    width: 235px;
+    min-width: 235px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+    overflow: hidden;
+    max-height: 500px;
+    height: 300px;
+    align-self: start;
+}
+
+.note-post {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15);
+    max-width: 600px;
+    margin: 0 auto 0px;
+    padding: 16px;
+    width: 100%;
+}
+
+.note-post__input {
+    border: none;
+    font-size: 16px;
+    outline: none;
+    padding: 4px 0;
+    width: 100%;
+}
+
 
 /*.content {*/
 /*    flex-grow: 1;*/
@@ -38,61 +141,6 @@
 /*    !*max-width: 1290px;*!*/
 /*    flex-wrap: wrap;*/
 /*}*/
-
-.sidebar-item {
-    display: flex;
-    align-items: center;
-    padding: 8px 24px 8px 24px;
-    cursor: pointer;
-    background-color: #ffffff;
-    height: 50px;
-}
-
-.sidebar-item:active {
-    background-color: #bdbdbd;
-}
-
-.sidebar-item:hover {
-    background-color: #bdbdbd;
-}
-
-.sidebar__item--icon {
-    color: #000000;
-    margin-right: 20px;
-    font-size: 24px;
-    width: 40px;
-}
-
-.sidebar__item--title {
-    color: #000000;
-    margin-right: 20px;
-    font-size: 18px;
-    width: 100%;
-}
-
-.note-sheet {
-    max-width: 500px;
-    width: 235px;
-    min-width: 235px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
-    overflow: hidden;
-    height: fit-content;
-    align-self: start;
-}
-
-.note-post {
-    display: flex;
-    flex-wrap: wrap;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15);
-    max-width: 600px;
-    margin: 0 auto 0px;
-    padding: 16px;
-    width: 100%;
-}
 
 /*.note-grid {*/
 /*    margin-top: 32px;*/

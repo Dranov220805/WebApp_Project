@@ -2,7 +2,7 @@
 ?>
 
 <!-- Sidebar -->
-<div id="sidebar" class="sidebar">
+<div id="sidebar" class="sidebar collapsed">
     <div class="sidebar-content" style="padding: 8px 0;">
         <!-- Notes item -->
         <div class="sidebar-item">

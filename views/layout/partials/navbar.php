@@ -5,8 +5,8 @@
     <div class="d-flex align-items-center w-100">
         <!-- Left side: Menu icon (sidebar toggle) and Logo -->
         <div class="d-flex align-items-center">
-            <button id="sidebar-toggle" class="sidebar-toggle" style="background: none; border: none; cursor: pointer; padding-left: 0px; padding-right: 10px">
-                <i style="width: 40px; height: 40px; padding-top: 8px; padding-bottom: 8px; font-size: 24px" class="navbar__item--icon fa-solid fa-bars"></i>
+            <button id="sidebar-toggle" class="sidebar-toggle" style="background: none; border: none; cursor: pointer; padding-left: 10px; padding-right: 30px">
+                <i class="navbar__item--icon fa-solid fa-bars"></i>
             </button>
 
             <div class="d-flex align-items-center" style="margin-left: 4px;">
@@ -19,9 +19,7 @@
             <div style="max-width: 720px; width: 100%; position: relative;">
                 <div id="search-container" class="search-expanded" style="display: flex; background-color: #f1f3f4; border-radius: 8px; padding: 6px 8px; align-items: center; transition: width 0.3s ease;">
                     <button id="search-icon" style="background: none; border: none; cursor: pointer; padding: 8px;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#5f6368">
-                            <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
-                        </svg>
+                        <i class="fa-solid fa-magnifying-glass"></i>
                     </button>
                     <input id="search-input" type="text" placeholder="Search notes" style="border: none; background: transparent; flex-grow: 1; padding: 4px 8px; outline: none; font-size: 14px; width: 100%; opacity: 1; transition: width 0.3s ease, opacity 0.3s ease;">
                 </div>
@@ -30,42 +28,77 @@
 
         <!-- Right side: Icons -->
         <div class="d-flex align-items-center">
-            <button style="background: none; border: none; cursor: pointer; padding: 8px;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="#5f6368">
-                    <path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"></path>
-                </svg>
+            <!-- Grid button with a popover -->
+            <button type="button" class="btn" style="background: none; border: none; cursor: pointer; padding: 8px; margin-left: 8px;">
+                <i class="navbar__item--icon fa-solid fa-border-all"></i>
             </button>
-            <button style="background: none; border: none; cursor: pointer; padding: 8px; margin-left: 8px;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="#5f6368">
-                    <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65A.488.488 0 0 0 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"></path>
-                </svg>
+            <!-- Setting button with a popover -->
+            <button type="button" class="btn" style="background: none; border: none; cursor: pointer; padding: 8px; margin-left: 8px;">
+                <i class="navbar__item--icon fa-solid fa-gear"></i>
             </button>
-            <button style="background: none; border: none; cursor: pointer; padding: 8px; margin-left: 8px;">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="#5f6368">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"></path>
-                </svg>
+            <!-- Your button with a popover -->
+            <button type="button" class="btn" data-bs-toggle="popover" data-bs-html="true" title="User Info"
+                    data-bs-content="<strong>Name:</strong> <?=$_SESSION['userName']?><br><strong>Email:</strong> example@gmail.com <br><strong>Role:</strong> <?=$_SESSION['roleId']?>"
+                    style="background: none; border: none; cursor: pointer; padding: 8px; margin-left: 8px;">
+                <i class="navbar__item--icon fa-regular fa-circle-user"></i>
+            </button>
+            <button data-bs-toggle="modal" data-bs-target="#myModal" style="background: none; border: none; cursor: pointer; padding: 8px; margin-left: 8px;">
+                <i class="navbar__item--icon fa-regular fa-circle-user"></i>
             </button>
         </div>
     </div>
 </nav>
 
+<!-- Modal place here-->
+
+<!-- The Modal -->
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Modal Heading</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <strong>Name:</strong> <?=$_SESSION['userName']?>
+                <br>
+                <strong>Email:</strong> <?=$_SESSION['email']?>
+                <br>
+                <strong>Role:</strong> <?=$_SESSION['roleId']?>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <a href="/log/logout" type="button" class="btn btn-danger">Log out</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 </div>
 
 <!-- CSS for styling -->
 <style>
+    .navbar__item--icon {
+        border: 1px solid white;
+        border-radius: 50%;
+        transition: background-color 0.3s ease;
 
-    .sidebar-item:not(.active):hover {
-        background-color: #ffffff;
+        width: 40px;
+        height: 40px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        font-size: 24px
     }
 
-    .search-collapsed {
-        width: 48px;
+    .navbar__item--icon:hover {
+        background-color: #f1f3f4;
     }
-
-    .search-expanded {
-        width: 100%;
-    }
-
     /* For mobile devices */
     @media (max-width: 780px) {
         .content {
@@ -100,3 +133,11 @@
         }
     }
 </style>
+
+<!-- Initialize the popover with JavaScript -->
+<script>
+    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+    const popoverList = [...popoverTriggerList].map(
+        popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl)
+    );
+</script>

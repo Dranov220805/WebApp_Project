@@ -43,7 +43,7 @@ class Auth {
             })
                 .then(response => response.json())
                 .then(data => {
-                    const { accessToken, roleId, userName, message, status } = data;
+                    const { accessToken, roleId, userName, email, message, status } = data;
                     $('#toast-message').html(message);
 
                     if (status === true) {
