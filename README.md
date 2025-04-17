@@ -1,6 +1,7 @@
 # Project Structure
 -- app: handle system's logic  
-|----- controllers: only use to directional (always note the route above the function)  
+|----- controllers: only use to directional (always note the route above the function)
+|----- core: only use for Json Web Token function
 |----- middlewares: only use to process the pre-request  
 |----- models: only use to mapping with database  
 |----- pattern: pattern code only  
@@ -9,14 +10,13 @@
 |----- .htaccess  
 -- config: handle system's configuration  
 |----- DatabaseManager.php: connect to database only  
-|----- .htaccess  
+|----- .htaccess 
+-- data: saving documentation about the project (Class Diagram, sql file)
 -- public: vendor for static informations  
 |----- css: (main, base, responsive, grid,...)  
-|----- font  
 |----- img: divided by function  
 |----- js: use 'module ES6' and Class Component  
-  
-|----- video: divided by function  
+ 
 -- route: redirect by router  
 |----- .htaccess  
 -- views: views only  
