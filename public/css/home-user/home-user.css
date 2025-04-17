@@ -1,0 +1,219 @@
+.sidebar {
+    width: 280px;
+    min-width: 50px;
+    height: calc(100vh - 56px);
+    background-color: #ffffff;
+    border-right: 1px solid #e0e0e0;
+    position: fixed;
+    left: 0;
+    top: 70px;
+    z-index: 100;
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+    transform: translateX(-100%);
+    color: #e8eaed;
+}
+
+/*.content {*/
+/*    flex-grow: 1;*/
+/*    transition: margin-left 0.3s ease;*/
+/*    width: 100%;*/
+/*    margin-right: 0;*/
+/*    padding: 0;*/
+/*}*/
+
+/*.container {*/
+/*    width: 100%;*/
+/*    padding: 0px;*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    justify-content: center;*/
+/*    width: 100%;*/
+/*}*/
+
+/*.note-grid {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    width: 100%;*/
+/*    !*max-width: 1290px;*!*/
+/*    flex-wrap: wrap;*/
+/*}*/
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 24px 8px 24px;
+    cursor: pointer;
+    background-color: #ffffff;
+    height: 50px;
+}
+
+.sidebar-item:active {
+    background-color: #bdbdbd;
+}
+
+.sidebar-item:hover {
+    background-color: #bdbdbd;
+}
+
+.sidebar__item--icon {
+    color: #000000;
+    margin-right: 20px;
+    font-size: 24px;
+    width: 40px;
+}
+
+.sidebar__item--title {
+    color: #000000;
+    margin-right: 20px;
+    font-size: 18px;
+    width: 100%;
+}
+
+.note-sheet {
+    max-width: 500px;
+    width: 235px;
+    min-width: 235px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+    overflow: hidden;
+    height: fit-content;
+    align-self: start;
+}
+
+.note-post {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15);
+    max-width: 600px;
+    margin: 0 auto 0px;
+    padding: 16px;
+    width: 100%;
+}
+
+/*.note-grid {*/
+/*    margin-top: 32px;*/
+/*}*/
+
+/*.note-post__content {*/
+
+/*}*/
+
+/*#content {*/
+
+/*}*/
+
+/*.content {*/
+/*    !*max-width: 1270px;*!*/
+/*    flex-grow: 1;*/
+/*    transition: margin-left 0.3s ease;*/
+/*    width: 100%;*/
+/*    margin: 0 auto;*/
+/*    padding: 16px;*/
+/*}*/
+
+/* Add these styles to your view_contents.css file */
+
+/* Container for the note creation area */
+.note-post {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15);
+    max-width: 600px;
+    margin: 0 auto 32px;
+    padding: 16px;
+    width: 100%;
+}
+
+/* Content styling for the main area */
+.content {
+    max-width: 1270px;
+    flex-grow: 1;
+    transition: margin-left 0.3s ease;
+    width: 100%;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+/* Note grid with column wrapping layout */
+.note-grid {
+    column-count: 4;
+    column-gap: 16px;
+    column-fill: balance;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Individual note card */
+/*.note-sheet {*/
+/*    break-inside: avoid; !* Prevents cards from breaking across columns *!*/
+/*    display: inline-block; !* Important for column layout *!*/
+/*    width: 100%;*/
+/*    margin-bottom: 16px;*/
+/*    background-color: white;*/
+/*    border-radius: 8px;*/
+/*    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);*/
+/*    overflow: hidden;*/
+/*}*/
+
+/* Responsive adjustments */
+@media (max-width: 2400px) {
+    .note-grid {
+        column-count: 7;
+    }
+}
+
+@media (max-width: 2400px) {
+    .note-grid {
+        column-count: 7;
+    }
+}
+
+
+@media (max-width: 2400px) {
+    .note-grid {
+        column-count: 7;
+    }
+}
+
+@media (max-width: 2100px) {
+    .note-grid {
+        column-count: 6;
+    }
+}
+
+@media (max-width: 1800px) {
+    .note-grid {
+        column-count: 5;
+    }
+}
+
+@media (max-width: 1500px) {
+    .note-grid {
+        column-count: 4;
+    }
+}
+
+@media (max-width: 1200px) {
+    .note-grid {
+        column-count: 3;
+    }
+}
+
+@media (max-width: 900px) {
+    .note-grid {
+        column-count: 2;
+    }
+}
+
+@media (max-width: 600px) {
+    .note-grid {
+        column-count: 1;
+    }
+}

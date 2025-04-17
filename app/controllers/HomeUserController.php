@@ -8,7 +8,7 @@ class HomeUserController{
     }
 
     public function index() {
-        $content = 'home-user';
+        $content = 'home';
         $footer = 'home';
         include "./views/layout/index.php";
     }

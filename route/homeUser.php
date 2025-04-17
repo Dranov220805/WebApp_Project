@@ -17,7 +17,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
         }
     } else if (isset($_GET['param_1'])){
         switch ($_GET['param_1']){
-            case 'home-user':
+            case 'home':
                 $homeUserMiddleWare->index();
                 break;
         }

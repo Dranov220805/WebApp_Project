@@ -2,16 +2,6 @@
 
 use \Firebase\JWT\JWT;
 use \Firebase\JWT\Key;
-//use \Dotenv\Dotenv;
-//
-//// Load .env file
-//try {
-//    $dotenv = Dotenv::createImmutable('.');
-//    $dotenv->load();
-//} catch (\Exception $e) {
-//    // Handle error (log it or display a message)
-//    echo 'Error loading .env file: ' . $e->getMessage();
-//}
 
 class JWTHandler {
     private $secret;
@@ -25,10 +15,6 @@ class JWTHandler {
         $this->issuer = $config['issuer'];
         $this->audience = $config['audience'];
         $this->accessTokenExp = $config['accessTokenExp'];
-//        $this->secret = "123456asdlksaduoasdpipmi987923849039ncqw8n0askdaosmp9";
-//        $this->issuer = "http://localhost";
-//        $this->audience = "http://localhost";
-//        $this->accessTokenExp = 600;
     }
 
     public function generateAccessToken($payload) {

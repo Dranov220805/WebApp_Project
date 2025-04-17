@@ -15,9 +15,9 @@
     <?php
         include "./views/layout/partials/views_content.php";
     ?>
-    <?php
-        include "./views/layout/partials/footer.php";
-    ?>
+<!--    --><?php
+//        include "./views/layout/partials/footer.php";
+//    ?>
     <?php
         include "./views/layout/partials/toast.php";
     ?>

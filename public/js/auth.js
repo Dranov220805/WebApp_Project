@@ -57,7 +57,7 @@ class Auth {
 
                             // Redirect user by role
                             if (String(roleId) === '1') {
-                                window.location.href = '/home-user';
+                                window.location.href = '/home';
                             } else if (String(roleId) === '2') {
                                 window.location.href = '/admin-dashboard';
                             }
@@ -103,7 +103,7 @@ function refreshToken() {
             } else {
                 // If the refresh failed (e.g., session expired), handle it
                 console.log('Session expired, redirecting to login');
-                window.location.href = '/login';
+                window.location.href = '/';
             }
         })
         .catch(err => console.error('Error refreshing token:', err));
@@ -120,13 +120,13 @@ function resetIdleTimer() {
 // Handle user inactivity (session expiration)
 function handleIdleTimeout() {
     console.log('User is idle for too long. Logging out...');
-    fetch('/auth/logout', {
-        method: 'POST',
+    fetch('/log/logout', {
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json'
         }
     }).then(response => {
-        window.location.href = '/login'; // Redirect to login after session expiration
+        window.location.href = '/'; // Redirect to login page after session expiration
     }).catch(err => console.error('Error logging out:', err));
 }
 
