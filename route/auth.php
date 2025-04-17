@@ -32,9 +32,12 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
                     $authMiddleware->login_POST();
                 }
                 break;
+            case 'auth':
+                if($_GET['param_2'] == 'token-refresh'){
+                    $authMiddleware->tokenRefresh();
+                }
         }
     } else if (isset($_GET['param_1'])){
-
     }
 }
 ?>

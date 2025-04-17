@@ -2,6 +2,10 @@ import site from './site.js';
 // import log from "./log.js";
 import auth from './auth.js';
 import reg from './reg.js';
+import note from './note.js';
+
+// notes.loadNotes(); ← you can still call methods on the exported instance
+
 import homeUser from './home-user.js';
 
 // site.index();
@@ -23,25 +27,25 @@ window.toggleConfirmPassword = () => {
 }
 
 window.checkLogin = () => {
-    auth.checkLogin()
+    auth.checkLogin();
 }
 
 window.refreshToken = () => {
-    auth.refreshToken()
+    auth.refreshToken();
 }
 
 window.resetIdleTimer = () => {
-    auth.resetIdleTimer()
+    auth.resetIdleTimer();
 }
 
 window.handleIdleTimeout = () => {
-    auth.handleIdleTimeout()
+    auth.handleIdleTimeout();
 }
 
-window.resetIdleTimer = () => {
-    auth.resetIdleTimer()
+window.refreshNotes = () => {
+    note.loadNotes();
 }
 
-window.LoadDOMContent_NavbarSidebar = () => {
-    homeUser.LoadDOMContent_NavbarSidebar();
+window.showToast = () => {
+    note.showToast();
 }

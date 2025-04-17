@@ -66,6 +66,17 @@ class AuthMiddleware {
         }
     }
 
+    public function tokenRefresh() {
+        header('Content-Type: application/json');
+
+        $content = trim(file_get_contents("php://input"));
+        $data = json_decode($content, true);
+
+        if (!empty($data['token'])) {
+
+        }
+    }
+
     // Middleware check for routes needing auth
     public static function check() {
         // Fallback for apache_request_headers()
