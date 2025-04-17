@@ -20,6 +20,8 @@ class AuthController {
                 'status' => true,
                 'accessToken' => $result['accessToken'],
                 'roleId' => $result['roleId'],
+                'userName' => $result['userName'],
+                'email' => $result['email'],
                 'message' => 'Đăng nhập thành công'
             ]);
         } else {

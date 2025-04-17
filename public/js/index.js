@@ -2,6 +2,7 @@ import site from './site.js';
 // import log from "./log.js";
 import auth from './auth.js';
 import reg from './reg.js';
+import homeUser from './home-user.js';
 
 // site.index();
 // site.ajaxTest();
@@ -39,4 +40,8 @@ window.handleIdleTimeout = () => {
 
 window.resetIdleTimer = () => {
     auth.resetIdleTimer()
+}
+
+window.LoadDOMContent_NavbarSidebar = () => {
+    homeUser.LoadDOMContent_NavbarSidebar();
 }

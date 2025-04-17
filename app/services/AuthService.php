@@ -22,6 +22,7 @@ class AuthService {
         // Set session role
         $_SESSION['roleId'] = $user->getRoleId();
         $_SESSION['userName'] = $user->getUsername();
+        $_SESSION['email'] = $user->getEmail();
 
         // Generate access token
         $jwtHandler = new JWTHandler();
@@ -48,7 +49,8 @@ class AuthService {
         return [
             'accessToken' => $accessToken,
             'roleId' => $user->getRoleId(),
-            'userName' => $user->getUsername()
+            'userName' => $user->getUsername(),
+            'email' => $user->getEmail()
         ];
     }
 
