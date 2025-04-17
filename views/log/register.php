@@ -99,7 +99,7 @@ include "./views/layout/partials/header.php";
                     <div class="mb-3">
                         <label for="confirmPassword" class="form-label">Confirm Password:</label>
                         <div class="input-group">
-                            <input type="password" class="form-control login-section-2__form--input-box" id="password-input-confirm" placeholder="Password" oninput="enableButton()" onclick="enableButton()">
+                            <input type="password" class="form-control login-section-2__form--input-box" id="password-input-confirm" placeholder="Confirm Password" oninput="enableButton()" onclick="enableButton()">
                             <span class="input-group-text bg-white">
                                 <i id="toggle-password-confirm" class="fa-regular fa-eye-slash" onclick="toggleConfirmPassword()" style="cursor: pointer;"></i>
                             </span>

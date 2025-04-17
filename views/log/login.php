@@ -49,7 +49,7 @@ include "./views/layout/partials/header.php";
 
                     <div class="mb-3">
                         <label for="email" class="form-label">Email:</label>
-                        <input type="email" class="form-control login-section-2__form--input-box" id="email-input" placeholder="example@gmail.com" required>
+                        <input type="text" class="form-control login-section-2__form--input-box" id="email-input" placeholder="example@gmail.com" required>
 <!--                        <input type="text" class="form-control login-section-2__form--input-box" id="email-input" placeholder="example@gmail.com" oninput="enableButton()" onclick="enableButton()">-->
                     </div>
 
