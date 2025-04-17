@@ -54,6 +54,39 @@ class AuthService {
         ];
     }
 
+//    public function refreshSession() {
+//        $refreshToken = $_COOKIE['refresh_token'] ?? null;
+//
+//        if (!$refreshToken) {
+//            http_response_code(401);
+//            echo json_encode(['message' => 'Missing refresh token']);
+//            return;
+//        }
+//
+//        $storedToken = RefreshToken::findValid($refreshToken);
+//        if (!$storedToken) {
+//            http_response_code(401);
+//            echo json_encode(['message' => 'Invalid or expired token']);
+//            return;
+//        }
+//
+//        $jwtHandler = new JWTHandler();
+//        $accessToken = $jwtHandler->generateAccessToken([
+//            'id' => $storedToken['accountId']
+//        ]);
+//
+//        // Update expiration
+//        $newExpires = date('Y-m-d H:i:s', strtotime('+30 minutes'));
+//        RefreshToken::updateUsage($storedToken['id'], $newExpires);
+//
+//        // Refresh cookie expiration
+//        setcookie("refresh_token", $refreshToken, time() + 1800, "/", "", false, true);
+//
+//        // Return new access token
+//        header('Content-Type: application/json');
+//        echo json_encode(['accessToken' => $accessToken]);
+//    }
+
     public function refreshSession() {
         $refreshToken = $_COOKIE['refresh_token'] ?? null;
         error_log("Refresh token from cookie: " . ($refreshToken ?? 'none'));

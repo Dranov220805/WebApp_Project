@@ -24,8 +24,10 @@ CREATE TABLE `Account` (
   `password` VARCHAR(200) NOT NULL,
   `isDeleted` BOOLEAN NOT NULL DEFAULT FALSE,
   `tokenExpiration` DATETIME NOT NULL DEFAULT NOW(),
+  `remember_token` VARCHAR(255) NULL,
   `email` VARCHAR(200) NOT NULL,
-  `roleId` INT NOT NULL
+  `roleId` INT NOT NULL,
+  `isVerified` BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 

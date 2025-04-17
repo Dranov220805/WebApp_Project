@@ -81,27 +81,32 @@ class Auth {
     }
 }
 
-// Timer and activity monitoring
-let idleTimeout;
-const MAX_IDLE_TIME = 30 * 60 * 1000; // 30 minutes in milliseconds
-const REFRESH_INTERVAL = 5 * 60 * 1000; // Refresh token every 5 minutes
 
-// Function to refresh the access token
+
+// Configuration
+const MAX_IDLE_TIME = 30 * 60 * 1000; // 30 minutes
+const REFRESH_THRESHOLD = 28 * 60 * 1000; // Trigger refresh after 28 minutes of no click
+
+let idleTimeout;
+let refreshTimeout;
+let lastClickTime = Date.now();
+
+// Refresh the access token
 function refreshToken() {
     fetch('/auth/refresh-token', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('accessToken') // or cookies
+            'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
         },
-        body: JSON.stringify({}) // body can be empty, just to trigger token refresh
+        body: JSON.stringify({})
     })
         .then(response => {
             if (response.ok) {
-                // If the token refresh is successful, reset the idle timer
                 console.log('Access token refreshed');
+                lastClickTime = Date.now();
+                resetTimers(); // restart the countdowns
             } else {
-                // If the refresh failed (e.g., session expired), handle it
                 console.log('Session expired, redirecting to login');
                 window.location.href = '/';
             }
@@ -109,34 +114,103 @@ function refreshToken() {
         .catch(err => console.error('Error refreshing token:', err));
 }
 
-// Function to reset idle timer on user activity
-function resetIdleTimer() {
-    clearTimeout(idleTimeout);
-    idleTimeout = setTimeout(handleIdleTimeout, MAX_IDLE_TIME);
-    // Refresh the token periodically while the user is active
-    setInterval(refreshToken, REFRESH_INTERVAL);
-}
-
-// Handle user inactivity (session expiration)
+// Handle session expiration due to inactivity
 function handleIdleTimeout() {
-    console.log('User is idle for too long. Logging out...');
+    console.log('User has been idle too long. Logging out...');
     fetch('/log/logout', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
         }
-    }).then(response => {
-        window.location.href = '/'; // Redirect to login page after session expiration
-    }).catch(err => console.error('Error logging out:', err));
+    })
+        .then(() => window.location.href = '/')
+        .catch(err => console.error('Error logging out:', err));
 }
 
-// Set up event listeners for user activity (e.g., mouse movement, key press)
-document.addEventListener('mousemove', resetIdleTimer);
-document.addEventListener('keypress', resetIdleTimer);
-document.addEventListener('click', resetIdleTimer);
-document.addEventListener('scroll', resetIdleTimer);
+// Reset all timers (called only on click)
+function resetTimers() {
+    clearTimeout(idleTimeout);
+    clearTimeout(refreshTimeout);
 
-// Initialize the idle timer when the page loads
-resetIdleTimer();
+    lastClickTime = Date.now();
+
+    // Logout after 30 minutes of no click
+    idleTimeout = setTimeout(handleIdleTimeout, MAX_IDLE_TIME);
+
+    // Refresh token after 28 minutes of no click
+    refreshTimeout = setTimeout(() => {
+        const timeSinceLastClick = Date.now() - lastClickTime;
+        if (timeSinceLastClick >= REFRESH_THRESHOLD) {
+            refreshToken();
+        }
+    }, REFRESH_THRESHOLD);
+}
+
+// Only count clicks as activity
+document.addEventListener('click', resetTimers);
+
+// Initialize timers on page load
+resetTimers();
+
+
+
+
+// // Timer and activity monitoring
+// let idleTimeout;
+// const MAX_IDLE_TIME = 30 * 60 * 1000; // 30 minutes in milliseconds
+// const REFRESH_INTERVAL = 5 * 60 * 1000; // Refresh token every 5 minutes
+//
+// // Function to refresh the access token
+// function refreshToken() {
+//     fetch('/auth/refresh-token', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//             'Authorization': 'Bearer ' + localStorage.getItem('accessToken') // or cookies
+//         },
+//         body: JSON.stringify({}) // body can be empty, just to trigger token refresh
+//     })
+//         .then(response => {
+//             if (response.ok) {
+//                 // If the token refresh is successful, reset the idle timer
+//                 console.log('Access token refreshed');
+//             } else {
+//                 // If the refresh failed (e.g., session expired), handle it
+//                 console.log('Session expired, redirecting to login');
+//                 window.location.href = '/';
+//             }
+//         })
+//         .catch(err => console.error('Error refreshing token:', err));
+// }
+//
+// // Function to reset idle timer on user activity
+// function resetIdleTimer() {
+//     clearTimeout(idleTimeout);
+//     idleTimeout = setTimeout(handleIdleTimeout, MAX_IDLE_TIME);
+//     // Refresh the token periodically while the user is active
+//     setInterval(refreshToken, REFRESH_INTERVAL);
+// }
+//
+// // Handle user inactivity (session expiration)
+// function handleIdleTimeout() {
+//     console.log('User is idle for too long. Logging out...');
+//     fetch('/log/logout', {
+//         method: 'GET',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         }
+//     }).then(response => {
+//         window.location.href = '/'; // Redirect to login page after session expiration
+//     }).catch(err => console.error('Error logging out:', err));
+// }
+//
+// // Set up event listeners for user activity (e.g., mouse movement, key press)
+// document.addEventListener('mousemove', resetIdleTimer);
+// document.addEventListener('keypress', resetIdleTimer);
+// document.addEventListener('click', resetIdleTimer);
+// document.addEventListener('scroll', resetIdleTimer);
+//
+// // Initialize the idle timer when the page loads
+// resetIdleTimer();
 
 export default new Auth();

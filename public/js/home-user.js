@@ -60,9 +60,9 @@ class HomeUser {
 
         // Initialize sidebar state
         if (window.innerWidth <= 780) {
-            sidebar.style.transform = 'translateX(-100%)';
+            // sidebar.style.transform = 'translateX(-100%)';
         } else {
-            content.style.marginLeft = '60px';
+            // content.style.marginLeft = '60px';
         }
 
         const toggleSearch = () => {
