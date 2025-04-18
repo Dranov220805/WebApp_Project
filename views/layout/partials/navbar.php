@@ -5,13 +5,13 @@
     <div class="d-flex align-items-center w-100">
         <!-- Left side: Menu icon (sidebar toggle) and Logo -->
         <div class="d-flex align-items-center">
-            <button id="sidebar-toggle" class="sidebar-toggle" style="background: none; border: none; cursor: pointer; padding-left: 10px; padding-right: 30px">
+            <button id="sidebar-toggle" class="sidebar-toggle" style="background: none; border: none; cursor: pointer; padding-left: 3px; padding-right: 30px">
                 <i class="navbar__item--icon fa-solid fa-bars"></i>
             </button>
 
-            <div class="d-flex align-items-center" style="margin-left: 4px;">
+            <a href="/home" class="d-flex align-items-center" style="margin-left: 4px;">
                 <img class="" height="24" src="/public/img/logo/logo-pernote-brand-nobg.png" alt="Pernote Logo">
-            </div>
+            </a>
         </div>
 
         <!-- Middle: Search bar -->
@@ -34,9 +34,9 @@
             </button>
 
             <!-- Setting button with a popover -->
-            <button type="button" class="btn" style="background: none; border: none; cursor: pointer; padding: 8px; margin-left: 8px;">
+            <a href="/user/preferences" type="button" class="btn" style="background: none; border: none; cursor: pointer; padding: 8px; margin-left: 8px;">
                 <i class="navbar__item--icon fa-solid fa-gear"></i>
-            </button>
+            </a>
 
             <!-- Your button with a popover -->
             <button type="button" class="btn" data-bs-toggle="popover" data-bs-html="true" title="User Info"

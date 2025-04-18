@@ -21,4 +21,11 @@ class HomeUserMiddleWare {
             $this->homeUserController->homeAccount();
         }
     }
+    public function userPreference() {
+        if (!isset($_SESSION['roleId'])) {
+            header('location:/');
+        } else {
+            $this->homeUserController->userPreference();
+        }
+    }
 }

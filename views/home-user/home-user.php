@@ -41,7 +41,7 @@
             <div class="pinned-note">
                 <h6>Pinned</h6>
                 <div class="note-grid d-flex justify-content-center">
-                    <div class="pinned-note__load" style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 16px; justify-content: center">
+                    <div class="pinned-note__load load-grid" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center">
 <!--                        Start of Pinned Note Grid-->
 
 <!--                        End of Pinned Note Grid-->
@@ -53,7 +53,7 @@
             <div class="pinned-note">
                 <h6>Others</h6>
                 <div class="note-grid d-flex justify-content-center">
-                    <div class="other-note__load" style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 16px; justify-content: center">
+                    <div class="other-note__load load-grid" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center">
 <!--                        Start of Others Note Grid-->
 
 <!--                        End of Others Note Grid-->

@@ -17,6 +17,11 @@ class HomeUserController{
         $footer = 'home';
         include "./views/layout/index.php";
     }
+    public function userPreference() {
+        $content = 'home-user-preference';
+        $footer = 'home';
+        include "./views/layout/index.php";
+    }
 }
 
 ?>

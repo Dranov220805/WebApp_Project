@@ -9,7 +9,7 @@
     transition: width 0.3s ease;
     overflow-y: auto;
     color: #e8eaed;
-    margin-left: 10px;
+    padding-left: 3px;
 }
 
 /* Collapsed sidebar state */
@@ -31,7 +31,7 @@
     height: 50px;
     overflow: hidden;
     white-space: nowrap;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease-in-out;
     transition: width 0.3s ease;
 }
 
@@ -65,18 +65,6 @@
     opacity: 0;
     width: 0;
 }
-
-/*!* Center icons when collapsed *!*/
-/*.sidebar.collapsed .sidebar-item {*/
-/*    justify-content: center;*/
-/*    padding: 8px 0;*/
-/*}*/
-
-/*!* Reset padding when expanded *!*/
-/*.sidebar.expanded .sidebar-item {*/
-/*    justify-content: flex-start;*/
-/*    padding: 8px 24px 8px 16px;*/
-/*}*/
 
 /* Content area adjustment */
 .content {
@@ -130,69 +118,12 @@
     resize: none; /* Prevent manual resizing */
 }
 
-/*.content {*/
-/*    flex-grow: 1;*/
-/*    transition: margin-left 0.3s ease;*/
-/*    width: 100%;*/
-/*    margin-right: 0;*/
-/*    padding: 0;*/
-/*}*/
+
 
 .container {
-    /*width: 100%;*/
-    /*padding: 0px;*/
-    /*display: flex;*/
-    /*flex-direction: column;*/
-    /*justify-content: center;*/
-    /*width: 100%;*/
-
     max-width: 1800px;
     width: 90%;
 }
-
-/*.note-grid {*/
-/*    display: flex;*/
-/*    flex-direction: column;*/
-/*    width: 100%;*/
-/*    !*max-width: 1290px;*!*/
-/*    flex-wrap: wrap;*/
-/*}*/
-
-/*.note-grid {*/
-/*    margin-top: 32px;*/
-/*}*/
-
-/*.note-post__content {*/
-
-/*}*/
-
-/*#content {*/
-
-/*}*/
-
-/*.content {*/
-/*    !*max-width: 1270px;*!*/
-/*    flex-grow: 1;*/
-/*    transition: margin-left 0.3s ease;*/
-/*    width: 100%;*/
-/*    margin: 0 auto;*/
-/*    padding: 16px;*/
-/*}*/
-
-/* Add these styles to your view_contents.css file */
-
-/* Container for the note creation area */
-/*.note-post {*/
-/*    display: flex;*/
-/*    flex-wrap: wrap;*/
-/*    background-color: #ffffff;*/
-/*    border-radius: 8px;*/
-/*    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15);*/
-/*    max-width: 600px;*/
-/*    margin: 0 auto 32px;*/
-/*    padding: 16px;*/
-/*    width: 100%;*/
-/*}*/
 
 /* Content styling for the main area */
 .content {
@@ -214,17 +145,34 @@
     margin: 0 auto;
 }
 
+.load-grid {
+    display: flex;
+    flex-direction: row;
+}
+
+.load-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 600px;
+}
+
+h6 {
+    margin-top: 20px;
+}
+
 /* Individual note card */
-/*.note-sheet {*/
-/*    break-inside: avoid; !* Prevents cards from breaking across columns *!*/
-/*    display: inline-block; !* Important for column layout *!*/
-/*    width: 100%;*/
-/*    margin-bottom: 16px;*/
-/*    background-color: white;*/
-/*    border-radius: 8px;*/
-/*    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);*/
-/*    overflow: hidden;*/
-/*}*/
+.load-list .note-sheet {
+    break-inside: avoid; /* Prevents cards from breaking across columns */
+    display: inline-block; /* Important for column layout */
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 16px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+    overflow: hidden;
+}
 
 /* Responsive adjustments */
 @media (max-width: 2400px) {

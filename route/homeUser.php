@@ -15,6 +15,10 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
                     $homeUserMiddleWare->userAccount();
                 }
                 break;
+            case 'user':
+                if(isset($_GET['param_2']) == 'preferences'){
+                    $homeUserMiddleWare->userPreference();
+                }
         }
     } else if (isset($_GET['param_1'])){
         switch ($_GET['param_1']){
