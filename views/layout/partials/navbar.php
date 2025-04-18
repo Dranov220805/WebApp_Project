@@ -29,13 +29,15 @@
         <!-- Right side: Icons -->
         <div class="d-flex align-items-center">
             <!-- Grid button with a popover -->
-            <button type="button" class="btn" style="background: none; border: none; cursor: pointer; padding: 8px; margin-left: 8px;">
+            <button type="button" class="btn toggle-grid" style="background: none; border: none; cursor: pointer; padding: 8px; margin-left: 8px;">
                 <i class="navbar__item--icon fa-solid fa-border-all"></i>
             </button>
+
             <!-- Setting button with a popover -->
             <button type="button" class="btn" style="background: none; border: none; cursor: pointer; padding: 8px; margin-left: 8px;">
                 <i class="navbar__item--icon fa-solid fa-gear"></i>
             </button>
+
             <!-- Your button with a popover -->
             <button type="button" class="btn" data-bs-toggle="popover" data-bs-html="true" title="User Info"
                     data-bs-content="<strong>Name:</strong> <?=$_SESSION['userName']?><br><strong>Email:</strong> <?=$_SESSION['email']?> <br><strong>Role:</strong> <?=$_SESSION['roleId']?>"

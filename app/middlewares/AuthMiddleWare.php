@@ -22,10 +22,10 @@ class AuthMiddleware {
                 unset($_SESSION['roleId']);
                 session_destroy();
 
-                $this->authController->login();
+                header('Location: /');
             }
         } else {
-            $this->authController->login();
+            header('Location: /');
         }
     }
 
@@ -48,23 +48,89 @@ class AuthMiddleware {
                     'status' => true,
                     'accessToken' => $result['accessToken'],
                     'roleId' => $result['roleId'],
-                    'message' => 'Đăng nhập thành công'
+                    'userName' => $result['userName'],
+                    'email' => $result['email'],
+                    'message' => 'Login successful'
                 ]);
             } else {
                 http_response_code(401);
                 echo json_encode([
                     'status' => false,
-                    'message' => 'Tên đăng nhập hoặc mật khẩu sai'
+                    'message' => 'Wrong username or password'
                 ]);
             }
         } else {
             http_response_code(400);
             echo json_encode([
                 'status' => false,
-                'message' => 'Thiếu thông tin đăng nhập'
+                'message' => 'Missing login credentials'
             ]);
         }
     }
+
+//    public function login_POST() {
+//        header('Content-Type: application/json');
+//
+//        $content = trim(file_get_contents("php://input"));
+//        $data = json_decode($content, true);
+//
+//        if (!empty($data['username']) && !empty($data['password'])) {
+//            $result = $this->authController->login();
+//
+//            if ($result) {
+//                echo json_encode([
+//                    'status' => true,
+//                    'accessToken' => $result['accessToken'],
+//                    'roleId' => $result['roleId'],
+//                    'message' => 'Login successful'
+//                ]);
+//            } else {
+//                http_response_code(401);
+//                echo json_encode([
+//                    'status' => false,
+//                    'message' => 'Wrong username or password'
+//                ]);
+//            }
+//        } else {
+//            http_response_code(400);
+//            echo json_encode([
+//                'status' => false,
+//                'message' => 'Missing login credentials'
+//            ]);
+//        }
+//    }
+
+//    public function login_POST() {
+//        header('Content-Type: application/json');
+//
+//        $content = trim(file_get_contents("php://input"));
+//        $data = json_decode($content, true);
+//
+//        if (!empty($data['username']) && !empty($data['password'])) {
+//            $result = $this->authController->login_POST();
+//
+//            if ($result) {
+//                echo json_encode([
+//                    'status' => true,
+//                    'accessToken' => $result['accessToken'],
+//                    'roleId' => $result['roleId'],
+//                    'message' => 'Login successful'
+//                ]);
+//            } else {
+//                http_response_code(401);
+//                echo json_encode([
+//                    'status' => false,
+//                    'message' => 'Wrong username or password'
+//                ]);
+//            }
+//        } else {
+//            http_response_code(400);
+//            echo json_encode([
+//                'status' => false,
+//                'message' => 'Missing login credentials'
+//            ]);
+//        }
+//    }
 
     public function tokenRefresh() {
         header('Content-Type: application/json');

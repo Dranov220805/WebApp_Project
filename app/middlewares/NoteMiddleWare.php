@@ -7,7 +7,7 @@ class NoteMiddleWare {
     }
 
     public function getNotes() {
-        if (!isset($_SESSION['accessToken'])) {
+        if (!isset($_SESSION['roleId'])) {
             throw new Exception("Unauthenticated");
         } else {
             $this->noteController->getNotes();

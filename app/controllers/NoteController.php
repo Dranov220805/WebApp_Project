@@ -17,7 +17,7 @@ class NoteController {
         // Basic validation
         if (!$accountId) {
             http_response_code(400);
-            echo json_encode(['status' => false, 'message' => 'Missing accountIs']);
+            echo json_encode(['status' => false, 'message' => 'Missing accountId']);
             return;
         } else if (!is_numeric($intPage) || !is_numeric($perPage)) {
             http_response_code(400);

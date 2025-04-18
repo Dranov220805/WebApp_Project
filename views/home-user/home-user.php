@@ -10,12 +10,12 @@
     ?>
 
     <!-- Main content area -->
-    <div id="content" class="content">
+    <div id="content" class="content" style="margin-left: 80px;">
         <div class="container">
             <!-- Note creation area -->
             <div class="note-post">
                 <form class="note-post__content" style="display: flex; flex-direction: column;" action="#" onsubmit="return false">
-                    <input class="note-post__input" type="text" placeholder="Take a note...">
+                    <textarea class="note-post__input" placeholder="Take a note..." rows="1"></textarea>
                     <div style="display: flex; justify-content: space-between; margin-top: 12px;">
                         <div>
                             <button style="background: none; border: none; cursor: pointer; padding: 8px;">
@@ -30,7 +30,7 @@
                                 </svg>
                             </button>
                         </div>
-                        <button style="background-color: #f1f3f4; border: none; border-radius: 4px; color: #202124; cursor: pointer; font-size: 14px; font-weight: 500; padding: 8px 16px;">
+                        <button class="btn btn-primary" style="background-color: #f1f3f4; border: none; border-radius: 4px; color: #202124; cursor: pointer; font-size: 14px; font-weight: 500; padding: 8px 16px;">
                             Create
                         </button>
                     </div>
@@ -41,7 +41,7 @@
             <div class="pinned-note">
                 <h6>Pinned</h6>
                 <div class="note-grid d-flex justify-content-center">
-                    <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 16px; justify-content: center">
+                    <div class="pinned-note__load" style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 16px; justify-content: center">
 <!--                        Start of Pinned Note Grid-->
 
 <!--                        End of Pinned Note Grid-->
@@ -55,6 +55,7 @@
                 <div class="note-grid d-flex justify-content-center">
                     <div class="other-note__load" style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 16px; justify-content: center">
 <!--                        Start of Others Note Grid-->
+
 <!--                        End of Others Note Grid-->
                     </div>
                 </div>
@@ -66,7 +67,5 @@ include "./views/layout/partials/overlay_loading.php";
 ?>
 
 
-<!-- JavaScript for toggling sidebar and search functionality -->
-<script>
-
-</script>
+<!-- JavaScript for loading note content -->
+<script src="/public/js/note.js" type="module"></script>
