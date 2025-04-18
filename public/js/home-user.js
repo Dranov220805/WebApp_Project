@@ -10,6 +10,9 @@ class HomeUser {
         const sidebarItems = document.querySelectorAll('.sidebar-item');
         let sidebarVisible = false;
 
+        const toggleGrid = document.querySelectorAll('.toggle-grid');
+        const toggleList = document.querySelectorAll('.toggle-list');
+
         const searchContainer = document.getElementById('search-container');
         const searchIcon = document.getElementById('search-icon');
         const searchInput = document.getElementById('search-input');

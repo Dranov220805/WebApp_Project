@@ -99,7 +99,7 @@ class Notes {
         if (this.isLoading) return;
         this.isLoading = true;
 
-        this.showToast('Loading notes...');
+        // this.showToast('Loading notes...');
 
         fetch(`/note/list?page=${this.currentPage}&limit=${this.limit}`, {
             headers: {
@@ -128,17 +128,17 @@ class Notes {
 
         notes.forEach(note => {
             const div = document.createElement("div");
-            div.className = "note-sheet";
+            div.className = "note-sheet d-flex flex-column";
             div.innerHTML = `
-            <div style="padding: 16px;">
-                <h3 style="color: #202124; font-size: 16px; font-weight: 500; margin: 0 0 12px 0;">
+            <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
+                <h3 class="note-sheet__title" style="color: #202124; font-size: 16px; font-weight: 500; margin: 0 0 12px 0;">
                     ${note.title}
                 </h3>
-                <div style="color: #5f6368; font-size: 14px; line-height: 1.5;">
+                <div class="note-sheet__content" style="color: #5f6368; font-size: 14px; line-height: 1.5;">
                     ${note.content.split(',').map(item => `<div>- ${item.trim()}</div>`).join('')}
                 </div>
             </div>
-            <div style="display: flex; justify-content: space-between; padding: 8px;">
+            <div class="note-sheet__menu" style="display: flex; justify-content: space-between; padding: 8px;">
                 <div>
                     <button style="background: none; border: none; cursor: pointer; padding: 8px;">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="#5f6368">
@@ -182,18 +182,18 @@ class Notes {
         inputArea.addEventListener("input", function () {
             const trimmedValue = this.value.trim();
 
-            // If user starts typing and contentTextarea doesn't exist
+            // Create the new textarea above the main input
             if (trimmedValue !== "" && !contentTextarea) {
                 contentTextarea = document.createElement("textarea");
                 contentTextarea.className = "note-text__content";
-                contentTextarea.placeholder = "Write your note...";
+                contentTextarea.placeholder = "Title";
                 contentTextarea.rows = 3;
 
                 Object.assign(contentTextarea.style, {
                     border: "none",
                     outline: "none",
                     fontSize: "16px",
-                    marginTop: "12px",
+                    marginBottom: "12px",
                     resize: "none",
                     width: "100%",
                     overflow: "hidden",
@@ -202,32 +202,30 @@ class Notes {
                     transition: "height 0.3s ease, opacity 0.3s ease"
                 });
 
-                this.parentNode.insertBefore(contentTextarea, this.nextSibling);
+                // Insert ABOVE the main input
+                this.parentNode.insertBefore(contentTextarea, this);
 
-                setTimeout(() => {
-                    contentTextarea.style.height = "80px";
+                requestAnimationFrame(() => {
+                    contentTextarea.style.height = "23px";
                     contentTextarea.style.opacity = "1";
-                }, 1);
+                });
 
-                contentTextarea.addEventListener("input", function () {
+                inputArea.addEventListener("input", function () {
                     this.style.height = "auto";
                     this.style.height = this.scrollHeight + "px";
                 });
             }
 
-            // If input is cleared, remove contentTextarea
+            // If the main input is cleared, remove the above field
             if (trimmedValue === "" && contentTextarea) {
                 contentTextarea.style.height = "0px";
                 contentTextarea.style.opacity = "0";
 
-                // Instead of setTimeout, listen for transition end
                 contentTextarea.addEventListener("transitionend", function handleTransitionEnd() {
                     if (contentTextarea && contentTextarea.parentNode) {
                         contentTextarea.remove();
                         contentTextarea = null;
                     }
-
-                    // Remove listener to avoid multiple triggers
                     this.removeEventListener("transitionend", handleTransitionEnd);
                 });
             }
