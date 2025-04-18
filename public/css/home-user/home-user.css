@@ -33,6 +33,7 @@
     white-space: nowrap;
     transition: background-color 0.3s ease-in-out;
     transition: width 0.3s ease;
+    text-decoration: none;
 }
 
 .sidebar-item:active {
@@ -57,7 +58,6 @@
     font-size: 18px;
     transition: opacity 0.2s ease;
     margin-left: 8px;
-    margin-top: 5px;
 }
 
 /* Hide titles when sidebar is collapsed */
@@ -118,11 +118,17 @@
     resize: none; /* Prevent manual resizing */
 }
 
-
-
 .container {
     max-width: 1800px;
-    width: 90%;
+    width: 100%;
+    margin: 0px;
+}
+
+.small-container {
+    max-width: 1500px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* Content styling for the main area */
@@ -141,7 +147,7 @@
     column-gap: 16px;
     column-fill: balance;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1300px;
     margin: 0 auto;
 }
 
@@ -150,15 +156,19 @@
     flex-direction: row;
 }
 
+.note-layout__title {
+    width: 100%;
+    max-width: 1300px;
+    margin: 0 auto;
+    margin-top: 10px;
+    height: 30px;
+}
+
 .load-list {
     display: flex;
     flex-direction: column;
     width: 100%;
     max-width: 600px;
-}
-
-h6 {
-    margin-top: 20px;
 }
 
 /* Individual note card */

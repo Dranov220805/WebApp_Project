@@ -115,7 +115,7 @@ include "./views/layout/partials/header.php";
                     </div>
 
                     <p class="text-center">Already have an account?
-                        <a href="/" id="login-button" class="login-section-2__form--link-signup">Sign in</a>
+                        <a href="/" id="login-link" class="login-section-2__form--link-signup">Sign in</a>
                     </p>
                 </form>
             </div>

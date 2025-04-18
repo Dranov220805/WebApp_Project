@@ -11,7 +11,7 @@
 
     <!-- Main content area -->
     <div id="content" class="content" style="margin-left: 80px;">
-        <div class="container">
+        <div class="small-container">
             <!-- Note creation area -->
             <div class="note-post">
                 <form class="note-post__content" style="display: flex; flex-direction: column;" action="#" onsubmit="return false">
@@ -39,7 +39,7 @@
 
             <!-- Pinned Notes grid -->
             <div class="pinned-note">
-                <h6>Pinned</h6>
+                <h6 class="note-layout__title">Pinned</h6>
                 <div class="note-grid d-flex justify-content-center">
                     <div class="pinned-note__load load-grid" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center">
 <!--                        Start of Pinned Note Grid-->
@@ -51,7 +51,7 @@
 
             <!-- Other Notes grid -->
             <div class="pinned-note">
-                <h6>Others</h6>
+                <h6 class="note-layout__title">Others</h6>
                 <div class="note-grid d-flex justify-content-center">
                     <div class="other-note__load load-grid" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center">
 <!--                        Start of Others Note Grid-->
@@ -62,7 +62,8 @@
             </div>
         </div>
     </div>
-<?php
+
+    <?php
 include "./views/layout/partials/overlay_loading.php";
 ?>
 

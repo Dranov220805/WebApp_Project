@@ -1,4 +1,5 @@
 <?php
+use Ramsey\Uuid\Uuid;
 
 class AccountRepository{
     private mysqli $conn;
@@ -47,6 +48,31 @@ class AccountRepository{
 
         $stmt->close();
         return $role_name;
+    }
+
+    public function createAccountByUsernameAndPasswordAndEmail($account_username, $account_password, $email): bool {
+        // Generate UUID
+        $uuid = Uuid::uuid4()->toString();
+
+        // Hash the password for secure storage
+        $hashedPassword = password_hash($account_password, PASSWORD_DEFAULT);
+
+        // Insert into the database
+        $sql = "INSERT INTO `Account` 
+            (`accountId`, `userName`, `password`, `email`) 
+            VALUES (?, ?, ?, ?)";
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            return false;
+        }
+
+        $stmt->bind_param('ssss', $uuid, $account_username, $hashedPassword, $email);
+
+        $success = $stmt->execute();
+        $stmt->close();
+
+        return $success;
     }
 
 }

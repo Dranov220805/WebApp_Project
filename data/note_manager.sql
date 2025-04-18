@@ -24,9 +24,9 @@ CREATE TABLE `Account` (
   `password` VARCHAR(200) NOT NULL,
   `isDeleted` BOOLEAN NOT NULL DEFAULT FALSE,
   `tokenExpiration` DATETIME NOT NULL DEFAULT NOW(),
-  `remember_token` VARCHAR(255) NULL,
+  `remember_token` VARCHAR(255) NULL DEFAULT 'test token',
   `email` VARCHAR(200) NOT NULL,
-  `roleId` INT NOT NULL,
+  `roleId` INT NOT NULL DEFAULT 1,
   `isVerified` BOOLEAN NOT NULL DEFAULT FALSE
 );
 

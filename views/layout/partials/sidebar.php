@@ -5,10 +5,10 @@
 <div id="sidebar" class="sidebar collapsed">
     <div class="sidebar-content" style="padding: 8px 0;">
         <!-- Notes item -->
-        <div class="sidebar-item">
+        <a href="/home" class="sidebar-item">
             <i class="sidebar__item--icon fa-solid fa-note-sticky"></i>
             <span class="sidebar__item--title">Notes</span>
-        </div>
+        </a>
 
         <!-- Reminders item -->
         <div class="sidebar-item">

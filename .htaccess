@@ -5,6 +5,13 @@
 </FilesMatch>
 RewriteEngine on
 
+# Add this to ensure manifest.json is served with correct content type
+#<Files "manifest.json">
+#    Header set Content-Type "application/json"
+#</Files>
+#
+#AddType application/javascript .js .mjs
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 #RewriteCond %{REQUEST_FILENAME}% !-l

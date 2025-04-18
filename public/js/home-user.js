@@ -90,36 +90,6 @@ class HomeUser {
             }
         };
 
-        // const toggleLayout = (e) => {
-        //     const pinnedContainer = document.querySelector('.pinned-note__load');
-        //     const otherContainer = document.querySelector('.other-note__load');
-        //     const icon = e.currentTarget.querySelector('i');
-        //
-        //     if (!icon) return;
-        //
-        //     const isGrid = icon.classList.contains('fa-border-all');
-        //
-        //     if (isGrid) {
-        //         // Switch to list view
-        //         icon.classList.remove('fa-border-all');
-        //         icon.classList.add('fa-bars');
-        //
-        //         pinnedContainer.classList.remove('load-grid');
-        //         otherContainer.classList.remove('load-grid');
-        //         pinnedContainer.classList.add('load-list');
-        //         otherContainer.classList.add('load-list');
-        //     } else {
-        //         // Switch to grid view
-        //         icon.classList.remove('fa-bars');
-        //         icon.classList.add('fa-border-all');
-        //
-        //         pinnedContainer.classList.remove('load-list');
-        //         otherContainer.classList.remove('load-list');
-        //         pinnedContainer.classList.add('load-grid');
-        //         otherContainer.classList.add('load-grid');
-        //     }
-        // };
-
         toggleGridBtns.forEach(btn => {
             btn.addEventListener('click', toggleLayout);
         });
@@ -152,21 +122,6 @@ class HomeUser {
                 toggleSidebar();
             }
         });
-
-        const checkWindowSize = () => {
-            if (window.innerWidth > 780) {
-                if (sidebar.classList.contains('collapsed')) {
-                    content.style.marginLeft = '80px';
-                } else {
-                    content.style.marginLeft = '240px';
-                }
-            } else {
-                content.style.marginLeft = '0';
-            }
-        };
-
-        window.addEventListener('resize', checkWindowSize);
-        checkWindowSize();
     }
 }
 

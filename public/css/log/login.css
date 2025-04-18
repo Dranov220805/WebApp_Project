@@ -34,6 +34,7 @@ body {
 .login-section-2 {
     width: 40%;
     min-width: 400px;
+    max-width: 500px;
 }
 
 /*.login-section-2__form {*/
