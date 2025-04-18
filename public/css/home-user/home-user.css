@@ -80,7 +80,7 @@
 
 /* Content area adjustment */
 .content {
-    transition: margin-left 0.3s ease;
+    transition: margin-left 0.3s ease-in-out;
 }
 
 .note-sheet {
@@ -104,8 +104,14 @@
     box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15);
     max-width: 600px;
     margin: 0 auto 0px;
-    padding: 16px;
+    padding: 16px 32px 16px 32px;
     width: 100%;
+}
+
+.note-post__content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 .note-post__input {
@@ -114,8 +120,15 @@
     outline: none;
     padding: 4px 0;
     width: 100%;
+    resize: none; /* Prevent manual resizing */
+    overflow-y: hidden; /* Hide scrollbars */
+    min-height: 30px; /* Set a minimum height */
+    max-height: 400px; /* Limit the maximum height to prevent it from growing too much */
 }
 
+.note-text__content {
+    resize: none; /* Prevent manual resizing */
+}
 
 /*.content {*/
 /*    flex-grow: 1;*/
@@ -125,14 +138,17 @@
 /*    padding: 0;*/
 /*}*/
 
-/*.container {*/
-/*    width: 100%;*/
-/*    padding: 0px;*/
-/*    display: flex;*/
-/*    flex-direction: column;*/
-/*    justify-content: center;*/
-/*    width: 100%;*/
-/*}*/
+.container {
+    /*width: 100%;*/
+    /*padding: 0px;*/
+    /*display: flex;*/
+    /*flex-direction: column;*/
+    /*justify-content: center;*/
+    /*width: 100%;*/
+
+    max-width: 1800px;
+    width: 90%;
+}
 
 /*.note-grid {*/
 /*    display: flex;*/
@@ -166,21 +182,21 @@
 /* Add these styles to your view_contents.css file */
 
 /* Container for the note creation area */
-.note-post {
-    display: flex;
-    flex-wrap: wrap;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15);
-    max-width: 600px;
-    margin: 0 auto 32px;
-    padding: 16px;
-    width: 100%;
-}
+/*.note-post {*/
+/*    display: flex;*/
+/*    flex-wrap: wrap;*/
+/*    background-color: #ffffff;*/
+/*    border-radius: 8px;*/
+/*    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15);*/
+/*    max-width: 600px;*/
+/*    margin: 0 auto 32px;*/
+/*    padding: 16px;*/
+/*    width: 100%;*/
+/*}*/
 
 /* Content styling for the main area */
 .content {
-    max-width: 1270px;
+    max-width: 1800px;
     flex-grow: 1;
     transition: margin-left 0.3s ease;
     width: 100%;

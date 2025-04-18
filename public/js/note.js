@@ -5,8 +5,26 @@ class Notes {
         this.isLoading = false;
 
         this.loadNotes();
+        this.inputNote();
+        this.initNotePostTrigger();
+
+        // document.addEventListener("DOMContentLoaded", () => {
+        //     const pinnedNoteContainer = document.querySelector(".pinned-note__load");
+        //     const noteContainer = document.querySelector(".other-note__load");
+        //     if (noteContainer) {
+        //         const notesInstance = new Notes();
+        //         window.refreshNotes = () => notesInstance.loadNotes(); // optional manual refresh
+        //     }
+        // });
+        //
+        // window.addEventListener("scroll", () => {
+        //     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200) {
+        //         this.loadNotes();
+        //     }
+        // });
 
         document.addEventListener("DOMContentLoaded", () => {
+            const pinnedNoteContainer = document.querySelector(".pinned-note__load");
             const noteContainer = document.querySelector(".other-note__load");
             if (noteContainer) {
                 const notesInstance = new Notes();
@@ -14,11 +32,7 @@ class Notes {
             }
         });
 
-        window.addEventListener("scroll", () => {
-            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200) {
-                this.loadNotes();
-            }
-        });
+        window.addEventListener("scroll", () => this.handleScroll());
     }
 
     // loadNotes() {
@@ -42,6 +56,21 @@ class Notes {
     //         .catch(err => console.error('Fetch failed:', err))
     //         .finally(() => this.isLoading = false);
     // }
+
+    handleScroll() {
+        const currentScrollTop = window.scrollY; // Get current scroll position
+
+        // Check if scrolling down (current position > previous position)
+        if (currentScrollTop > this.lastScrollTop) {
+            // Only load more notes if we are near the bottom of the page
+            if ((window.innerHeight + currentScrollTop) >= document.body.offsetHeight - 200) {
+                this.loadNotes();
+            }
+        }
+
+        // Update the last scroll position
+        this.lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop; // Prevent negative scroll value
+    }
 
     showToast(message, duration = 3000) {
         const toast = document.getElementById("toast");
@@ -82,9 +111,9 @@ class Notes {
                 if (data.data?.length > 0) {
                     this.appendNotesToDOM(data.data);
                     this.currentPage++;
-                    this.showToast('Notes loaded successfully!');
+                    // this.showToast('Notes loaded successfully!');
                 } else {
-                    this.showToast('No more notes to load.');
+                    // this.showToast('No more notes to load.');
                 }
             })
             .catch(err => {
@@ -133,6 +162,78 @@ class Notes {
             container.appendChild(div);
         });
     }
+
+    inputNote() {
+        document.querySelector('.note-post__input').addEventListener('input', function () {
+            this.style.height = 'auto'; // Reset the height to auto to calculate new content height
+            this.style.height = (this.scrollHeight) + 'px'; // Set the height to the scroll height of the content
+        });
+    }
+
+    initNotePostTrigger() {
+        const inputArea = document.querySelector(".note-post__input");
+
+        // Prevent attaching the event listener multiple times
+        if (inputArea.dataset.listenerAttached === "true") return;
+        inputArea.dataset.listenerAttached = "true";
+
+        let contentTextarea = null;
+
+        inputArea.addEventListener("input", function () {
+            const trimmedValue = this.value.trim();
+
+            // If user starts typing and contentTextarea doesn't exist
+            if (trimmedValue !== "" && !contentTextarea) {
+                contentTextarea = document.createElement("textarea");
+                contentTextarea.className = "note-text__content";
+                contentTextarea.placeholder = "Write your note...";
+                contentTextarea.rows = 3;
+
+                Object.assign(contentTextarea.style, {
+                    border: "none",
+                    outline: "none",
+                    fontSize: "16px",
+                    marginTop: "12px",
+                    resize: "none",
+                    width: "100%",
+                    overflow: "hidden",
+                    height: "0px",
+                    opacity: "0",
+                    transition: "height 0.3s ease, opacity 0.3s ease"
+                });
+
+                this.parentNode.insertBefore(contentTextarea, this.nextSibling);
+
+                setTimeout(() => {
+                    contentTextarea.style.height = "80px";
+                    contentTextarea.style.opacity = "1";
+                }, 1);
+
+                contentTextarea.addEventListener("input", function () {
+                    this.style.height = "auto";
+                    this.style.height = this.scrollHeight + "px";
+                });
+            }
+
+            // If input is cleared, remove contentTextarea
+            if (trimmedValue === "" && contentTextarea) {
+                contentTextarea.style.height = "0px";
+                contentTextarea.style.opacity = "0";
+
+                // Instead of setTimeout, listen for transition end
+                contentTextarea.addEventListener("transitionend", function handleTransitionEnd() {
+                    if (contentTextarea && contentTextarea.parentNode) {
+                        contentTextarea.remove();
+                        contentTextarea = null;
+                    }
+
+                    // Remove listener to avoid multiple triggers
+                    this.removeEventListener("transitionend", handleTransitionEnd);
+                });
+            }
+        });
+    }
+
 }
 
 const notesInstance = new Notes();
