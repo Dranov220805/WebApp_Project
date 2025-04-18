@@ -1,4 +1,5 @@
 <?php
+
 include "./app/controllers/HomeUserController.php";
 include "./app/middlewares/HomeUserMiddleWare.php";
 $homeUserMiddleWare = new HomeUserMiddleWare();

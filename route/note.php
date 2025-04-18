@@ -16,14 +16,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 // Handling the 'note' endpoint
                 if ($_GET['param_2'] == 'list') {
                     // Call a function to return the paginated list of notes
-                    $noteController->getNotes();
+                    $noteMiddleWare->getNotes();
                 } else {
                     // Return an error or other specific handling if necessary
-                    echo json_encode(['error' => 'Invalid note action']);
+//                    echo json_encode(['error' => 'Invalid note action']);
                 }
                 break;
             default:
-                echo json_encode(['error' => 'Invalid endpoint']);
+//                echo json_encode(['error' => 'Invalid endpoint for note']);
                 break;
         }
     } else if (isset($_GET['param_1'])) {
@@ -32,10 +32,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             case 'note':
                 // Handle fetching specific note based on id or other parameters
                 // Example: Fetch a specific note by ID (this will depend on your logic)
-                $noteController->getNoteById($_GET['param_2']);
+//                $noteController->getNoteById($_GET['param_2']);
                 break;
             default:
-                echo json_encode(['error' => 'Invalid endpoint']);
+//                echo json_encode(['error' => 'Invalid endpoint for note']);
                 break;
         }
     } else {
@@ -47,7 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 // Handle POST requests
 else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Example handling for note creation, etc.
-    if (isset($_POST['param_1']) && isset($_POST['param_2'])) {
+    if (isset($_POST['param_1']) && isset($_POST['param_2']) && isset($_POST['param3'])) {
+
+    } else if (isset($_POST['param_1']) && isset($_POST['param_2'])) {
         switch ($_POST['param_1']) {
             case 'note':
                 if ($_POST['param_2'] == 'create') {
@@ -57,11 +59,11 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
             // Add more cases as needed for other POST actions
             default:
-                echo json_encode(['error' => 'Invalid action']);
+//                echo json_encode(['error' => 'Invalid action']);
                 break;
         }
-    } else {
-        echo json_encode(['error' => 'Missing parameters']);
+    } else if (isset($_POST['param_1'])) {
+//        echo json_encode(['error' => 'Missing parameters']);
     }
 }
 

@@ -6,6 +6,14 @@ class Notes {
 
         this.loadNotes();
 
+        document.addEventListener("DOMContentLoaded", () => {
+            const noteContainer = document.querySelector(".other-note__load");
+            if (noteContainer) {
+                const notesInstance = new Notes();
+                window.refreshNotes = () => notesInstance.loadNotes(); // optional manual refresh
+            }
+        });
+
         window.addEventListener("scroll", () => {
             if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200) {
                 this.loadNotes();
@@ -34,6 +42,7 @@ class Notes {
     //         .catch(err => console.error('Fetch failed:', err))
     //         .finally(() => this.isLoading = false);
     // }
+
     showToast(message, duration = 3000) {
         const toast = document.getElementById("toast");
         const messageElement = document.getElementById("toast-message");
@@ -124,19 +133,9 @@ class Notes {
             container.appendChild(div);
         });
     }
-
-    // appendNotesToDOM(notes) {
-    //     const container = document.getElementById("note-container");
-    //     notes.forEach(note => {
-    //         const div = document.createElement('div');
-    //         div.className = "note";
-    //         div.innerHTML = `<h4>${note.title}</h4><p>${note.content}</p>`;
-    //         container.appendChild(div);
-    //     });
-    // }
 }
 
 const notesInstance = new Notes();
 window.refreshNotes = () => notesInstance.loadNotes(); // optional manual refresh
 
-export default notesInstance;
+// export default notesInstance;

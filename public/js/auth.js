@@ -13,22 +13,33 @@ class Auth {
         togglePassword.classList.toggle('fa-eye-slash');
     }
 
-    enableButton() {
-        const emailInput = document.getElementById("email-input").value;
-        const passwordInput = document.getElementById("password-input").value;
-        const loginButton = document.getElementById("login-button");
+    // Show toast message with manual close
+    showLoginToast(message, type = 'success', duration = 3000) {
+        const toast = document.getElementById("toast");
+        const messageElement = document.getElementById("toast-message");
+        const closeBtn = document.getElementById("toast-close");
 
-        // if (emailInput === "" || passwordInput === "") {
-        //     loginButton.disabled = true;
-        //     loginButton.style.backgroundColor = "#4b5563";
-        //     loginButton.style.color = "white";
-        //     loginButton.style.fontWeight = "500";
-        // } else {
-        //     loginButton.disabled = false;
-        //     loginButton.style.background = "#5771ff"; // Replace with actual color values
-        // }
+        // Set message and toast class based on type
+        messageElement.innerText = message;
+        toast.classList.remove("d-none", "bg-success", "bg-danger"); // Reset classes
+        toast.classList.add(`bg-${type}`);
+
+        // Show toast
+        toast.classList.remove("d-none");
+
+        // Auto-hide after duration
+        const hideTimeout = setTimeout(() => {
+            toast.classList.add("d-none");
+        }, duration);
+
+        // Allow manual close
+        closeBtn.onclick = () => {
+            toast.classList.add("d-none");
+            clearTimeout(hideTimeout); // Clear the auto-hide timer
+        };
     }
 
+    // Handle login logic
     checkLogin = () => {
         $('#login-button').click(() => {
             const username = $('#email-input').val();
@@ -36,26 +47,25 @@ class Auth {
 
             fetch('/log/login', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ username, password })
+                body: JSON.stringify({
+                    username,
+                    password
+                })
             })
                 .then(response => response.json())
                 .then(data => {
+                    console.log(data);
                     const { accessToken, roleId, userName, email, message, status } = data;
-                    $('#toast-message').html(message);
 
                     if (status === true) {
-                        // Store token in localStorage for later authenticated requests
+                        // Store the access token in session storage for later use
                         sessionStorage.setItem('accessToken', accessToken);
 
-                        $('#toast').removeClass('d-none bg-danger').addClass('bg-success');
+                        // Show success toast message
+                        this.showLoginToast(message, 'success');
 
                         setTimeout(() => {
-                            $('#toast').addClass('d-none').removeClass('bg-success');
-
-                            // Redirect user by role
+                            // Redirect user based on role
                             if (String(roleId) === '1') {
                                 window.location.href = '/home';
                             } else if (String(roleId) === '2') {
@@ -63,15 +73,14 @@ class Auth {
                             }
                         }, 1000);
                     } else {
-                        $('#toast').removeClass('d-none bg-success').addClass('bg-danger');
-
-                        setTimeout(() => {
-                            $('#toast').addClass('d-none').removeClass('bg-danger');
-                        }, 1000);
+                        // Show error toast message
+                        this.showLoginToast(message, 'danger');
                     }
                 })
                 .catch(error => {
                     console.error('Login error:', error);
+                    // Show error toast for network issues
+                    this.showLoginToast('Something went wrong. Please try again later.', 'danger');
                 });
         });
     }

@@ -66,7 +66,5 @@ include "./views/layout/partials/overlay_loading.php";
 ?>
 
 
-<!-- JavaScript for toggling sidebar and search functionality -->
-<script>
-
-</script>
+<!-- JavaScript for loading note content -->
+<script src="/public/js/note.js" type="module"></script>

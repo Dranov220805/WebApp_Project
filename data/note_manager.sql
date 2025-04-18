@@ -193,6 +193,44 @@ VALUES
   (UUID(), @uuid4, 'Workout Plan', 'Monday: Cardio, Tuesday: Strength', NOW(), FALSE, FALSE),
   (UUID(), @uuid5, 'Vacation Ideas', 'Planning trip to Italy', NOW(), FALSE, TRUE);
 
+-- 15 notes for @uuid1
+INSERT INTO `Note` (`noteId`, `accountId`, `title`, `content`, `createDate`, `isDeleted`, `isProtected`)
+VALUES
+    (UUID(), @uuid1, 'Grocery List', 'Milk, Eggs, Bread, Butter', NOW(), FALSE, FALSE),
+    (UUID(), @uuid1, 'Project Plan', 'Finish phase 1 by next week', NOW(), FALSE, TRUE),
+    (UUID(), @uuid1, 'Meeting Notes', 'Discussed budget planning', NOW(), FALSE, FALSE),
+    (UUID(), @uuid1, 'Workout Plan', 'Monday: Cardio, Tuesday: Strength', NOW(), FALSE, FALSE),
+    (UUID(), @uuid1, 'Vacation Ideas', 'Planning trip to Italy', NOW(), FALSE, TRUE),
+    (UUID(), @uuid1, 'Reading List', 'Atomic Habits, Deep Work', NOW(), FALSE, FALSE),
+    (UUID(), @uuid1, 'Birthday Plans', 'Dinner with friends, cake pickup', NOW(), FALSE, FALSE),
+    (UUID(), @uuid1, 'Shopping List', 'Shoes, Jacket, Hat', NOW(), FALSE, FALSE),
+    (UUID(), @uuid1, 'Chores', 'Clean room, do laundry', NOW(), FALSE, FALSE),
+    (UUID(), @uuid1, 'App Ideas', 'Note app, Budget tracker', NOW(), FALSE, TRUE),
+    (UUID(), @uuid1, 'Journal Entry', 'Had a productive day', NOW(), FALSE, FALSE),
+    (UUID(), @uuid1, 'Recipe Notes', 'Pasta with tomato sauce', NOW(), FALSE, FALSE),
+    (UUID(), @uuid1, 'Study Topics', 'Math, History, Programming', NOW(), FALSE, FALSE),
+    (UUID(), @uuid1, 'Wishlist', 'New laptop, Headphones', NOW(), FALSE, FALSE),
+    (UUID(), @uuid1, 'Goals', 'Run 5k, Read 10 books', NOW(), FALSE, TRUE);
+
+-- 15 notes for @uuid2
+INSERT INTO `Note` (`noteId`, `accountId`, `title`, `content`, `createDate`, `isDeleted`, `isProtected`)
+VALUES
+    (UUID(), @uuid2, 'Grocery List', 'Eggs, Chicken, Rice, Coffee', NOW(), FALSE, FALSE),
+    (UUID(), @uuid2, 'Travel Checklist', 'Passport, Tickets, Camera', NOW(), FALSE, TRUE),
+    (UUID(), @uuid2, 'Daily Routine', 'Wake up at 7, Workout at 8', NOW(), FALSE, FALSE),
+    (UUID(), @uuid2, 'Workout Log', 'Squats, Bench Press, Deadlifts', NOW(), FALSE, FALSE),
+    (UUID(), @uuid2, 'Movie Watchlist', 'Inception, Interstellar', NOW(), FALSE, FALSE),
+    (UUID(), @uuid2, 'Startup Notes', 'Pitch deck, MVP features', NOW(), FALSE, TRUE),
+    (UUID(), @uuid2, 'Study Plan', 'Revise algorithms, system design', NOW(), FALSE, FALSE),
+    (UUID(), @uuid2, 'Project Deadlines', 'Submit report by Monday', NOW(), FALSE, FALSE),
+    (UUID(), @uuid2, 'Ideas Dump', 'SaaS platform, Content creator tools', NOW(), FALSE, TRUE),
+    (UUID(), @uuid2, 'Reflection', 'Week went better than expected', NOW(), FALSE, FALSE),
+    (UUID(), @uuid2, 'Fitness Goals', 'Lose 5kg, Gain muscle', NOW(), FALSE, FALSE),
+    (UUID(), @uuid2, 'Meal Plan', 'High protein, low carb', NOW(), FALSE, FALSE),
+    (UUID(), @uuid2, 'Learning Notes', 'GraphQL, Docker basics', NOW(), FALSE, FALSE),
+    (UUID(), @uuid2, 'Wishlist', 'Smartwatch, Bluetooth speaker', NOW(), FALSE, FALSE),
+    (UUID(), @uuid2, 'Goals', 'Launch side project, 10k steps daily', NOW(), FALSE, TRUE);
+
 -- Insert data into `NoteSharing`
 
 INSERT INTO `NoteSharing` (`noteSharingId`, `noteId`, `timeShared`, `canEdit`)
