@@ -25,8 +25,9 @@
 -- .htaccess  
 
 # This project is using composer, please install below library for system behave properly:
--- composer install            
+-- composer install     
+
 -- composer require ramsey/uuid
--- composer require cloudinary/cloudinary_php 
--- composer require vlucas/phpdotenv   
+-- composer require cloudinary/cloudinary_php
+-- composer require vlucas/phpdotenv 
 -- composer require firebase/php-jwt      
