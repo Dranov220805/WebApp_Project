@@ -27,6 +27,11 @@ class RegisterService {
         }
 
         $user = $this->accountRepository->getAccountByUsernameAndPassword($username, $password);
+        if (!$user) {
+            return [
+                'status' => false,
+            ];
+        }
 
         // Set session role
         $_SESSION['roleId'] = $user->getRoleId();
