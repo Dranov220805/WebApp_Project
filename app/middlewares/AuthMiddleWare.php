@@ -39,18 +39,17 @@ class AuthMiddleware {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
 
-        if (!empty($data['username']) && !empty($data['password'])) {
+        if (!empty($data['email']) && !empty($data['password'])) {
             $authService = new AuthService();
-            $result = $authService->login($data['username'], $data['password']);
+            $result = $authService->login($data['email'], $data['password']);
 
-            if ($result) {
+            if ($result['status'] === true) {
                 echo json_encode([
                     'status' => true,
-                    'accessToken' => $result['accessToken'],
                     'roleId' => $result['roleId'],
                     'userName' => $result['userName'],
                     'email' => $result['email'],
-                    'message' => 'Login successful'
+                    'message' => $result['message']
                 ]);
             } else {
                 http_response_code(401);

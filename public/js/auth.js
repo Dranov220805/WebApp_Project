@@ -42,13 +42,13 @@ class Auth {
     // Handle login logic
     checkLogin = () => {
         $('#login-button').click(() => {
-            const username = $('#email-input').val();
+            const email = $('#email-input').val();
             const password = $('#password-input').val();
 
             fetch('/log/login', {
                 method: 'POST',
                 body: JSON.stringify({
-                    username,
+                    email,
                     password
                 })
             })

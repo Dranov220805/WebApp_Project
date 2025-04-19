@@ -37,7 +37,6 @@ class Reg {
         };
     }
 
-    // Hanlde register logic
     checkRegister = () => {
         $('#register-button').click(() => {
             const email = $('#email-input').val();
@@ -49,13 +48,11 @@ class Reg {
             const hasLowercase = /[a-z]/.test(password);
             const hasNumber = /\d/.test(password);
 
-            // Check if all fields are filled
             if (!username || !password || !email || !confirmPassword) {
                 this.showRegisterToast('Please fill in all fields.', 'warning');
                 return;
             }
 
-            // Check email format
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 this.showRegisterToast('Please enter a valid email address.', 'warning');
@@ -76,15 +73,12 @@ class Reg {
             }
 
             if (password.length < 8) {
-                this.showRegisterToast(
-                    'Password length must be more than 8 characters',
-                    'warning'
-                );
+                this.showRegisterToast('Password length must be more than 8 characters', 'warning');
                 return;
             }
 
-            // If all checks pass, continue with registration
-            fetch('reg/register', {
+            // Register POST
+            fetch('register', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json"
@@ -95,48 +89,181 @@ class Reg {
                     email
                 })
             })
-                // .then(response => response.json())
                 .then(response => {
-                    console.log(response); // Log the response to inspect it
-
                     if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                        throw new Error('Network response was not ok during registration');
                     }
-
-                    // Check if content type is JSON
-                    const contentType = response.headers.get('Content-Type');
-                    console.log(contentType);
-                    console.log(response.json());
-                    if (contentType && contentType.includes('application/json')) {
-                        return response.json(); // Parse as JSON if content type is correct
-                    } else {
-                        throw new Error('Response is not JSON');
-                    }
+                    return response.json();
                 })
                 .then(data => {
-                    console.log(data);
-                    const { accessToken, roleId, userName, email, message, status } = data;
+                    const { status, message } = data;
 
                     if (status === true) {
+                        if (message === "Email already exists") {
+                            this.showRegisterToast('Email already exists!', 'warning');
+                        } else {
+                            this.showRegisterToast('Registration successful! Logging you in...', 'success');
+
+                            // Proceed to login if registration is successful
+                            return fetch('log/login', {
+                                method: 'POST',
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({
+                                    email,
+                                    password
+                                })
+                            });
+                        }
+                    } else {
+                        throw new Error(message || 'Registration failed');
+                    }
+                })
+                .then(loginResponse => {
+                    if (!loginResponse.ok) {
+                        throw new Error('Login after registration failed');
+                    }
+                    return loginResponse.json();
+                })
+                .then(loginData => {
+                    const { accessToken, message, status } = loginData;
+
+                    if (status === true) {
+                        this.showRegisterToast('Logged in successfully!', 'success');
+
                         sessionStorage.setItem('accessToken', accessToken);
 
-                        this.showRegisterToast(message, 'success');
-
+                        // Redirect user
                         setTimeout(() => {
-                            if (String(roleId) === '1') {
-                                window.location.href = '/home';
-                            }
+                            window.location.href = '/home';
                         }, 1000);
                     } else {
-                        this.showRegisterToast(message, 'danger');
+                        throw new Error(message || 'Login failed');
                     }
                 })
                 .catch(error => {
-                    console.error('Register error:', error);
-                    this.showRegisterToast('Something went wrong. Please try again later', 'warning');
-                })
+                    console.error('Register/Login error:', error);
+                    this.showRegisterToast(error.message || 'Something went wrong. Please try again.', 'danger');
+                });
         });
     };
+
+    // Hanlde register logic
+    // checkRegister = () => {
+    //     $('#register-button').click(() => {
+    //         const email = $('#email-input').val();
+    //         const username = $('#username-input').val();
+    //         const password = $('#password-input').val();
+    //         const confirmPassword = $('#password-input-confirm').val();
+    //
+    //         const hasUppercase = /[A-Z]/.test(password);
+    //         const hasLowercase = /[a-z]/.test(password);
+    //         const hasNumber = /\d/.test(password);
+    //
+    //         if (!username || !password || !email || !confirmPassword) {
+    //             this.showRegisterToast('Please fill in all fields.', 'warning');
+    //             return;
+    //         }
+    //
+    //         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    //         if (!emailRegex.test(email)) {
+    //             this.showRegisterToast('Please enter a valid email address.', 'warning');
+    //             return;
+    //         }
+    //
+    //         if (password !== confirmPassword) {
+    //             this.showRegisterToast('Passwords do not match!', 'warning');
+    //             return;
+    //         }
+    //
+    //         if (!hasUppercase || !hasLowercase || !hasNumber) {
+    //             this.showRegisterToast(
+    //                 'Password must contain at least one uppercase letter, lowercase letters, and numbers.',
+    //                 'warning'
+    //             );
+    //             return;
+    //         }
+    //
+    //         if (password.length < 8) {
+    //             this.showRegisterToast('Password length must be more than 8 characters', 'warning');
+    //             return;
+    //         }
+    //
+    //         // Register POST
+    //         fetch('register', {
+    //             method: 'POST',
+    //             headers: {
+    //                 "Content-Type": "application/json"
+    //             },
+    //             body: JSON.stringify({
+    //                 username,
+    //                 password,
+    //                 email
+    //             })
+    //         })
+    //             .then(response => {
+    //                 if (!response.ok) throw new Error('Network response was not ok');
+    //                 const contentType = response.headers.get('Content-Type');
+    //                 if (contentType && contentType.includes('application/json')) {
+    //                     return response.json();
+    //                 } else {
+    //                     throw new Error('Response is not JSON');
+    //                 }
+    //             })
+    //             .then(data => {
+    //                 const { status, message } = data;
+    //
+    //                 if (status === true) {
+    //                     if (message === "Email already exists") {
+    //                         this.showRegisterToast('Email already exists!', 'warning');
+    //                     } else {
+    //                         this.showRegisterToast('Registration successful! Logging you in...', 'success');
+    //
+    //                         // Send login POST
+    //                         return fetch('log/login', {
+    //                             method: 'POST',
+    //                             headers: {
+    //                                 "Content-Type": "application/json"
+    //                             },
+    //                             body: JSON.stringify({
+    //                                 email,
+    //                                 password
+    //                             })
+    //                         });
+    //                     }
+    //                 } else {
+    //                     throw new Error(message || 'Registration failed');
+    //                 }
+    //             })
+    //             .then(loginResponse => {
+    //                 if (!loginResponse.ok) {
+    //                     throw new Error('Login after registration failed');
+    //                 }
+    //                 return loginResponse.json();
+    //             })
+    //             .then(loginData => {
+    //                 const { accessToken, message, status } = loginData;
+    //
+    //                 if (status === true) {
+    //                     this.showRegisterToast('Logged in successfully!', 'success');
+    //
+    //                     sessionStorage.setItem('accessToken', accessToken);
+    //
+    //                     // Redirect user
+    //                     setTimeout(() => {
+    //                         window.location.href = '/home';
+    //                     }, 1000);
+    //                 } else {
+    //                     throw new Error(message || 'Login failed');
+    //                 }
+    //             })
+    //             .catch(error => {
+    //                 console.error('Register/Login error:', error);
+    //                 this.showRegisterToast(error.message || 'Something went wrong. Please try again.', 'danger');
+    //             });
+    //     });
+    // };
 
 }
 

@@ -24,19 +24,34 @@ class RegisterMiddleWare {
             $result = $registerService->register($data['username'], $data['password'], $data['email']);
 
             if ($result) {
-                // Send a success response
                 http_response_code(200);
-                echo json_encode([
+//                echo json_encode([
+//                    'status' => true,
+//                    'roleId' => $result['roleId'],
+//                    'username' => $result['username'],
+//                    'email' => $result['email'],
+//                    'message' => $result['message']
+//                ]);
+                $response = [
                     'status' => true,
-                    'accessToken' => $result['accessToken'],
-                    'roleId' => $result['roleId'],
-                    'username' => $result['username'],
-                    'email' => $result['email'],
-                    'message' => 'Your account has been created'
-                ]);
+                    'message' => $result['message']
+                ];
+
+                if (isset($result['roleId'])) {
+                    $response['roleId'] = $result['roleId'];
+                }
+
+                if (isset($result['username'])) {
+                    $response['username'] = $result['username'];
+                }
+
+                if (isset($result['email'])) {
+                    $response['email'] = $result['email'];
+                }
+
+                echo json_encode($response);
             } else {
-                // Send an error response if account creation failed
-                http_response_code(500);
+                http_response_code(400);
                 echo json_encode([
                     'status' => false,
                     'message' => 'Account creation failed. Please try again later.'

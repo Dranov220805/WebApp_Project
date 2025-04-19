@@ -157,11 +157,11 @@ SET @uuid20 = UUID();
 -- Insert data into `Account`
 INSERT INTO `Account` (`accountId`, `userName`, `password`, `isDeleted`, `tokenExpiration`, `email`, `roleId`)
 VALUES
-  (@uuid1, 'john_doe', 'hashedpassword123', FALSE, '2025-12-31 23:59:59', 'john@example.com', 1),
-  (@uuid2, 'jane_smith', 'hashedpassword456', FALSE, '2025-12-31 23:59:59', 'jane@example.com', 2),
-  (@uuid3, 'michael_adams', 'securepass789', FALSE, '2025-12-31 23:59:59', 'michael@example.com', 3),
-  (@uuid4, 'emily_jones', 'randompass321', FALSE, '2025-12-31 23:59:59', 'emily@example.com', 4),
-  (@uuid5, 'alex_brown', 'strongpassword000', FALSE, '2025-12-31 23:59:59', 'alex@example.com', 2);
+  (@uuid1, 'john_doe', '$2y$10$0lTiUI79Y2XYyKjMpo1S2uoNLjY3w1aozxqFXry9RCNWGDIYup8ga', FALSE, '2025-12-31 23:59:59', 'john@example.com', 1),
+  (@uuid2, 'jane_smith', '$2y$10$0lTiUI79Y2XYyKjMpo1S2uoNLjY3w1aozxqFXry9RCNWGDIYup8ga', FALSE, '2025-12-31 23:59:59', 'jane@example.com', 2),
+  (@uuid3, 'michael_adams', '$2y$10$0lTiUI79Y2XYyKjMpo1S2uoNLjY3w1aozxqFXry9RCNWGDIYup8ga', FALSE, '2025-12-31 23:59:59', 'michael@example.com', 3),
+  (@uuid4, 'emily_jones', '$2y$10$0lTiUI79Y2XYyKjMpo1S2uoNLjY3w1aozxqFXry9RCNWGDIYup8ga', FALSE, '2025-12-31 23:59:59', 'emily@example.com', 4),
+  (@uuid5, 'alex_brown', '$2y$10$0lTiUI79Y2XYyKjMpo1S2uoNLjY3w1aozxqFXry9RCNWGDIYup8ga', FALSE, '2025-12-31 23:59:59', 'alex@example.com', 2);
 
 -- Insert data into `Preference`
 
