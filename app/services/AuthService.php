@@ -14,7 +14,9 @@ class AuthService {
 
         // If no account is found, return false
         if (!$user) {
-            return false;
+            return [
+                'status' => false,
+            ];
         }
 
         // Set session role

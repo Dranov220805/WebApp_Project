@@ -68,7 +68,7 @@ class AccountRepository{
             $row['password'], $row['email'], $row['roleId']);
     }
 
-    public function createAccountByUsernameAndPasswordAndEmail($account_username, $account_password, $email): ?Account {
+    public function createAccountByUsernameAndPasswordAndEmail($account_username, $account_password, $email): bool {
         // Generate UUID
         $uuid = Uuid::uuid4()->toString();
 
@@ -84,12 +84,9 @@ class AccountRepository{
         $stmt->bind_param('ssss', $uuid, $account_username, $hashedPassword, $email);
 
         $result = $stmt->execute();
-        if (!$result) return null;
-        $row = $result->fetch_assoc();
+        if (!$result) return false;
         $stmt->close();
-        return new Account($row['accountId'], $row['userName'],
-            $row['password'], $row['email'], $row['roleId']);
-
+        return true;
     }
 
 }

@@ -105,6 +105,8 @@ class Reg {
 
                     // Check if content type is JSON
                     const contentType = response.headers.get('Content-Type');
+                    console.log(contentType);
+                    console.log(response.json());
                     if (contentType && contentType.includes('application/json')) {
                         return response.json(); // Parse as JSON if content type is correct
                     } else {
