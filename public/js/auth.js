@@ -92,8 +92,8 @@ class Auth {
 
 // Configuration
 const MAX_IDLE_TIME = 30 * 60 * 1000;           // 30 minutes total session
-const REFRESH_THRESHOLD = 1 * 60 * 1000;       // Check at 1 minute
-const RECENT_ACTIVITY_WINDOW = 30 * 1000;      // Must click within last 30s
+const REFRESH_THRESHOLD = 2 * 60 * 1000;       // Check at 2 minutes
+const RECENT_ACTIVITY_WINDOW =  1 * 30 * 1000;      // Must click within last 1 minute
 
 let idleTimeout;
 let refreshTimeout;
@@ -104,7 +104,7 @@ function refreshToken() {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            'Authorization': 'Bearer ' + sessionStorage.getItem('accessToken')
         },
         body: JSON.stringify({})
     })

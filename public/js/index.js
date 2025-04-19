@@ -23,6 +23,10 @@ window.checkLogin = () => {
     auth.checkLogin();
 };
 
+window.checkRegister = () => {
+    reg.checkRegister();
+};
+
 window.refreshToken = () => {
     auth.refreshToken();
 };

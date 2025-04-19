@@ -18,6 +18,7 @@ class AccountRepository{
             return null;
         }
         $row = $result->fetch_assoc();
+        $stmt->close();
         return new Account($row['accountId'], $row['userName'],
             $row['password'], $row['email'], $row['roleId']);
     }
@@ -50,7 +51,24 @@ class AccountRepository{
         return $role_name;
     }
 
-    public function createAccountByUsernameAndPasswordAndEmail($account_username, $account_password, $email): bool {
+    public function getAccountByEmail($email): ?Account{
+        $sql = "SELECT * FROM `Account`
+                WHERE `email` = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param('s', $email);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        if (!$result || $result->num_rows === 0) {
+            return null;
+        }
+        $row = $result->fetch_assoc();
+        $stmt->close();
+        return new Account($row['accountId'], $row['userName'],
+            $row['password'], $row['email'], $row['roleId']);
+    }
+
+    public function createAccountByUsernameAndPasswordAndEmail($account_username, $account_password, $email): ?Account {
         // Generate UUID
         $uuid = Uuid::uuid4()->toString();
 
@@ -63,16 +81,15 @@ class AccountRepository{
             VALUES (?, ?, ?, ?)";
 
         $stmt = $this->conn->prepare($sql);
-        if (!$stmt) {
-            return false;
-        }
-
         $stmt->bind_param('ssss', $uuid, $account_username, $hashedPassword, $email);
 
-        $success = $stmt->execute();
+        $result = $stmt->execute();
+        if (!$result) return null;
+        $row = $result->fetch_assoc();
         $stmt->close();
+        return new Account($row['accountId'], $row['userName'],
+            $row['password'], $row['email'], $row['roleId']);
 
-        return $success;
     }
 
 }

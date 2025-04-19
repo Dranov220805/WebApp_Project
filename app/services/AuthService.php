@@ -1,6 +1,4 @@
 <?php
-
-
 use Repository\RefreshToken;
 
 class AuthService {

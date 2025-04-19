@@ -11,4 +11,8 @@ class RegisterController {
         $footer = 'home';
         include "views/log/register.php";
     }
+
+    public function register_POST() {
+
+    }
 }

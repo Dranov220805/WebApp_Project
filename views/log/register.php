@@ -68,12 +68,12 @@ include "./views/layout/partials/header.php";
 
                     <div class="mb-3">
                         <label for="email" class="form-label">Email:</label>
-                        <input type="email" class="form-control login-section-2__form--input-box" id="email" placeholder="example@gmail.com" required>
+                        <input type="email" class="form-control login-section-2__form--input-box" id="email-input" placeholder="example@gmail.com">
                     </div>
 
                     <div class="mb-3">
                         <label for="displayName" class="form-label">Display name:</label>
-                        <input type="text" class="form-control login-section-2__form--input-box" id="displayName" placeholder="Enter your display name" required>
+                        <input type="text" class="form-control login-section-2__form--input-box" id="username-input" placeholder="Enter your display name">
                     </div>
 
 <!--                    <div class="mb-3">-->
@@ -89,7 +89,7 @@ include "./views/layout/partials/header.php";
                     <div class="mb-3">
                         <label for="password" class="form-label">Password:</label>
                         <div class="input-group">
-                            <input type="password" class="form-control login-section-2__form--input-box" id="password-input" placeholder="Password" oninput="enableButton()" onclick="enableButton()">
+                            <input type="password" class="form-control login-section-2__form--input-box" id="password-input" placeholder="Password">
                             <span class="input-group-text bg-white">
                                 <i id="toggle-password" class="fa-regular fa-eye-slash" onclick="togglePassword()" style="cursor: pointer;"></i>
                             </span>
@@ -99,7 +99,7 @@ include "./views/layout/partials/header.php";
                     <div class="mb-3">
                         <label for="confirmPassword" class="form-label">Confirm Password:</label>
                         <div class="input-group">
-                            <input type="password" class="form-control login-section-2__form--input-box" id="password-input-confirm" placeholder="Confirm Password" oninput="enableButton()" onclick="enableButton()">
+                            <input type="password" class="form-control login-section-2__form--input-box" id="password-input-confirm" placeholder="Confirm Password">
                             <span class="input-group-text bg-white">
                                 <i id="toggle-password-confirm" class="fa-regular fa-eye-slash" onclick="toggleConfirmPassword()" style="cursor: pointer;"></i>
                             </span>
@@ -138,8 +138,8 @@ include "./views/layout/partials/overlay_loading.php";
         if (window.enableButton){
             enableButton();
         }
-        if(window.checkLogin){
-            checkLogin();
+        if(window.checkRegister){
+            checkRegister();
         }
     })
 </script>
