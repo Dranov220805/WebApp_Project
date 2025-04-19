@@ -84,10 +84,7 @@ class Auth {
                 });
         });
     }
-
-    redirectToRolePage = () => {
-        // Future: Add logic based on roleId if needed
-    }
+    
 }
 
 // Configuration
