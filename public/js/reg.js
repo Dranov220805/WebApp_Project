@@ -105,16 +105,43 @@ class Reg {
                             this.showRegisterToast('Registration successful! Logging you in...', 'success');
 
                             // Proceed to login if registration is successful
-                            return fetch('log/login', {
+                            return fetch('/log/login', {
                                 method: 'POST',
-                                headers: {
-                                    "Content-Type": "application/json"
-                                },
                                 body: JSON.stringify({
                                     email,
                                     password
                                 })
-                            });
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    console.log(data);
+                                    const { accessToken, roleId, userName, email, message, status } = data;
+
+                                    if (status === true) {
+                                        // Store the access token in session storage for later use
+                                        sessionStorage.setItem('accessToken', accessToken);
+
+                                        // Show success toast message
+                                        // this.showLoginToast(message, 'success');
+
+                                        setTimeout(() => {
+                                            // Redirect user based on role
+                                            if (String(roleId) === '1') {
+                                                window.location.href = '/home';
+                                            } else if (String(roleId) === '2') {
+                                                window.location.href = '/admin-dashboard';
+                                            }
+                                        }, 1000);
+                                    } else {
+                                        // Show error toast message
+                                        // this.showLoginToast(message, 'danger');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Login error:', error);
+                                    // Show error toast for network issues
+                                    this.showLoginToast('Something went wrong. Please try again later.', 'danger');
+                                });;
                         }
                     } else {
                         throw new Error(message || 'Registration failed');
