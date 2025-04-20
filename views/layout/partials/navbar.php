@@ -66,6 +66,8 @@
 
             <!-- Modal body -->
             <div class="modal-body">
+                <strong>AccountId:</strong> <?=$_SESSION['accountId']?>
+                <br>
                 <strong>Name:</strong> <?=$_SESSION['userName']?>
                 <br>
                 <strong>Email:</strong> <?=$_SESSION['email']?>

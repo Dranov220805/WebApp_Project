@@ -43,18 +43,6 @@ class NoteController {
         ]);
     }
 
-//    public function getNotesList() {
-//        // Assuming pagination parameters are passed (page, limit)
-//        $page = isset($_GET['page']) ? $_GET['page'] : 1;
-//        $limit = isset($_GET['limit']) ? $_GET['limit'] : 10;
-//
-//        // Call your service layer to fetch paginated notes
-//        $notes = $this->noteService->getNotesByAccountIdPaginated($accountId, $limit, ($page - 1) * $limit);
-//
-//        // Return the result as a JSON response
-//        echo json_encode(['data' => $notes]);
-//    }
-
     public function getNoteById($noteId) {
         // Fetch a single note by ID
         $note = $this->noteService->getNoteById($noteId);
@@ -62,14 +50,40 @@ class NoteController {
         // Return the result as a JSON response
         echo json_encode(['data' => $note]);
     }
+    public function createNote_POST() {
+        $content = trim(file_get_contents("php://input"));
+        $data = json_decode($content, true);
 
-    public function createNote($data) {
-        // Handle note creation from POST data
-        // Validate and process the POST data (e.g., title, content, etc.)
-        $note = $this->noteService->createNote($data);
+        $accountId = $_SESSION['accountId'] ?? null;
 
-        // Return the result as a JSON response
-        echo json_encode(['message' => 'Note created successfully', 'data' => $note]);
+        if (!empty($accountId) && !empty($data['title']) && !empty($data['content'])) {
+            $noteService = new NoteService();
+            $result = $noteService->createNoteByAccountIdAndTitleAndContent($accountId, $data['title'], $data['content']);
+
+            if ($result) {
+                http_response_code(201);
+                echo json_encode([
+                    'status' => true,
+                    'accountId' => $result['accountId'],
+                    'title' => $result['title'],
+                    'content' => $result['content'],
+                    'createDate' => $result['createDate'],
+                    'message' => $result['message']
+                ]);
+            } else {
+                http_response_code(400);
+                echo json_encode([
+                    'status' => false,
+                    'message' => 'Note could not be created'
+                ]);
+            }
+        } else {
+            http_response_code(400);
+            echo json_encode([
+                'status' => false,
+                'message' => 'Missing title/content'
+            ]);
+        }
     }
 
     public function getAllNotes() {

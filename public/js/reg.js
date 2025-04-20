@@ -13,7 +13,7 @@ class Reg {
         togglePassword.classList.toggle('fa-eye-slash');
     }
 
-    showRegisterToast(message, type = 'success', duration = 3000) {
+    showRegisterToast(message, type = 'success', duration = 2000) {
         const toast = document.getElementById("toast");
         const messageElement = document.getElementById("toast-message");
         const closeBtn = document.getElementById("toast-close");
@@ -89,12 +89,7 @@ class Reg {
                     email
                 })
             })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok during registration');
-                    }
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
                     const { status, message } = data;
 
@@ -147,28 +142,6 @@ class Reg {
                         throw new Error(message || 'Registration failed');
                     }
                 })
-                // .then(loginResponse => {
-                //     if (!loginResponse.ok) {
-                //         throw new Error('Login after registration failed');
-                //     }
-                //     return loginResponse.json();
-                // })
-                // .then(loginData => {
-                //     const { accessToken, message, status } = loginData;
-                //
-                //     if (status === true) {
-                //         this.showRegisterToast('Logged in successfully!', 'success');
-                //
-                //         sessionStorage.setItem('accessToken', accessToken);
-                //
-                //         // Redirect user
-                //         setTimeout(() => {
-                //             window.location.href = '/home';
-                //         }, 1000);
-                //     } else {
-                //         throw new Error(message || 'Login failed');
-                //     }
-                // })
                 .catch(error => {
                     console.error('Register/Login error:', error);
                     this.showRegisterToast(error.message || 'Something went wrong. Please try again.', 'danger');

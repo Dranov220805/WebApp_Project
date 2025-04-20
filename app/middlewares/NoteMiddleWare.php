@@ -13,6 +13,15 @@ class NoteMiddleWare {
             $this->noteController->getNotes();
         }
     }
+
+    public function createNote_POST() {
+        if (!isset($_SESSION['roleId'])) {
+            throw new Exception("Unauthenticated");
+        } else {
+            $this->noteController->createNote_POST();
+        }
+    }
+
 }
 
 ?>

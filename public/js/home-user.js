@@ -123,6 +123,7 @@ class HomeUser {
             }
         });
     }
+
 }
 
 export default new HomeUser();

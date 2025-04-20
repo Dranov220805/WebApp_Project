@@ -4,6 +4,10 @@ class Note {
     public string $noteId;
     public string $accountId;
     public string $title;
+    public string $content;
+    public string $createDate;
+    public bool $isDeleted;
+    public bool $isProtected;
 
     public function getNoteId(): string
     {
@@ -74,10 +78,6 @@ class Note {
     {
         $this->isProtected = $isProtected;
     }
-    public string $content;
-    public string $createDate;
-    public bool $isDeleted;
-    public bool $isProtected;
 
     public function __construct($noteId, $accountId, $title, $content, $createDate, $isDeleted, $isProtected) {
         $this->noteId = $noteId;

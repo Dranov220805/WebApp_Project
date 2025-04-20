@@ -3,66 +3,55 @@ class Notes {
         this.currentPage = 1;
         this.limit = 10;
         this.isLoading = false;
+        this.lastScrollTop = 0;
 
+        this.setupEvents();
         this.loadNotes();
-        this.inputNote();
-        this.initNotePostTrigger();
+    }
 
-        document.addEventListener("DOMContentLoaded", () => {
-            const pinnedNoteContainer = document.querySelector(".pinned-note__load");
-            const noteContainer = document.querySelector(".other-note__load");
-            if (noteContainer) {
-                const notesInstance = new Notes();
-                window.refreshNotes = () => notesInstance.loadNotes(); // optional manual refresh
-            }
-        });
+    setupEvents() {
+        const createNoteBtn = document.querySelector(".create-note-btn");
+        const noteInput = document.querySelector(".note-post__input");
+
+        if (createNoteBtn) createNoteBtn.addEventListener("click", () => this.createNote_POST());
+        if (noteInput) noteInput.addEventListener("input", this.autoResizeInput);
 
         window.addEventListener("scroll", () => this.handleScroll());
+        this.initNotePostTrigger();
     }
 
     handleScroll() {
-        const currentScrollTop = window.scrollY; // Get current scroll position
-
-        // Check if scrolling down (current position > previous position)
-        if (currentScrollTop > this.lastScrollTop) {
-            // Only load more notes if we are near the bottom of the page
-            if ((window.innerHeight + currentScrollTop) >= document.body.offsetHeight - 200) {
-                this.loadNotes();
-            }
+        const currentScrollTop = window.scrollY;
+        if (currentScrollTop > this.lastScrollTop &&
+            (window.innerHeight + currentScrollTop >= document.body.offsetHeight - 200)) {
+            this.loadNotes();
         }
-
-        // Update the last scroll position
-        this.lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop; // Prevent negative scroll value
+        this.lastScrollTop = Math.max(currentScrollTop, 0);
     }
 
-    showToast(message, duration = 3000) {
+    showToast(message, type = 'danger', duration = 3000) {
         const toast = document.getElementById("toast");
         const messageElement = document.getElementById("toast-message");
         const closeBtn = document.getElementById("toast-close");
 
-        // Set message
-        messageElement.innerText = message;
+        if (!toast || !messageElement || !closeBtn) return;
 
-        // Show toast
+        messageElement.innerText = message;
+        toast.classList.remove("d-none", "bg-success", "bg-danger");
+        toast.classList.add(`bg-${type}`);
+
         toast.classList.remove("d-none");
 
-        // Auto-hide after duration
-        const hideTimeout = setTimeout(() => {
-            toast.classList.add("d-none");
-        }, duration);
-
-        // Allow manual close
+        const hideTimeout = setTimeout(() => toast.classList.add("d-none"), duration);
         closeBtn.onclick = () => {
             toast.classList.add("d-none");
             clearTimeout(hideTimeout);
         };
-    };
+    }
 
     loadNotes() {
         if (this.isLoading) return;
         this.isLoading = true;
-
-        // this.showToast('Loading notes...');
 
         fetch(`/note/list?page=${this.currentPage}&limit=${this.limit}`, {
             headers: {
@@ -74,9 +63,6 @@ class Notes {
                 if (data.data?.length > 0) {
                     this.appendNotesToDOM(data.data);
                     this.currentPage++;
-                    // this.showToast('Notes loaded successfully!');
-                } else {
-                    // this.showToast('No more notes to load.');
                 }
             })
             .catch(err => {
@@ -88,115 +74,167 @@ class Notes {
 
     appendNotesToDOM(notes) {
         const container = document.querySelector(".other-note__load");
+        if (!container) return;
 
         notes.forEach(note => {
             const div = document.createElement("div");
             div.className = "note-sheet d-flex flex-column";
             div.innerHTML = `
-            <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
-                <h3 class="note-sheet__title" style="color: #202124; font-size: 16px; font-weight: 500; margin: 0 0 12px 0;">
-                    ${note.title}
-                </h3>
-                <div class="note-sheet__content" style="color: #5f6368; font-size: 14px; line-height: 1.5;">
-                    ${note.content.split(',').map(item => `<div>- ${item.trim()}</div>`).join('')}
+                <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
+                    <h3 class="note-sheet__title">${note.title}</h3>
+                    <div class="note-sheet__content">
+                        ${note.content.split(',').map(item => `<div>- ${item.trim()}</div>`).join('')}
+                    </div>
                 </div>
-            </div>
-            <div class="note-sheet__menu" style="display: flex; justify-content: space-between; padding: 8px;">
-                <div>
-                    <button style="background: none; border: none; cursor: pointer; padding: 8px;">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#5f6368">
-                            <i class="fa-regular fa-square-plus"></i>
-                        </svg>
-                    </button>
-                    <button style="background: none; border: none; cursor: pointer; padding: 8px;">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#5f6368">
-                            <i class="fa-solid fa-tags"></i>
-                        </svg>
-                    </button>
+                <div class="note-sheet__menu">
+                    <div>
+                        <button><i class="fa-regular fa-square-plus"></i></button>
+                        <button><i class="fa-solid fa-tags"></i></button>
+                    </div>
+                    <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
                 </div>
-                <button style="background: none; border: none; cursor: pointer; padding: 8px;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#5f6368">
-                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                    </svg>
-                </button>
-            </div>
-        `;
+            `;
             container.appendChild(div);
         });
     }
 
-    inputNote() {
-        document.querySelector('.note-post__input').addEventListener('input', function () {
-            this.style.height = 'auto'; // Reset the height to auto to calculate new content height
-            this.style.height = (this.scrollHeight) + 'px'; // Set the height to the scroll height of the content
-        });
+    appendNewNotesToDOM(note) {
+        const container = document.querySelector(".other-note__load");
+        if (!container) return;
+
+        const div = document.createElement("div");
+        div.className = "note-sheet d-flex flex-column";
+        div.innerHTML = `
+            <div class="note-sheet" onclick="notesInstance.openNoteModal('${note.title}', '${note.content}')">
+                <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
+                    <h3 class="note-sheet__title">${note.title}</h3>
+                    <div class="note-sheet__content">
+                        ${note.content.split(',').map(item => `<div>- ${item.trim()}</div>`).join('')}
+                    </div>
+                </div>
+                <div class="note-sheet__menu" onclick="event.stopPropagation()">
+                    <div>
+                        <button><i class="fa-regular fa-square-plus"></i></button>
+                        <button><i class="fa-solid fa-tags"></i></button>
+                    </div>
+                    <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                </div>
+            </div>
+        `;
+        container.prepend(div);
+    }
+
+    autoResizeInput(event) {
+        event.target.style.height = 'auto';
+        event.target.style.height = `${event.target.scrollHeight}px`;
+    }
+
+    openNoteModal(title, content) {
+        // Update the modal with the note title and content
+        document.getElementById("noteModalLabel").textContent = title;
+        document.getElementById("modalContent").innerHTML = content
+            .split(',')
+            .map(item => `<div>- ${item.trim()}</div>`)
+            .join('');
     }
 
     initNotePostTrigger() {
         const inputArea = document.querySelector(".note-post__input");
+        const titleField = document.querySelector(".note-text__content");
 
-        // Prevent attaching the event listener multiple times
-        if (inputArea.dataset.listenerAttached === "true") return;
+        if (!inputArea || !titleField || inputArea.dataset.listenerAttached === "true") return;
         inputArea.dataset.listenerAttached = "true";
 
-        let contentTextarea = null;
-
+        // Resize inputArea dynamically as user types
         inputArea.addEventListener("input", function () {
-            const trimmedValue = this.value.trim();
+            const value = this.value.trim();
 
-            // Create the new textarea above the main input
-            if (trimmedValue !== "" && !contentTextarea) {
-                contentTextarea = document.createElement("textarea");
-                contentTextarea.className = "note-text__content";
-                contentTextarea.placeholder = "Title";
-                contentTextarea.rows = 3;
+            if (value !== "") {
+                // Show the title field if hidden
+                if (titleField.classList.contains("d-none")) {
+                    requestAnimationFrame(() => {
+                        titleField.style.height = "23px";
+                        titleField.style.opacity = "1";
+                        titleField.classList.remove("d-none");
+                    });
+                }
 
-                Object.assign(contentTextarea.style, {
-                    border: "none",
-                    outline: "none",
-                    fontSize: "16px",
-                    marginBottom: "12px",
-                    resize: "none",
-                    width: "100%",
-                    overflow: "hidden",
-                    height: "0px",
-                    opacity: "0",
-                    transition: "height 0.3s ease, opacity 0.3s ease"
-                });
+                // Auto-resize the inputArea (optional)
+                this.style.height = "auto";
+                this.style.height = this.scrollHeight + "px";
+            } else {
+                // Hide the title field
+                titleField.style.height = "0px";
+                titleField.style.opacity = "0";
+                titleField.classList.add("d-none");
 
-                // Insert ABOVE the main input
-                this.parentNode.insertBefore(contentTextarea, this);
-
-                requestAnimationFrame(() => {
-                    contentTextarea.style.height = "23px";
-                    contentTextarea.style.opacity = "1";
-                });
-
-                inputArea.addEventListener("input", function () {
-                    this.style.height = "auto";
-                    this.style.height = this.scrollHeight + "px";
-                });
-            }
-
-            // If the main input is cleared, remove the above field
-            if (trimmedValue === "" && contentTextarea) {
-                contentTextarea.style.height = "0px";
-                contentTextarea.style.opacity = "0";
-
-                contentTextarea.addEventListener("transitionend", function handleTransitionEnd() {
-                    if (contentTextarea && contentTextarea.parentNode) {
-                        contentTextarea.remove();
-                        contentTextarea = null;
-                    }
-                    this.removeEventListener("transitionend", handleTransitionEnd);
+                // Optional: clear title input when hidden
+                titleField.addEventListener("transitionend", function handleEnd() {
+                    titleField.value = "";
+                    titleField.removeEventListener("transitionend", handleEnd);
                 });
             }
         });
+
+        // Auto-resize titleField as user types
+        titleField.addEventListener("input", function () {
+            this.style.height = "auto";
+            this.style.height = this.scrollHeight + "px";
+        });
     }
+
+
+
+
+
+    createNote_POST() {
+        const titleInput = document.querySelector(".note-text__content");
+        const contentInput = document.querySelector(".note-post__input");
+
+        const title = titleInput?.value.trim() || '';
+        const content = contentInput?.value.trim() || '';
+
+        console.log(titleInput);
+        console.log(contentInput);
+        console.log(title);
+        console.log(content);
+
+        if (!title || !content) {
+            this.showToast('Please enter a title and content', 'danger');
+            return;
+        }
+
+        fetch('note/create', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                title,
+                content
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                const { status, accountId, title, content, createdDate, message} = data;
+                if (status === true) {
+                    this.showToast('Note created successfully!', 'success');
+                    titleInput.remove();
+                    contentInput.value = '';
+                    this.appendNewNotesToDOM(data);
+                } else {
+                    this.showToast(data.message || 'Failed to create note.', 'danger');
+                }
+            })
+            .catch(err => {
+                console.error('Create note error:', err);
+                this.showToast('An error occurred while creating the note.', 'danger');
+            });
+    }
+
 
 }
 
+// Initialize
 const notesInstance = new Notes();
-window.refreshNotes = () => notesInstance.loadNotes(); // optional manual refresh
-
-// export default notesInstance;
+window.refreshNotes = () => notesInstance.loadNotes();

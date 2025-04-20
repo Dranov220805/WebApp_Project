@@ -15,6 +15,7 @@
             <!-- Note creation area -->
             <div class="note-post">
                 <form class="note-post__content" style="display: flex; flex-direction: column;" action="#" onsubmit="return false">
+                    <input class="note-text__content d-none" placeholder="Title">
                     <textarea class="note-post__input" placeholder="Take a note..." rows="1"></textarea>
                     <div style="display: flex; justify-content: space-between; margin-top: 12px;">
                         <div>
@@ -30,7 +31,7 @@
                                 </svg>
                             </button>
                         </div>
-                        <button class="btn btn-primary" style="background-color: #f1f3f4; border: none; border-radius: 4px; color: #202124; cursor: pointer; font-size: 14px; font-weight: 500; padding: 8px 16px;">
+                        <button class="btn btn-primary create-note-btn" style="background-color: #f1f3f4; border: none; border-radius: 4px; color: #202124; cursor: pointer; font-size: 14px; font-weight: 500; padding: 8px 16px;">
                             Create
                         </button>
                     </div>
@@ -58,6 +59,24 @@
 
 <!--                        End of Others Note Grid-->
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Structure -->
+    <div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="noteModalLabel">Note Title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modalContent">
+                    <!-- Full note content will appear here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

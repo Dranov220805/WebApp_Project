@@ -36,8 +36,8 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
                 }
                 break;
             case 'auth':
-                if($_GET['param_2'] == 'token-refresh'){
-                    $authMiddleware->tokenRefresh();
+                if($_GET['param_2'] == 'heartbeat'){
+                    $authMiddleware->checkSession();
                 }
                 break;
         }
