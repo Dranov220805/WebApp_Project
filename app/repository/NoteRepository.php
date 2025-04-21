@@ -40,6 +40,30 @@ class NoteRepository{
         return $notes;
     }
 
+    public function getPinnedNotesByAccountId($accountId): array {
+        $sql = "SELECT n.* FROM `Account` a
+        LEFT JOIN `Note` n ON a.accountId = n.accountId
+        LEFT JOIN `Modification` m ON m.noteId = n.noteId
+        WHERE a.accountId = ? 
+        AND n.isDeleted = FALSE
+        AND m.isPinned = TRUE
+        ORDER BY n.createDate DESC";
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Failed to prepare SQL statement: " . $this->conn->error);
+        }
+        $stmt->bind_param("s", $accountId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $note = [];
+        while ($row = $result->fetch_assoc()) {
+            $note[] = $row;
+        }
+        return $note;
+    }
+
     public function createNoteByAccountIdAndTitleAndContent($accountId, $title, $content): ?Note {
         // Set timezone to UTC+7
 

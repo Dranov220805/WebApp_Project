@@ -43,6 +43,32 @@ class NoteController {
         ]);
     }
 
+    public function getPinnedNotes() {
+
+        $accountId = $_SESSION['accountId'] ?? null;
+        if (empty($accountId)) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'Missing accountId'
+            ]);
+        } else {
+            $result = $this->noteService->getPinnedNotesByAccountId($accountId);
+
+            if (!$result) {
+                echo json_encode([
+                    'status' => false,
+                    'message' => 'No pinned notes found'
+                ]);
+            } else {
+                echo json_encode([
+                    'status' => true,
+                    'data' => $result,
+                    'message' => 'Load pinned notes'
+                ]);
+            }
+        }
+    }
+
     public function getNoteById($noteId) {
         // Fetch a single note by ID
         $note = $this->noteService->getNoteById($noteId);

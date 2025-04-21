@@ -3,18 +3,24 @@ class Notes {
         this.currentPage = 1;
         this.limit = 10;
         this.isLoading = false;
+        this.isLoadingPinned = false;
         this.lastScrollTop = 0;
 
         this.setupEvents();
+        this.loadPinnedNotes();
         this.loadNotes();
     }
 
     setupEvents() {
         const createNoteBtn = document.querySelector(".create-note-btn");
         const noteInput = document.querySelector(".note-post__input");
+        const noteModalClose = document.querySelector(".note-modal-close");
+        const notePinBtn = document.querySelector(".note-pin-btn");
 
         if (createNoteBtn) createNoteBtn.addEventListener("click", () => this.createNote_POST());
         if (noteInput) noteInput.addEventListener("input", this.autoResizeInput);
+        if (notePinBtn) notePinBtn.addEventListener("click", () => this.pinNewNote());
+
 
         window.addEventListener("scroll", () => this.handleScroll());
         this.initNotePostTrigger();
@@ -94,62 +100,78 @@ class Notes {
             </div>
             <div class="note-sheet__menu" onclick="event.stopPropagation()">
                 <div>
-                    <button><i class="fa-regular fa-square-plus"></i></button>
-                    <button><i class="fa-solid fa-tags"></i></button>
-                    <button><i class="fa-solid fa-images"></i></button>
-                    <button class="edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
-                    <button class="delete-btn" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                    <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
+                    <button title="Label"><i class="fa-solid fa-tags"></i></button>
+                    <button title="Image"><i class="fa-solid fa-images"></i></button>
+                    <button class="note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
+                    <button class="note-delete-btn" title="Delete"><i class="fa-solid fa-trash"></i></button>
                 </div>
                 <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
             </div>
         `;
             // Append to container
             container.appendChild(div);
-
-            // Add Edit button handler
-            div.querySelector(".edit-btn").onclick = (e) => {
-                e.stopPropagation();
-                this.editNote(note); // <- pass the whole note object
-            };
-
-            // Add Delete button handler
-            div.querySelector(".delete-btn").onclick = (e) => {
-                e.stopPropagation();
-                this.deleteNote(note.noteId, div);
-            };
         });
     }
 
-    // Function to expand the note into a modal-like view
-    // expandNote(noteElement) {
-    //     // Avoid multiple expansions
-    //     if (noteElement.classList.contains('expanded')) return;
-    //
-    //     // Add overlay
-    //     let overlay = document.querySelector('.overlay');
-    //     if (!overlay) {
-    //         overlay = document.createElement('div');
-    //         overlay.className = 'overlay';
-    //         document.body.appendChild(overlay);
-    //     }
-    //     overlay.classList.add('active');
-    //
-    //     // Expand the note
-    //     noteElement.classList.add('expanded');
-    //
-    //     // Add close button
-    //     const closeBtn = document.createElement('button');
-    //     closeBtn.className = 'note-sheet__close-btn';
-    //     closeBtn.innerHTML = '&times;';
-    //     closeBtn.onclick = (e) => {
-    //         e.stopPropagation();
-    //         noteElement.classList.remove('expanded');
-    //         overlay.classList.remove('active');
-    //         closeBtn.remove();
-    //     };
-    //
-    //     noteElement.appendChild(closeBtn);
-    // }
+    loadPinnedNotes() {
+        if (this.isLoadingPinned) return;
+        this.isLoadingPinned = true;
+
+        fetch(`/note/pinned/list`, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                if (data.data?.length > 0) {
+                    this.appendPinnedNotesToDOM(data.data);
+                    this.currentPage++;
+                }
+            })
+            .catch(err => {
+                console.error('Fetch failed:', err);
+                this.showToast('Failed to load notes. Please try again.');
+            })
+            .finally(() => this.isLoading = false);
+    }
+
+    appendPinnedNotesToDOM(notes) {
+        const container = document.querySelector(".pinned-note__load");
+        if (!container) return;
+
+        notes.forEach(note => {
+            const div = document.createElement("div");
+            div.className = "note-sheet d-flex flex-column";
+            div.dataset.id = note.noteId;
+            // div.onclick = () => this.expandNote(div);
+            div.onclick = () => this.openNoteInModal(note);
+
+
+            div.innerHTML = `
+            <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
+                <h3 class="note-sheet__title">${note.title}</h3>
+                <div class="note-sheet__content">
+                    ${note.content.replace(/\n/g, '<br>')}
+                </div>
+            </div>
+            <div class="note-sheet__menu" onclick="event.stopPropagation()">
+                <div>
+                    <button class="pinned-note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
+                    <button title="Label"><i class="fa-solid fa-tags"></i></button>
+                    <button title="Image"><i class="fa-solid fa-images"></i></button>
+                    <button class="pinned-note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
+                    <button class="pinned-note-delete-btn" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                </div>
+                <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
+            </div>
+        `;
+            // Append to container
+            container.appendChild(div);
+        });
+    }
 
     loadNewNotes() {
         if (this.isLoading) return;
@@ -287,6 +309,8 @@ class Notes {
                 .then(data => {
                     if (data.status) {
                         showSavedIcon();
+                        document.querySelector(".other-note__load").innerHTML = '';
+                        this.currentPage = 1;
                         this.loadNewNotes();
                     }
                     else showErrorIcon();
@@ -343,7 +367,8 @@ class Notes {
                     contentInput.value = '';
                     // this.appendNewNotesToDOM(data);
                     document.querySelector(".other-note__load").innerHTML = '';
-                    this.loadNewNotes();
+                    this.currentPage = 1;
+                    this.loadNotes();
                 } else {
                     this.showToast(data.message || 'Failed to create note.', 'danger');
                 }
@@ -354,64 +379,43 @@ class Notes {
             });
     }
 
-    setupAutoSave(noteId) {
-        const titleInput = document.querySelector('.note-title-input');
-        const contentInput = document.querySelector('.note-content-input');
-        const icon = document.querySelector('.save-status-icon i');
+    deleteNote_POST(noteId, noteElement) {
+        const modalEl = document.getElementById('deleteNoteModal');
+        const confirmBtn = modalEl.querySelector('#confirmDeleteBtn');
+        const modal = new bootstrap.Modal(modalEl);
 
-        let timeout = null;
-        let isSaving = false;
-
-        const showSavingIcon = () => {
-            icon.className = 'fa-solid fa-spinner fa-spin text-warning'; // spinning icon
-        };
-
-        const showSavedIcon = () => {
-            icon.className = 'fa-solid fa-check-circle text-success'; // check icon
-        };
-
-        const autoSave = () => {
-            if (isSaving) return;
-            isSaving = true;
-
-            showSavingIcon();
-
-            fetch("/notes/update", {
-                method: "POST",
+        const onConfirm = () => {
+            fetch(`/note/delete`, {
+                method: 'POST',
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    noteId,
-                    title: titleInput.value,
-                    content: contentInput.value
-                })
+                body: JSON.stringify({ noteId })
             })
                 .then(res => res.json())
                 .then(data => {
-                    if (data.status) {
-                        showSavedIcon();
-                        console.log(data);
+                    if (data.status === true) {
+                        this.showToast("Note deleted successfully", "success");
+                        noteElement.remove(); // Remove from DOM
                     } else {
-                        icon.className = 'fa-solid fa-exclamation-circle text-danger'; // error
+                        this.showToast(data.message || "Failed to delete note", "danger");
                     }
                 })
+                .catch(err => {
+                    console.error("Delete error:", err);
+                    this.showToast("An error occurred while deleting the note", "danger");
+                })
                 .finally(() => {
-                    isSaving = false;
+                    confirmBtn.removeEventListener("click", onConfirm);
+                    modal.hide();
                 });
         };
 
-        const handleTyping = () => {
-            showSavingIcon();
-            clearTimeout(timeout);
-            timeout = setTimeout(autoSave, 2000);
-        };
-
-        titleInput.addEventListener('input', handleTyping);
-        contentInput.addEventListener('input', handleTyping);
+        confirmBtn.addEventListener("click", onConfirm);
+        modal.show();
     }
 
     expandNote(noteElement) {
         const noteId = noteElement.dataset.id;
-        const note = this.notes.find(n => n.noteId === noteId); // assuming you keep note list
+        const note = this.notes.find(n => n.noteId === noteId);
 
         const editorHTML = `
         <div class="note-editor" data-id="${note.noteId}">
@@ -427,6 +431,9 @@ class Notes {
         this.setupAutoSave(note.noteId);
     }
 
+    pinNewNote() {
+
+    }
 
 }
 

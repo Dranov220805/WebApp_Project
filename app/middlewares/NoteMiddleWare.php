@@ -14,6 +14,14 @@ class NoteMiddleWare {
         }
     }
 
+    public function getPinnedNotes() {
+        if (!isset($_SESSION['roleId'])) {
+            throw new Exception("Unauthenticated");
+        } else {
+            $this->noteController->getPinnedNotes();
+        }
+    }
+
     public function createNote_POST() {
         if (!isset($_SESSION['roleId'])) {
             throw new Exception("Unauthenticated");

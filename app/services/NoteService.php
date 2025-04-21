@@ -11,6 +11,10 @@ class NoteService {
         return $this->noteRepository->getNotesByAccountIdPaginated($accountId, $page, $perPage);
     }
 
+    public function getPinnedNotesByAccountId(string $accountId) {
+        return $this->noteRepository->getPinnedNotesByAccountId($accountId);
+    }
+
     public function createNoteByAccountIdAndTitleAndContent($accountId, $title, $content)
     {
         $result = $this->noteRepository->createNoteByAccountIdAndTitleAndContent($accountId, $title, $content);

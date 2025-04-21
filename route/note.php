@@ -6,7 +6,16 @@ $noteController = new NoteController();
 $noteMiddleWare = new NoteMiddleWare();
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    if (isset($_GET['param_1']) && isset($_GET['param_2'])) {
+    if (isset($_GET['param_1']) && isset($_GET['param_2']) && isset($_GET['param_3'])) {
+        switch ($_GET['param_1']) {
+            case 'note':
+                if ($_GET['param_2'] == 'pinned') {
+                    if (isset($_GET['param_3']) == 'list') {
+                        $noteMiddleWare->getPinnedNotes();
+                    }
+                }
+        }
+    } else if (isset($_GET['param_1']) && isset($_GET['param_2'])) {
         switch ($_GET['param_1']) {
             case 'note':
                 if ($_GET['param_2'] == 'list') {
