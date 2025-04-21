@@ -86,6 +86,49 @@ class NoteController {
         }
     }
 
+    public function updateNote_POST() {
+        $content = trim(file_get_contents("php://input"));
+        $data = json_decode($content, true);
+
+        $accountId = $_SESSION['accountId'] ?? null;
+        $noteId = $data['noteId'] ?? null;
+        $title = $data['title'] ?? null;
+        $content = $data['content'] ?? null;
+
+        if (!empty($accountId) && !empty($noteId) && !empty($title) && !empty($content)) {
+            $result = $this->noteService->updateNoteByAccountIdAndNoteId($accountId, $noteId, $title, $content);
+
+            if ($result['status'] === true) {
+                http_response_code(201);
+                echo json_encode ([
+                    'status' => true,
+                    'accountId' => $accountId,
+                    'noteId' => $noteId,
+                    'title' => $title,
+                    'content' => $content,
+                    'modifiedDate' => $result['modifiedDate'],
+                    'message' => $result['message']
+                ]);
+            } else {
+                http_response_code(400);
+                echo json_encode ([
+                    'status' => false,
+                    'message' => $result['message']
+                ]);
+            }
+        } else {
+            http_response_code(400);
+            echo json_encode ([
+                'status' => false,
+                'message' => 'Missing title/content'
+            ]);
+        }
+    }
+
+    public function deleteNote_POST() {
+
+    }
+
     public function getAllNotes() {
         // Fetch all notes for the current user
         $notes = $this->noteService->getAllNotes();

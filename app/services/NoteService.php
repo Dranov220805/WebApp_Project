@@ -31,5 +31,26 @@ class NoteService {
             'message' => 'Note created'
         ];
     }
+
+    public function updateNoteByAccountIdAndNoteId($accountId, $noteId, $noteTitle, $noteContent) {
+        $result = $this->noteRepository->updateNoteByAccountIdAndNoteId($accountId, $noteId, $noteTitle, $noteContent);
+
+        if (!$result) {
+            return [
+                'status' => false,
+                'message' => 'Note could not be updated'
+            ];
+        }
+
+        return [
+            'status' => true,
+            'accountId' => $result->getAccountId(),
+            'noteId' => $result->getNoteId(),
+            'noteTitle' => $result->getTitle(),
+            'noteContent' => $result->getContent(),
+            'modifiedDate' => $result->getCreateDate(),
+            'message' => 'Note updated'
+        ];
+    }
 }
 ?>

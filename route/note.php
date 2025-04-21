@@ -47,6 +47,10 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             case 'note':
                 if ($_GET['param_2'] == 'create') {
                     $noteMiddleWare->createNote_POST();
+                } else if ($_GET['param_2'] == 'update') {
+                    $noteMiddleWare->updateNote_POST();
+                }else if ($_GET['param_2'] == 'delete') {
+                    $noteMiddleWare->deleteNote_POST();
                 }
                 break;
             default:

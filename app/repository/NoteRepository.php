@@ -72,6 +72,34 @@ class NoteRepository{
         );
     }
 
+    public function updateNoteByAccountIdAndNoteId($accountId, $noteId, $noteTitle, $noteContent): ?Note {
+        $modifiedDate = date("Y-m-d H:i:s");
+        $isDeleted = 0;
+        $isProtected = 0;
+
+        $sql = "UPDATE `Note` 
+            SET `title` = ?, `content` = ?, `createDate` = ?
+            WHERE `accountId` = ? AND `noteId` = ?";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("sssss", $noteTitle, $noteContent, $modifiedDate, $accountId, $noteId);
+
+        $result = $stmt->execute();
+        $stmt->close();
+
+        if (!$result) return null;
+
+        return new Note(
+            $noteId,
+            $accountId,
+            $noteTitle,
+            $noteContent,
+            $modifiedDate,
+            $isDeleted, // Assuming you're not modifying isDeleted here
+            $isProtected  // Assuming you're not modifying isProtected here
+        );
+    }
+
 }
 
 //    public function getNotesByAccountIdPaginated(string $accountId, int $limit, int $offset): array {

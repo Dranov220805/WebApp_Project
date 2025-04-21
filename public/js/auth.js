@@ -156,7 +156,7 @@ function showCountdownWarning() {
             clearInterval(countdownInterval);
             return;
         }
-        console.log('You will be logged out in 1 minute(s) if inactive.');
+        console.log('You will be logged out in the next 5 minute(s) if inactive.');
         countdown--;
     }, 60000);
 }

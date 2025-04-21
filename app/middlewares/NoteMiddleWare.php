@@ -22,6 +22,22 @@ class NoteMiddleWare {
         }
     }
 
+    public function updateNote_POST() {
+        if (!isset($_SESSION['roleId'])) {
+            throw new Exception("Unauthenticated");
+        } else {
+            $this->noteController->updateNote_POST();
+        }
+    }
+
+    public function deleteNote_POST() {
+        if (!isset($_SESSION['roleId'])) {
+            throw new Exception("Unauthenticated");
+        } else {
+            $this->noteController->deleteNote_POST();
+        }
+    }
+
 }
 
 ?>

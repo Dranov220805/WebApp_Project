@@ -313,6 +313,11 @@
     overflow: hidden;
 }
 
+.note-modal-display {
+    width: 80%;
+    height: 90%;
+}
+
 /* ─────── DARK MODE SUPPORT ─────── */
 body.dark-mode {
     background-color: #202124;

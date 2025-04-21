@@ -60,6 +60,7 @@ class Notes {
         })
             .then(res => res.json())
             .then(data => {
+                console.log(data);
                 if (data.data?.length > 0) {
                     this.appendNotesToDOM(data.data);
                     this.currentPage++;
@@ -79,7 +80,10 @@ class Notes {
         notes.forEach(note => {
             const div = document.createElement("div");
             div.className = "note-sheet d-flex flex-column";
-            div.onclick = () => this.expandNote(div); // <-- attach click handler
+            div.dataset.id = note.noteId;
+            // div.onclick = () => this.expandNote(div);
+            div.onclick = () => this.openNoteInModal(note);
+
 
             div.innerHTML = `
             <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
@@ -93,71 +97,59 @@ class Notes {
                     <button><i class="fa-regular fa-square-plus"></i></button>
                     <button><i class="fa-solid fa-tags"></i></button>
                     <button><i class="fa-solid fa-images"></i></button>
+                    <button class="edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
+                    <button class="delete-btn" title="Delete"><i class="fa-solid fa-trash"></i></button>
                 </div>
                 <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
             </div>
         `;
+            // Append to container
             container.appendChild(div);
+
+            // Add Edit button handler
+            div.querySelector(".edit-btn").onclick = (e) => {
+                e.stopPropagation();
+                this.editNote(note); // <- pass the whole note object
+            };
+
+            // Add Delete button handler
+            div.querySelector(".delete-btn").onclick = (e) => {
+                e.stopPropagation();
+                this.deleteNote(note.noteId, div);
+            };
         });
     }
 
-    appendNewNotesToDOM(note) {
-        const container = document.querySelector(".other-note__load");
-        if (!container) return;
-
-        const div = document.createElement("div");
-        div.className = "note-sheet d-flex flex-column";
-        div.onclick = () => this.expandNote(div); // <-- attach click handler
-
-        div.innerHTML = `
-        <div class="note-sheet__title-content" style="padding: 16px;">
-            <h3 class="note-sheet__title">${note.title}</h3>
-            <div class="note-sheet__content">
-                ${note.content.replace(/\n/g, '<br>')}
-            </div>
-        </div>
-        <div class="note-sheet__menu" onclick="event.stopPropagation()">
-            <div>
-                <button><i class="fa-regular fa-square-plus"></i></button>
-                <button><i class="fa-solid fa-tags"></i></button>
-                <button><i class="fa-solid fa-images"></i></button>
-            </div>
-            <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
-        </div>
-    `;
-        container.prepend(div);
-    }
-
     // Function to expand the note into a modal-like view
-    expandNote(noteElement) {
-        // Avoid multiple expansions
-        if (noteElement.classList.contains('expanded')) return;
-
-        // Add overlay
-        let overlay = document.querySelector('.overlay');
-        if (!overlay) {
-            overlay = document.createElement('div');
-            overlay.className = 'overlay';
-            document.body.appendChild(overlay);
-        }
-        overlay.classList.add('active');
-
-        // Expand the note
-        noteElement.classList.add('expanded');
-
-        // Add close button
-        const closeBtn = document.createElement('button');
-        closeBtn.className = 'note-sheet__close-btn';
-        closeBtn.innerHTML = '&times;';
-        closeBtn.onclick = (e) => {
-            e.stopPropagation();
-            noteElement.classList.remove('expanded');
-            overlay.classList.remove('active');
-            closeBtn.remove();
-        };
-
-        noteElement.appendChild(closeBtn);
-    }
+    // expandNote(noteElement) {
+    //     // Avoid multiple expansions
+    //     if (noteElement.classList.contains('expanded')) return;
+    //
+    //     // Add overlay
+    //     let overlay = document.querySelector('.overlay');
+    //     if (!overlay) {
+    //         overlay = document.createElement('div');
+    //         overlay.className = 'overlay';
+    //         document.body.appendChild(overlay);
+    //     }
+    //     overlay.classList.add('active');
+    //
+    //     // Expand the note
+    //     noteElement.classList.add('expanded');
+    //
+    //     // Add close button
+    //     const closeBtn = document.createElement('button');
+    //     closeBtn.className = 'note-sheet__close-btn';
+    //     closeBtn.innerHTML = '&times;';
+    //     closeBtn.onclick = (e) => {
+    //         e.stopPropagation();
+    //         noteElement.classList.remove('expanded');
+    //         overlay.classList.remove('active');
+    //         closeBtn.remove();
+    //     };
+    //
+    //     noteElement.appendChild(closeBtn);
+    // }
 
     loadNewNotes() {
         if (this.isLoading) return;
@@ -241,6 +233,80 @@ class Notes {
         });
     }
 
+    openNoteInModal(note) {
+        const modalEl = document.getElementById('noteModal');
+        const modal = new bootstrap.Modal(modalEl);
+
+        // Fill modal fields
+        const titleInput = modalEl.querySelector('.note-title-input');
+        const contentInput = modalEl.querySelector('.note-content-input');
+        const icon = modalEl.querySelector('.save-status-icon i');
+
+        titleInput.value = note.title;
+        contentInput.value = note.content;
+        icon.className = 'fa-solid fa-check-circle text-success';
+
+        // Show modal
+        modal.show();
+
+        // Setup auto-save (reuse logic)
+        this.setupAutoSaveModal(note.noteId, titleInput, contentInput, icon);
+    }
+
+    setupAutoSaveModal(noteId, titleInput, contentInput, icon) {
+        let timeout = null;
+        let isSaving = false;
+
+        const showSavingIcon = () => {
+            icon.className = 'fa-solid fa-spinner fa-spin text-warning';
+        };
+
+        const showSavedIcon = () => {
+            icon.className = 'fa-solid fa-check-circle text-success';
+        };
+
+        const showErrorIcon = () => {
+            icon.className = 'fa-solid fa-exclamation-circle text-danger';
+        };
+
+        const autoSave = () => {
+            if (isSaving) return;
+            isSaving = true;
+            showSavingIcon();
+
+            fetch('/note/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    noteId,
+                    title: titleInput.value,
+                    content: contentInput.value
+                })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status) {
+                        showSavedIcon();
+                        this.loadNewNotes();
+                    }
+                    else showErrorIcon();
+                })
+                .catch(showErrorIcon)
+                .finally(() => {
+                    isSaving = false;
+                });
+        };
+
+        const handleTyping = () => {
+            showSavingIcon();
+            clearTimeout(timeout);
+            timeout = setTimeout(autoSave, 1000);
+        };
+
+        titleInput.addEventListener('input', handleTyping);
+        contentInput.addEventListener('input', handleTyping);
+    }
+
     createNote_POST() {
         const titleInput = document.querySelector(".note-text__content");
         const contentInput = document.querySelector(".note-post__input");
@@ -286,6 +352,79 @@ class Notes {
                 console.error('Create note error:', err);
                 this.showToast('An error occurred while creating the note.', 'danger');
             });
+    }
+
+    setupAutoSave(noteId) {
+        const titleInput = document.querySelector('.note-title-input');
+        const contentInput = document.querySelector('.note-content-input');
+        const icon = document.querySelector('.save-status-icon i');
+
+        let timeout = null;
+        let isSaving = false;
+
+        const showSavingIcon = () => {
+            icon.className = 'fa-solid fa-spinner fa-spin text-warning'; // spinning icon
+        };
+
+        const showSavedIcon = () => {
+            icon.className = 'fa-solid fa-check-circle text-success'; // check icon
+        };
+
+        const autoSave = () => {
+            if (isSaving) return;
+            isSaving = true;
+
+            showSavingIcon();
+
+            fetch("/notes/update", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    noteId,
+                    title: titleInput.value,
+                    content: contentInput.value
+                })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status) {
+                        showSavedIcon();
+                        console.log(data);
+                    } else {
+                        icon.className = 'fa-solid fa-exclamation-circle text-danger'; // error
+                    }
+                })
+                .finally(() => {
+                    isSaving = false;
+                });
+        };
+
+        const handleTyping = () => {
+            showSavingIcon();
+            clearTimeout(timeout);
+            timeout = setTimeout(autoSave, 2000);
+        };
+
+        titleInput.addEventListener('input', handleTyping);
+        contentInput.addEventListener('input', handleTyping);
+    }
+
+    expandNote(noteElement) {
+        const noteId = noteElement.dataset.id;
+        const note = this.notes.find(n => n.noteId === noteId); // assuming you keep note list
+
+        const editorHTML = `
+        <div class="note-editor" data-id="${note.noteId}">
+            <input class="note-title-input" value="${note.title}" />
+            <textarea class="note-content-input">${note.content}</textarea>
+            <div class="save-status-icon"><i class="fa-solid fa-check-circle text-success"></i></div>
+        </div>
+    `;
+
+        const target = document.querySelector(".note-editor-container");
+        target.innerHTML = editorHTML;
+
+        this.setupAutoSave(note.noteId);
     }
 
 
