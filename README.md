@@ -30,3 +30,4 @@
 -- composer require cloudinary/cloudinary_php
 -- composer require vlucas/phpdotenv 
 -- composer require firebase/php-jwt      
+-- .env file to save global variable
