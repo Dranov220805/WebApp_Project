@@ -25,7 +25,11 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
             case 'home':
                 $homeUserMiddleWare->index();
                 break;
+            default:
+                $homeUserMiddleWare->index();
         }
+    } else {
+        $homeUserMiddleWare->index();
     }
 
 }

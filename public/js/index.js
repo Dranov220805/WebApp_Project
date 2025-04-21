@@ -1,14 +1,12 @@
 // Import necessary modules
-import site from './site.js';
 import auth from './auth.js';
 import reg from './reg.js';
-// import log from "./log.js";
 // import note from './note.js';
 import homeUser from './home-user.js';
 
 // Site functionality
-site.closeToast();
-site.translateItem();
+homeUser.closeToast();
+homeUser.translateItem();
 
 // Auth and Registration functionality
 window.toggleConfirmPassword = () => {

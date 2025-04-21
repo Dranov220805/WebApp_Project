@@ -1,129 +1,208 @@
 class HomeUser {
     constructor() {
-        document.addEventListener('DOMContentLoaded', this.initialize.bind(this));
+        document.addEventListener('DOMContentLoaded', () => this.initialize());
     }
 
     initialize() {
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        const sidebar = document.getElementById('sidebar');
-        const content = document.getElementById('content');
-        const sidebarItems = document.querySelectorAll('.sidebar-item');
-        const toggleGridBtns = document.querySelectorAll('.toggle-grid');
-        const toggleListBtns = document.querySelectorAll('.toggle-list');
-        const searchContainer = document.getElementById('search-container');
-        const searchIcon = document.getElementById('search-icon');
-        const searchInput = document.getElementById('search-input');
+        this.sidebarToggle = document.getElementById('sidebar-toggle');
+        this.sidebar = document.getElementById('sidebar');
+        this.content = document.getElementById('content');
+        this.sidebarItems = document.querySelectorAll('.sidebar-item');
+        this.toggleGridBtns = document.querySelectorAll('.toggle-grid');
+        this.toggleListBtns = document.querySelectorAll('.toggle-list');
+        this.searchContainer = document.getElementById('search-container');
+        this.searchIcon = document.getElementById('search-icon');
+        this.searchInput = document.getElementById('search-input');
 
-        let sidebarVisible = false;
-        let searchExpanded = false;
+        this.sidebarVisible = false;
+        this.searchExpanded = false;
 
-        const toggleSidebar = () => {
-            if (window.innerWidth <= 780) {
-                // Mobile
-                if (sidebarVisible) {
-                    sidebar.style.transform = 'translateX(-100%)';
-                    content.style.marginLeft = '0';
-                    document.body.classList.remove('sidebar-visible');
-                } else {
-                    sidebar.style.transform = 'translateX(0)';
-                    content.style.marginLeft = '0';
-                    document.body.classList.add('sidebar-visible');
-                }
-            } else {
-                // Desktop
-                if (sidebarVisible) {
-                    sidebar.classList.remove('expanded');
-                    sidebar.classList.add('collapsed');
-                    content.style.marginLeft = '80px';
-                } else {
-                    sidebar.classList.remove('collapsed');
-                    sidebar.classList.add('expanded');
-                    content.style.marginLeft = '240px';
-                }
-            }
-
-            sidebarVisible = !sidebarVisible;
-        };
-
-        const toggleLayout = (e) => {
-            const pinnedContainer = document.querySelector('.pinned-note__load');
-            const otherContainer = document.querySelector('.other-note__load');
-            const icon = e.currentTarget.querySelector('i');
-
-            if (!icon) return;
-
-            const isGrid = icon.classList.contains('fa-border-all');
-
-            // Toggle icons
-            icon.classList.toggle('fa-border-all');
-            icon.classList.toggle('fa-bars');
-
-            // Define transition helper
-            const animateTransition = (container, toClass, fromClass) => {
-                const cards = container.querySelectorAll('.note-sheet');
-                cards.forEach(card => {
-                    card.classList.add('animate-out');
-                });
-
-                setTimeout(() => {
-                    container.classList.remove(fromClass);
-                    container.classList.add(toClass);
-
-                    cards.forEach(card => {
-                        card.classList.remove('animate-out');
-                        card.classList.add('animate-in');
-
-                        // Remove animation class after it's done
-                        setTimeout(() => card.classList.remove('animate-in'), 300);
-                    });
-                }, 150); // Allow animate-out to play
-            };
-
-            if (isGrid) {
-                // Grid → List
-                animateTransition(pinnedContainer, 'load-list', 'load-grid');
-                animateTransition(otherContainer, 'load-list', 'load-grid');
-            } else {
-                // List → Grid
-                animateTransition(pinnedContainer, 'load-grid', 'load-list');
-                animateTransition(otherContainer, 'load-grid', 'load-list');
-            }
-        };
-
-        toggleGridBtns.forEach(btn => {
-            btn.addEventListener('click', toggleLayout);
-        });
-
-        // Optional search toggle
-        const toggleSearch = () => {
-            if (!searchExpanded) {
-                searchContainer.classList.add('expanded');
-                searchInput.focus();
-            } else {
-                searchContainer.classList.remove('expanded');
-                searchInput.value = '';
-            }
-            searchExpanded = !searchExpanded;
-        };
-
-        sidebarToggle?.addEventListener('click', toggleSidebar);
-        searchIcon?.addEventListener('click', toggleSearch);
-
-        document.addEventListener('click', event => {
-            if (searchExpanded &&
-                !searchContainer.contains(event.target) &&
-                !searchIcon.contains(event.target)) {
-                toggleSearch();
-            }
-
-            if (sidebarVisible && window.innerWidth < 768 &&
-                !sidebar.contains(event.target) &&
-                !sidebarToggle.contains(event.target)) {
-                toggleSidebar();
-            }
-        });
+        this.attachEventListeners();
+        this.checkVerification();
     }
 
+    index = () => {
+        console.log('hello world !!');
+    }
+
+    closeToast = () => {
+        $('#toast-close').click(() => {
+            $('#toast').addClass('d-none')
+        })
+    }
+
+    ajaxTest = () => {
+        $(document).ready(() => {
+            $('#button').click(function (){
+                $.ajax({
+                    url: '/student',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        name: 'Jake Johnson',
+                    }),
+                    success: function (response, status, xhr) {
+                        console.log('success');
+                        $('#para').html(response.message);
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(error);
+                    },
+                    complete: function (xhr, status){
+                        console.log('complete')
+                    }
+                })
+            })
+        })
+    }
+
+    translateItem = () => {
+        $('.loading-item').click(() => {
+            $('#overlay-loading').removeClass('d-none');
+        })
+    }
+
+    showToast(message, type = 'danger', duration = 3000) {
+        const toast = document.getElementById("toast");
+        const messageElement = document.getElementById("toast-message");
+        const closeBtn = document.getElementById("toast-close");
+
+        if (!toast || !messageElement || !closeBtn) return;
+
+        messageElement.innerText = message;
+        toast.classList.remove("d-none", "bg-success", "bg-danger");
+        toast.classList.add(`bg-${type}`);
+
+        toast.classList.remove("d-none");
+
+        const hideTimeout = setTimeout(() => toast.classList.add("d-none"), duration);
+        closeBtn.onclick = () => {
+            toast.classList.add("d-none");
+            clearTimeout(hideTimeout);
+        };
+    }
+
+    attachEventListeners() {
+        this.sidebarToggle?.addEventListener('click', () => this.toggleSidebar());
+        this.searchIcon?.addEventListener('click', () => this.toggleSearch());
+
+        this.toggleGridBtns.forEach(btn =>
+            btn.addEventListener('click', (e) => this.toggleLayout(e))
+        );
+
+        document.addEventListener('click', (event) => this.handleGlobalClick(event));
+    }
+
+    checkVerification() {
+        fetch('auth/verification', {
+            method: 'GET'
+        })
+            .then(res => res.json())
+            .then(data => {
+                const {status, message} = data;
+                this.showToast('Account has not been verified','warning');
+            })
+            .catch(
+                err => console.log(err)
+            );
+    }
+
+    toggleSidebar() {
+        const isMobile = window.innerWidth <= 780;
+
+        if (isMobile) {
+            if (this.sidebarVisible) {
+                this.sidebar.style.transform = 'translateX(-100%)';
+                this.content.style.marginLeft = '0';
+                document.body.classList.remove('sidebar-visible');
+            } else {
+                this.sidebar.style.transform = 'translateX(0)';
+                this.content.style.marginLeft = '0';
+                document.body.classList.add('sidebar-visible');
+            }
+        } else {
+            if (this.sidebarVisible) {
+                this.sidebar.classList.remove('expanded');
+                this.sidebar.classList.add('collapsed');
+                this.content.style.marginLeft = '80px';
+            } else {
+                this.sidebar.classList.remove('collapsed');
+                this.sidebar.classList.add('expanded');
+                this.content.style.marginLeft = '240px';
+            }
+        }
+
+        this.sidebarVisible = !this.sidebarVisible;
+    }
+
+    toggleSearch() {
+        if (!this.searchExpanded) {
+            this.searchContainer.classList.add('expanded');
+            this.searchInput.focus();
+        } else {
+            this.searchContainer.classList.remove('expanded');
+            this.searchInput.value = '';
+        }
+
+        this.searchExpanded = !this.searchExpanded;
+    }
+
+    handleGlobalClick(event) {
+        if (
+            this.searchExpanded &&
+            !this.searchContainer.contains(event.target) &&
+            !this.searchIcon.contains(event.target)
+        ) {
+            this.toggleSearch();
+        }
+
+        if (
+            this.sidebarVisible &&
+            window.innerWidth < 768 &&
+            !this.sidebar.contains(event.target) &&
+            !this.sidebarToggle.contains(event.target)
+        ) {
+            this.toggleSidebar();
+        }
+    }
+
+    toggleLayout(event) {
+        const icon = event.currentTarget.querySelector('i');
+        if (!icon) return;
+
+        const pinnedContainer = document.querySelector('.pinned-note__load');
+        const otherContainer = document.querySelector('.other-note__load');
+
+        const isGrid = icon.classList.contains('fa-border-all');
+
+        icon.classList.toggle('fa-border-all');
+        icon.classList.toggle('fa-bars');
+
+        if (isGrid) {
+            this.animateTransition(pinnedContainer, 'load-list', 'load-grid');
+            this.animateTransition(otherContainer, 'load-list', 'load-grid');
+        } else {
+            this.animateTransition(pinnedContainer, 'load-grid', 'load-list');
+            this.animateTransition(otherContainer, 'load-grid', 'load-list');
+        }
+    }
+
+    animateTransition(container, toClass, fromClass) {
+        const cards = container.querySelectorAll('.note-sheet');
+        cards.forEach(card => card.classList.add('animate-out'));
+
+        setTimeout(() => {
+            container.classList.remove(fromClass);
+            container.classList.add(toClass);
+
+            cards.forEach(card => {
+                card.classList.remove('animate-out');
+                card.classList.add('animate-in');
+
+                setTimeout(() => card.classList.remove('animate-in'), 300);
+            });
+        }, 150);
+    }
 }
 
 export default new HomeUser();

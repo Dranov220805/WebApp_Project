@@ -9,21 +9,21 @@ class HomeUserMiddleWare {
     }
     public function index() {
         if (!isset($_SESSION['roleId'])) {
-            header('location:/');
+            header('location:/log/login');
         } else {
             $this->homeUserController->index();
         }
     }
     public function userAccount() {
         if (!isset($_SESSION['roleId'])) {
-            header('location:/');
+            header('location:/log/login');
         } else {
             $this->homeUserController->homeAccount();
         }
     }
     public function userPreference() {
         if (!isset($_SESSION['roleId'])) {
-            header('location:/');
+            header('location:/log/login');
         } else {
             $this->homeUserController->userPreference();
         }

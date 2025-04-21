@@ -9,7 +9,7 @@ class LogMiddleWare{
 
     public function login(){
         if (isset($_SESSION['roleId'])) {
-            header('location: /');
+            header('location: /log/login');
         } else {
             $this->logController->login();
         }

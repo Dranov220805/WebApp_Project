@@ -6,7 +6,7 @@
         <!-- Left side: Menu icon (sidebar toggle) and Logo -->
         <div class="d-flex align-items-center">
             <button id="sidebar-toggle" class="sidebar-toggle" style="background: none; border: none; cursor: pointer; padding-left: 3px; padding-right: 30px">
-                <i class="navbar__item--icon fa-solid fa-bars"></i>
+                <i class="navbar__item--icon fa-solid fa-bars" style="color: #5f6368"></i>
             </button>
 
             <a href="/home" class="d-flex align-items-center" style="margin-left: 4px;">
@@ -18,7 +18,7 @@
         <div class="flex-grow-1 d-flex justify-content-center">
             <div style="max-width: 720px; width: 100%; position: relative;">
                 <div id="search-container" class="search-expanded" style="display: flex; background-color: #f1f3f4; border-radius: 8px; padding: 6px 8px; align-items: center; transition: width 0.3s ease;">
-                    <button id="search-icon" style="background: none; border: none; cursor: pointer; padding: 8px;">
+                    <button id="search-icon" style="color: #5f6368; background: none; border: none; cursor: pointer; padding: 8px;">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </button>
                     <input id="search-input" type="text" placeholder="Search notes" style="border: none; background: transparent; flex-grow: 1; padding: 4px 8px; outline: none; font-size: 14px; width: 100%; opacity: 1; transition: width 0.3s ease, opacity 0.3s ease;">
@@ -30,22 +30,25 @@
         <div class="d-flex align-items-center">
             <!-- Grid button with a popover -->
             <button type="button" class="btn toggle-grid" style="background: none; border: none; cursor: pointer; padding: 8px; margin-left: 8px;">
-                <i class="navbar__item--icon fa-solid fa-border-all"></i>
+                <i class="navbar__item--icon fa-solid fa-border-all" style="color: #5f6368;"></i>
             </button>
 
             <!-- Setting button with a popover -->
-            <a href="/user/preferences" type="button" class="btn" style="background: none; border: none; cursor: pointer; padding: 8px; margin-left: 8px;">
+            <a href="/user/preferences" type="button" class="btn" style="color: #5f6368; background: none; border: none; cursor: pointer; padding: 8px; margin-left: 8px;">
                 <i class="navbar__item--icon fa-solid fa-gear"></i>
             </a>
 
             <!-- Your button with a popover -->
             <button type="button" class="btn" data-bs-toggle="popover" data-bs-html="true" title="User Info"
-                    data-bs-content="<strong>Name:</strong> <?=$_SESSION['userName']?><br><strong>Email:</strong> <?=$_SESSION['email']?> <br><strong>Role:</strong> <?=$_SESSION['roleId']?>"
+                    data-bs-content="<strong>Name:</strong> <?=$_SESSION['userName']?>
+                    <br><strong>Email:</strong> <?=$_SESSION['email']?>
+                    <br><strong>Role:</strong> <?=$_SESSION['roleId']?>
+                    <br><strong>Verify Status:</strong> <?=$_SESSION['isVerified']?>"
                     style="background: none; border: none; cursor: pointer; padding: 8px; margin-left: 8px;">
-                <i class="navbar__item--icon fa-regular fa-circle-user"></i>
+                <i class="navbar__item--icon fa-regular fa-circle-user" style="color: #5f6368;"></i>
             </button>
             <button data-bs-toggle="modal" data-bs-target="#myModal" style="background: none; border: none; cursor: pointer; padding: 8px; margin-left: 8px;">
-                <i class="navbar__item--icon fa-regular fa-circle-user"></i>
+                <i class="navbar__item--icon fa-regular fa-circle-user" style="color: #5f6368;"></i>
             </button>
         </div>
     </div>
@@ -73,6 +76,8 @@
                 <strong>Email:</strong> <?=$_SESSION['email']?>
                 <br>
                 <strong>Role:</strong> <?=$_SESSION['roleId']?>
+                <br>
+                <strong>Verfy status:</strong> <?=$_SESSION['isVerified']?>
             </div>
 
             <!-- Modal footer -->

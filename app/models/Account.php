@@ -6,13 +6,15 @@ class Account{
     private string $password;
     private string $email;
     private string $roleId;
+    private int $isVerified;
 
-    public function __construct(string $accountId, string $userName, string $password, string $email, string $roleId){
+    public function __construct(string $accountId, string $userName, string $password, string $email, string $roleId, int $isVerified){
         $this->accountId = $accountId;
         $this->userName = $userName;
         $this->password = $password;
         $this->email = $email;
         $this->roleId = $roleId;
+        $this->isVerified = $isVerified;
     }
 
     public function getAccountId(): string{
@@ -53,6 +55,16 @@ class Account{
 
     public function setRoleId(string $roleId){
         $this->roleId = $roleId;
+    }
+
+    public function getIsVerified(): int
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(int $isVerified): void
+    {
+        $this->isVerified = $isVerified;
     }
 
 }

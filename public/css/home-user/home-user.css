@@ -71,6 +71,76 @@
     transition: margin-left 0.3s ease-in-out;
 }
 
+/*.note-sheet {*/
+/*    max-width: 500px;*/
+/*    width: 235px;*/
+/*    min-width: 235px;*/
+/*    background-color: white;*/
+/*    border-radius: 8px;*/
+/*    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);*/
+/*    overflow: hidden;*/
+/*    max-height: 500px;*/
+/*    height: 300px;*/
+/*    align-self: start;*/
+
+/*    !* Transition for smooth hover effects *!*/
+/*    transition: box-shadow 0.3s ease, transform 0.2s ease;*/
+/*}*/
+
+/*!* Hover effect *!*/
+/*.note-sheet:hover {*/
+/*    box-shadow: 0 4px 8px rgba(60,64,67,0.3), 0 6px 10px rgba(60,64,67,0.2);*/
+/*    transform: translateY(-2px); !* subtle lift effect *!*/
+/*}*/
+
+/*.note-sheet__title-content {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    flex-grow: 1;*/
+/*    max-height: 262px;*/
+/*}*/
+
+/*.note-sheet__content {*/
+/*    max-height: 170px;*/
+/*}*/
+
+/*.note-sheet__menu {*/
+/*    display: flex;*/
+/*    justify-content: space-between;*/
+/*    align-items: center;*/
+/*    padding: 8px 12px;*/
+/*    border-top: 1px solid #eee;*/
+/*    background-color: #f9f9f9;*/
+/*}*/
+
+/*!* Style for the icon buttons *!*/
+/*.note-sheet__menu button {*/
+/*    background: none;*/
+/*    border: none;*/
+/*    padding: 6px;*/
+/*    cursor: pointer;*/
+/*    border-radius: 6px;*/
+/*    transition: background-color 0.2s ease, transform 0.2s ease;*/
+/*    color: #555;*/
+/*    font-size: 16px;*/
+/*}*/
+
+/*!* Hover effect for buttons *!*/
+/*.note-sheet__menu button:hover {*/
+/*    background-color: #e0e0e0;*/
+/*    transform: scale(1.05);*/
+/*}*/
+
+/*!* Icon spacing for left group *!*/
+/*.note-sheet__menu > div button:not(:last-child) {*/
+/*    margin-right: 6px;*/
+/*}*/
+
+/*!* Optional: Slight spacing if needed on the rightmost button *!*/
+/*.note-sheet__menu > button {*/
+/*    margin-left: 8px;*/
+/*}*/
+
 .note-sheet {
     max-width: 500px;
     width: 235px;
@@ -91,6 +161,28 @@
 .note-sheet:hover {
     box-shadow: 0 4px 8px rgba(60,64,67,0.3), 0 6px 10px rgba(60,64,67,0.2);
     transform: translateY(-2px); /* subtle lift effect */
+}
+
+.note-sheet__title-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    max-height: 262px;
+    padding: 16px;
+}
+
+.note-sheet__title {
+    margin: 0 0 0.5rem 0;
+    font-size: 18px;
+}
+
+.note-sheet__content {
+    max-height: 170px;
+    font-size: 14px;
+    color: #444;
+    line-height: 1.4;
+    /*overflow-y: auto;*/
+    overflow-y: hidden;
 }
 
 .note-sheet__menu {
@@ -129,6 +221,54 @@
 .note-sheet__menu > button {
     margin-left: 8px;
 }
+
+/* ────────── Expanded Mode ────────── */
+.note-sheet.expanded {
+    position: fixed !important;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    height: 90%;
+    z-index: 1050;
+    overflow-y: auto;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+
+    .note-sheet__content {
+        overflow-y: auto;
+    }
+}
+
+/* Close button inside expanded note */
+.note-sheet__close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 26px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    z-index: 1060;
+}
+
+/* Overlay to blur background */
+.overlay {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(2px);
+    z-index: 1040;
+    display: none;
+}
+
+.overlay.active {
+    display: block;
+}
+
 
 .note-post {
     display: flex;
@@ -296,5 +436,32 @@
 @media (max-width: 600px) {
     .note-grid {
         column-count: 1;
+    }
+}
+
+@media (max-width: 780px) {
+    .sidebar {
+        top: 0;
+        left: -100%;
+        width: 250px;
+        height: 100vh;
+        z-index: 999;
+        transition: left 0.3s ease;
+        border-right: 1px solid #e0e0e0;
+        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar.mobile-open {
+        left: 0;
+    }
+
+    .sidebar.collapsed,
+    .sidebar.expanded {
+        width: 250px;
+    }
+
+    .sidebar__item--title {
+        opacity: 1;
+        width: auto;
     }
 }

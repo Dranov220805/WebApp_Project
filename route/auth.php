@@ -12,17 +12,18 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
         switch ($_GET['param_1']){
             case 'log':
                 if($_GET['param_2'] == 'login'){
-                    $authMiddleware->login();
+                    $authMiddleware->index();
                 } else if($_GET['param_2'] == 'logout'){
                     $authMiddleware->logout();
                 }
                 break;
+            case 'auth':
+                if($_GET['param_2'] == 'verification'){
+                    $authMiddleware->checkVerification();
+                }
         }
     } else if (isset($_GET['param_1'])){
-        switch ($_GET['param_1']){
-            case '':
-                $authMiddleware->login();
-        }
+
     }
 
 } else if($_SERVER['REQUEST_METHOD'] == 'POST'){

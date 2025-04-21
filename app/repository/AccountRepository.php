@@ -42,7 +42,8 @@ class AccountRepository{
             $row['userName'],
             $row['password'],
             $row['email'],
-            $row['roleId']
+            $row['roleId'],
+            $row['isVerified']
         );
     }
 
@@ -112,17 +113,18 @@ class AccountRepository{
 
         // Default parameter
         $roleId = 1;
+        $isVerified = 0;
 
         // Hash the password for secure storage
         $hashedPassword = password_hash($account_password, PASSWORD_DEFAULT);
 
         // Insert into the database
         $sql = "INSERT INTO `Account` 
-            (`accountId`, `userName`, `password`, `email`, `roleId`) 
-            VALUES (?, ?, ?, ?, ?)";
+            (`accountId`, `userName`, `password`, `email`, `roleId`, `isVerified`) 
+            VALUES (?, ?, ?, ?, ?, ?)";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param('ssssi', $uuid, $account_username, $hashedPassword, $email, $roleId);
+        $stmt->bind_param('ssssii', $uuid, $account_username, $hashedPassword, $email, $roleId, $isVerified);
 
         $result = $stmt->execute();
         $stmt->close();
@@ -134,7 +136,8 @@ class AccountRepository{
             $account_username,
             $account_password,
             $email,
-            $roleId
+            $roleId,
+            $isVerified
         );
     }
 

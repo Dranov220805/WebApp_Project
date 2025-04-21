@@ -79,21 +79,24 @@ class Notes {
         notes.forEach(note => {
             const div = document.createElement("div");
             div.className = "note-sheet d-flex flex-column";
+            div.onclick = () => this.expandNote(div); // <-- attach click handler
+
             div.innerHTML = `
-                <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
-                    <h3 class="note-sheet__title">${note.title}</h3>
-                    <div class="note-sheet__content">
-                        ${note.content.split(',').map(item => `<div>- ${item.trim()}</div>`).join('')}
-                    </div>
+            <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
+                <h3 class="note-sheet__title">${note.title}</h3>
+                <div class="note-sheet__content">
+                    ${note.content.replace(/\n/g, '<br>')}
                 </div>
-                <div class="note-sheet__menu">
-                    <div>
-                        <button><i class="fa-regular fa-square-plus"></i></button>
-                        <button><i class="fa-solid fa-tags"></i></button>
-                    </div>
-                    <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
+            </div>
+            <div class="note-sheet__menu" onclick="event.stopPropagation()">
+                <div>
+                    <button><i class="fa-regular fa-square-plus"></i></button>
+                    <button><i class="fa-solid fa-tags"></i></button>
+                    <button><i class="fa-solid fa-images"></i></button>
                 </div>
-            `;
+                <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
+            </div>
+        `;
             container.appendChild(div);
         });
     }
@@ -104,24 +107,79 @@ class Notes {
 
         const div = document.createElement("div");
         div.className = "note-sheet d-flex flex-column";
+        div.onclick = () => this.expandNote(div); // <-- attach click handler
+
         div.innerHTML = `
-            <div class="note-sheet" onclick="notesInstance.openNoteModal('${note.title}', '${note.content}')">
-                <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
-                    <h3 class="note-sheet__title">${note.title}</h3>
-                    <div class="note-sheet__content">
-                        ${note.content.split(',').map(item => `<div>- ${item.trim()}</div>`).join('')}
-                    </div>
-                </div>
-                <div class="note-sheet__menu" onclick="event.stopPropagation()">
-                    <div>
-                        <button><i class="fa-regular fa-square-plus"></i></button>
-                        <button><i class="fa-solid fa-tags"></i></button>
-                    </div>
-                    <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
-                </div>
+        <div class="note-sheet__title-content" style="padding: 16px;">
+            <h3 class="note-sheet__title">${note.title}</h3>
+            <div class="note-sheet__content">
+                ${note.content.replace(/\n/g, '<br>')}
             </div>
-        `;
+        </div>
+        <div class="note-sheet__menu" onclick="event.stopPropagation()">
+            <div>
+                <button><i class="fa-regular fa-square-plus"></i></button>
+                <button><i class="fa-solid fa-tags"></i></button>
+                <button><i class="fa-solid fa-images"></i></button>
+            </div>
+            <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
+        </div>
+    `;
         container.prepend(div);
+    }
+
+    // Function to expand the note into a modal-like view
+    expandNote(noteElement) {
+        // Avoid multiple expansions
+        if (noteElement.classList.contains('expanded')) return;
+
+        // Add overlay
+        let overlay = document.querySelector('.overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.className = 'overlay';
+            document.body.appendChild(overlay);
+        }
+        overlay.classList.add('active');
+
+        // Expand the note
+        noteElement.classList.add('expanded');
+
+        // Add close button
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'note-sheet__close-btn';
+        closeBtn.innerHTML = '&times;';
+        closeBtn.onclick = (e) => {
+            e.stopPropagation();
+            noteElement.classList.remove('expanded');
+            overlay.classList.remove('active');
+            closeBtn.remove();
+        };
+
+        noteElement.appendChild(closeBtn);
+    }
+
+    loadNewNotes() {
+        if (this.isLoading) return;
+        this.isLoading = true;
+
+        fetch(`/note/list?page=${1}&limit=${this.limit}`, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.data?.length > 0) {
+                    this.appendNotesToDOM(data.data);
+                    this.currentPage++;
+                }
+            })
+            .catch(err => {
+                console.error('Fetch failed:', err);
+                this.showToast('Failed to load notes. Please try again.');
+            })
+            .finally(() => this.isLoading = false);
     }
 
     autoResizeInput(event) {
@@ -221,7 +279,9 @@ class Notes {
                     this.showToast('Note created successfully!', 'success');
                     titleInput.remove();
                     contentInput.value = '';
-                    this.appendNewNotesToDOM(data);
+                    // this.appendNewNotesToDOM(data);
+                    document.querySelector(".other-note__load").innerHTML = '';
+                    this.loadNewNotes();
                 } else {
                     this.showToast(data.message || 'Failed to create note.', 'danger');
                 }

@@ -30,17 +30,6 @@ CREATE TABLE `Account` (
   `isVerified` BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-
-CREATE TABLE refresh_tokens (
-    `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `accountId` CHAR(36) NOT NULL,
-    `token` TEXT NOT NULL,
-    `expiresAt` DATETIME NOT NULL,
-    `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP,
-    `lastUsedAt` DATETIME DEFAULT CURRENT_TIMESTAMP,
-    `revoked` BOOLEAN DEFAULT FALSE
-);
-
 -- Table structure for table `Preference`
 CREATE TABLE `Preference` (
   `preferenceId` CHAR(36) NOT NULL PRIMARY KEY,
