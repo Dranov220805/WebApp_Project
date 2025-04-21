@@ -6,6 +6,7 @@ class HomeUser {
     initialize() {
         this.sidebarToggle = document.getElementById('sidebar-toggle');
         this.sidebar = document.getElementById('sidebar');
+        this.sidebar = document.getElementById('sidebar');
         this.content = document.getElementById('content');
         this.sidebarItems = document.querySelectorAll('.sidebar-item');
         this.toggleGridBtns = document.querySelectorAll('.toggle-grid');
@@ -84,6 +85,8 @@ class HomeUser {
 
     attachEventListeners() {
         this.sidebarToggle?.addEventListener('click', () => this.toggleSidebar());
+        // this.sidebar?.addEventListener('mouseenter', () => this.toggleSidebar());
+        // this.sidebar?.addEventListener('mouseleave', () => this.toggleSidebar());
         this.searchIcon?.addEventListener('click', () => this.toggleSearch());
 
         this.toggleGridBtns.forEach(btn =>

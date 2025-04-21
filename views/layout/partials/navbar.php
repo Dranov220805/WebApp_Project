@@ -5,7 +5,7 @@
     <div class="d-flex align-items-center w-100">
         <!-- Left side: Menu icon (sidebar toggle) and Logo -->
         <div class="d-flex align-items-center">
-            <button id="sidebar-toggle" class="sidebar-toggle" style="background: none; border: none; cursor: pointer; padding-left: 3px; padding-right: 30px">
+            <button id="sidebar-toggle" class="sidebar-toggle" style="background: none; border: none; cursor: pointer; padding-left: 0px; padding-right: 30px">
                 <i class="navbar__item--icon fa-solid fa-bars" style="color: #5f6368"></i>
             </button>
 
@@ -47,7 +47,7 @@
                     style="background: none; border: none; cursor: pointer; padding: 8px; margin-left: 8px;">
                 <i class="navbar__item--icon fa-regular fa-circle-user" style="color: #5f6368;"></i>
             </button>
-            <button data-bs-toggle="modal" data-bs-target="#myModal" style="background: none; border: none; cursor: pointer; padding: 8px; margin-left: 8px;">
+            <button data-bs-toggle="modal" class="info-modal" data-bs-target="#myModal" data-bs-backdrop="false" data-bs-scroll="true">
                 <i class="navbar__item--icon fa-regular fa-circle-user" style="color: #5f6368;"></i>
             </button>
         </div>
@@ -57,7 +57,7 @@
 <!-- Modal place here-->
 
 <!-- The Modal -->
-<div class="modal fade" id="myModal">
+<div class="modal fade" id="myModal" data-bs-backdrop="false" data-bs-scroll="true">
     <div class="modal-dialog">
         <div class="modal-content">
 
@@ -105,9 +105,27 @@
         font-size: 24px
     }
 
+    .info-modal {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        margin-left: 8px;
+    }
+
     .navbar__item--icon:hover {
         background-color: #f1f3f4;
     }
+
+    .modal-dialog {
+        margin-right: 30px;
+        margin-left: auto;
+    }
+
+    .modal-backdrop {
+        display: none !important;
+    }
+
     /* For mobile devices */
     @media (max-width: 780px) {
         .content {
