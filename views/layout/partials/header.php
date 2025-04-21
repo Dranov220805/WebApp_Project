@@ -18,6 +18,8 @@
     <link href='https://fonts.googleapis.com/css?family=Baloo Da 2' rel='stylesheet'>
     <link href='https://fonts.googleapis.com/css?family=Open Sans' rel='stylesheet'>
     <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="stylesheet" href="/public/css/layout/partials/navbar.css">
+    <link rel="stylesheet" href="/public/css/layout/partials/sidebar.css">
     <link rel="stylesheet" href="/public/css/log/login.css">
     <link rel="stylesheet" href="/public/css/log/register.css">
     <link rel="stylesheet" href="/public/css/home-user/home-user.css">

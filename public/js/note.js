@@ -241,10 +241,6 @@ class Notes {
         });
     }
 
-
-
-
-
     createNote_POST() {
         const titleInput = document.querySelector(".note-text__content");
         const contentInput = document.querySelector(".note-post__input");

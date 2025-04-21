@@ -1,0 +1,121 @@
+.sidebar {
+    height: calc(100vh - 56px);
+    background-color: #ffffff;
+    border-right: 1px solid #e0e0e0;
+    position: fixed;
+    left: 0;
+    top: 70px;
+    z-index: 100;
+    transition: width 0.3s ease, background 0.3s ease-in-out;
+    overflow-y: auto;
+    color: #e8eaed;
+}
+
+/* Collapsed sidebar state */
+.sidebar.collapsed {
+    width: 80px;
+}
+
+/* Expanded sidebar state */
+.sidebar.expanded {
+    width: 280px;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    background-color: #ffffff;
+    height: 50px;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: background-color 0.3s ease-in-out;
+    transition: width 0.3s ease;
+    text-decoration: none;
+}
+
+.sidebar-item:active {
+    background-color: #bdbdbd;
+}
+
+.sidebar-item:hover {
+    background-color: #898f97;
+    transition: background-color 0.3s ease-in-out;
+    .sidebar__item--icon {
+        color: #ffffff;
+    }
+    .sidebar__item--title {
+        color: #ffffff;
+    }
+}
+
+.sidebar__item--icon {
+    color: #5f6368;
+    font-size: 24px;
+    min-width: 40px;
+    display: flex;
+    justify-content: center;
+    margin-left: 4px;
+}
+
+.sidebar__item--title {
+    color: #000000;
+    font-size: 18px;
+    transition: opacity 0.2s ease;
+    margin-left: 8px;
+}
+
+/* Hide titles when sidebar is collapsed */
+.sidebar.collapsed .sidebar__item--title {
+    opacity: 0;
+    width: 0;
+}
+
+@media (max-width: 1100px) {
+    .sidebar {
+        display: block;
+        position: fixed;
+        z-index: 50;
+    }
+}
+
+@media (max-width: 800px) {
+    .sidebar {
+        height: 100vh;
+        z-index: 50;
+        transition: left 0.3s ease;
+        border-right: 1px solid #e0e0e0;
+        /*box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);*/
+        transition: width 0.3s ease, opacity 0.3s ease, background 0.3s ease-in-out;
+        overflow: hidden;
+        opacity: 1;
+        transition: translateX(0);
+    }
+
+    .sidebar.collapsed {
+        width: 80px;
+        opacity: 0;
+        transform: translateX(-100%);
+        visibility: hidden;
+        pointer-events: none;
+    }
+    .sidebar.expanded {
+        width: 280px;
+        display: block;
+        transform: translateX(0);
+    }
+
+    .sidebar__item--title {
+        width: 250px;
+        opacity: 1;
+        transform: translateX(0);
+        visibility: visible;
+    }
+}
+
+@media (max-width: 456px) {
+    .sidebar.expanded {
+        width: 180px;
+    }
+}

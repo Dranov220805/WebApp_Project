@@ -1,3 +1,145 @@
-.pernote-btn {
-    background-color: #0000FF;
+.navbar {
+    padding: 8px 16px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+    z-index: 200;
+    width: 100%;
 }
+
+.fixed-top {
+    position: fixed;
+    top: 0;
+}
+
+.sidebar-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding-left: 0;
+    padding-right: 30px;
+}
+
+.logo-link {
+    margin-left: 4px;
+}
+
+.search-bar-container {
+    max-width: 720px;
+    width: 100%;
+    position: relative;
+}
+
+.search-expanded {
+    display: flex;
+    background-color: #f1f3f4;
+    border-radius: 8px;
+    padding: 6px 8px;
+    align-items: center;
+    transition: width 0.3s ease;
+}
+
+.search-icon-btn {
+    color: #5f6368;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.search-input {
+    border: none;
+    background: transparent;
+    flex-grow: 1;
+    padding: 4px 8px;
+    outline: none;
+    font-size: 14px;
+    width: 100%;
+    opacity: 1;
+    transition: width 0.3s ease, opacity 0.3s ease;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    margin-left: 8px;
+    color: #5f6368;
+}
+
+.navbar__item--icon {
+    border: 1px solid white;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+    width: 40px;
+    height: 40px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    font-size: 24px;
+}
+
+.navbar__item--icon:hover {
+    background-color: #f1f3f4;
+}
+
+.info-modal {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    margin-left: 8px;
+}
+
+.modal-dialog {
+    margin-right: 30px;
+    margin-left: auto;
+}
+
+.modal-backdrop {
+    display: none !important;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 800px) {
+    .navbar {
+        padding: 8px 16px;
+        background-color: #ffffff;
+        border-bottom: 1px solid #e0e0e0;
+        z-index: 200;
+        width: 100%;
+        height: 76px;
+    }
+
+    .content {
+        width: 100%;
+        margin-left: 0 !important;
+    }
+
+    .note-sheet {
+        width: 100%;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    body.sidebar-visible {
+        display: block;
+        content: "";
+        position: fixed;
+        width: 200px;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 1);
+        z-index: 50;
+    }
+}
+
+/*@media (max-width: 480px) {*/
+/*    .navbar .flex-grow-1 {*/
+/*        margin: 0 8px;*/
+/*    }*/
+
+/*    .navbar .d-flex.align-items-center:last-child {*/
+/*        display: none !important;*/
+/*    }*/
+/*}*/

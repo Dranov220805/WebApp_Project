@@ -22,38 +22,9 @@ class HomeUser {
         this.checkVerification();
     }
 
-    index = () => {
-        console.log('hello world !!');
-    }
-
     closeToast = () => {
         $('#toast-close').click(() => {
             $('#toast').addClass('d-none')
-        })
-    }
-
-    ajaxTest = () => {
-        $(document).ready(() => {
-            $('#button').click(function (){
-                $.ajax({
-                    url: '/student',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        name: 'Jake Johnson',
-                    }),
-                    success: function (response, status, xhr) {
-                        console.log('success');
-                        $('#para').html(response.message);
-                    },
-                    error: function (xhr, status, error) {
-                        console.log(error);
-                    },
-                    complete: function (xhr, status){
-                        console.log('complete')
-                    }
-                })
-            })
         })
     }
 
@@ -93,7 +64,7 @@ class HomeUser {
             btn.addEventListener('click', (e) => this.toggleLayout(e))
         );
 
-        document.addEventListener('click', (event) => this.handleGlobalClick(event));
+        // document.addEventListener('click', (event) => this.handleGlobalClick(event));
     }
 
     checkVerification() {
@@ -111,17 +82,32 @@ class HomeUser {
     }
 
     toggleSidebar() {
-        const isMobile = window.innerWidth <= 780;
+        const isTablet = window.innerWidth <= 1100;
+        const isMobile = window.innerWidth <= 800;
 
-        if (isMobile) {
+        if (isTablet) {
             if (this.sidebarVisible) {
-                this.sidebar.style.transform = 'translateX(-100%)';
                 this.content.style.marginLeft = '0';
-                document.body.classList.remove('sidebar-visible');
+                this.sidebar.classList.remove('expanded');
+                this.sidebar.classList.add('collapsed');
+                this.content.style.marginLeft = '80px';
             } else {
-                this.sidebar.style.transform = 'translateX(0)';
                 this.content.style.marginLeft = '0';
-                document.body.classList.add('sidebar-visible');
+                this.sidebar.classList.remove('collapsed');
+                this.sidebar.classList.add('expanded');
+                this.content.style.marginLeft = '80px';
+            }
+        } else if (isMobile) {
+            if (this.sidebarVisible) {
+                this.content.style.marginLeft = '0';
+                this.sidebar.classList.remove('expanded');
+                this.sidebar.classList.add('collapsed');
+                // this.content.style.marginLeft = '80px';
+            } else {
+                this.content.style.marginLeft = '0';
+                this.sidebar.classList.remove('collapsed');
+                this.sidebar.classList.add('expanded');
+                // this.content.style.marginLeft = '80px';
             }
         } else {
             if (this.sidebarVisible) {
@@ -150,23 +136,27 @@ class HomeUser {
         this.searchExpanded = !this.searchExpanded;
     }
 
-    handleGlobalClick(event) {
-        if (
-            this.searchExpanded &&
-            !this.searchContainer.contains(event.target) &&
-            !this.searchIcon.contains(event.target)
-        ) {
-            this.toggleSearch();
-        }
+    // handleGlobalClick(event) {
+    //     if (
+    //         this.searchExpanded &&
+    //         !this.searchContainer.contains(event.target) &&
+    //         !this.searchIcon.contains(event.target)
+    //     ) {
+    //         this.toggleSearch();
+    //     }
+    //
+    //     if (
+    //         this.sidebarVisible &&
+    //         window.innerWidth < 800 &&
+    //         !this.sidebar.contains(event.target) &&
+    //         !this.sidebarToggle.contains(event.target)
+    //     ) {
+    //         this.toggleSidebar();
+    //     }
+    // }
 
-        if (
-            this.sidebarVisible &&
-            window.innerWidth < 768 &&
-            !this.sidebar.contains(event.target) &&
-            !this.sidebarToggle.contains(event.target)
-        ) {
-            this.toggleSidebar();
-        }
+    handleDeviceLayout() {
+
     }
 
     toggleLayout(event) {

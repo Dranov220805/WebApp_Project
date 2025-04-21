@@ -20,10 +20,10 @@
 
                 <div class="setting-row">
                     <div class="setting-label">Theme</div>
-                    <select class="form-select dropdown-select">
-                        <option selected>Light</option>
-                        <option>Dark</option>
-                        <option>System default</option>
+                    <select id="theme-selector" class="form-select dropdown-select">
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                        <option value="system" selected>System default</option>
                     </select>
                 </div>
 
