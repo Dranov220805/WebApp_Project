@@ -450,7 +450,7 @@ class Notes {
                         if (oldNote) oldNote.remove();
 
                         // Prepend new HTML to notes list
-                        const notesList = document.getElementById('other-note__load');
+                        const notesList = document.querySelector('.other-note__load');
                         const pinnedNoteList = document.getElementById('pinned-note__load');
                         if (notesList) {
                             // const tempDiv = document.createElement('div');
