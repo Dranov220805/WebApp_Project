@@ -1,6 +1,3 @@
-<?php
-?>
-
 <!doctype html>
 <html lang="en">
 <?php
@@ -8,33 +5,6 @@ include "./views/layout/partials/header.php";
 ?>
 
 <body>
-<!--<section class="login-section">-->
-<!--    <form action="#" onsubmit="return false" class="login-section-2__form">-->
-<!--        <figure class="login-section-2__form--figure mb-5">-->
-<!--            <img style="width: 200px; " src="/public/img/logo/logo-pernote-brand-nobg.png" draggable="false" alt="login img" class="login-section-2__form--image">-->
-<!--        </figure>-->
-<!--        <h1 class="login-section-2__form--greeting mb-1">Welcome to Pernote</h1>-->
-<!--        <h2 class="login-section-2__form--greeting-2 mb-3">Sign in to access your notes</h2>-->
-<!--        <div class="login-section-2__form--input input-group mb-3">-->
-<!--            <label class="form-label" for="username">Username:</label>-->
-<!--            <input id="id-input" class="login-section-2__form--input-box form-control" oninput="enableButton()" onclick="enableButton()" placeholder="Username" type="text">-->
-<!--        </div>-->
-<!--        <div class="login-section-2__form--input mb-3">-->
-<!--            <label class="form-label" for="login-button">Password:</label>-->
-<!--            <div>-->
-<!--                <input id="password-input" class="login-section-2__form--input-box form-control" oninput="enableButton()" onclick="enableButton()" placeholder="Password" type="password">-->
-<!--                <span><i id="toggle-password" class="fa-regular fa-eye-slash" onclick="togglePassword()"></i></span>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--        <div class="login-section-2__form--link-forgot-password">-->
-<!--            <p class="d-flex flex-direction-column"><span class="d-flex align-content-center"><input id="login-section-2__form--remember-me" type="checkbox" value="isRemembered"></span>Remember me</p>-->
-<!--            <a id="login-section-2__form--forgot_password" class="mr-0" href="#">Forgot password?</a>-->
-<!--        </div>-->
-<!--        <button id="login-button" class="login-section-2__form--button">Sign in</button>-->
-<!--        <p>Don't have an account? <span><a id="register-button" class="login-section-2__form--link-signup">Sign up</a></span></p>-->
-<!--    </form>-->
-<!--</section>-->
-
 <section class="login-section py-5">
     <div class="container">
         <div class="row justify-content-center " style="width=30%">

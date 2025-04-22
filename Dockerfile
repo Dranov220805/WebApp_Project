@@ -17,3 +17,4 @@ RUN a2enmod rewrite
 # use this to run header
 RUN a2enmod headers
 RUN service apache2 restart
+

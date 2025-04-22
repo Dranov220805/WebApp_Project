@@ -14,7 +14,7 @@ class Auth {
     }
 
     // Show toast message with manual close
-    showLoginToast(message, type = 'success', duration = 3000) {
+    showLoginToast(message, type = 'success', duration = 2000) {
         const toast = document.getElementById("toast");
         const messageElement = document.getElementById("toast-message");
         const closeBtn = document.getElementById("toast-close");
@@ -106,7 +106,7 @@ function handleClickActivity() {
 function handleIdleTimeout() {
     console.log('User idle too long. Logging out...');
     fetch('/log/logout')
-        .then(() => window.location.href = '/')
+        .then(() => window.location.href = '/log/login')
         .catch(err => console.error('Logout error:', err));
 }
 

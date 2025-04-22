@@ -30,8 +30,6 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
                     $registerMiddleWare->register_POST();
                 }
                 break;
-            default:
-                break;
         }
     } else if (isset($_GET['param_1'])){
 

@@ -21,6 +21,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
                 if($_GET['param_2'] == 'verification'){
                     $authMiddleware->checkVerification();
                 }
+                break;
         }
     } else if (isset($_GET['param_1'])){
 

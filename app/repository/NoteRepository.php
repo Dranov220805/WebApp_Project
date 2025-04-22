@@ -16,7 +16,8 @@ class NoteRepository{
     {
         $sql = "SELECT n.* FROM `Account` a
         LEFT JOIN `Note` n ON a.accountId = n.accountId
-        WHERE a.userName = ? 
+        LEFT JOIN `Modification` m ON m.noteId = n.noteId
+        WHERE a.accountId = ? 
         AND n.isDeleted = FALSE
         ORDER BY n.createDate DESC
         LIMIT ? OFFSET ?";
@@ -47,7 +48,7 @@ class NoteRepository{
         WHERE a.accountId = ? 
         AND n.isDeleted = FALSE
         AND m.isPinned = TRUE
-        ORDER BY n.createDate DESC";
+        ORDER BY m.pinnedTime DESC";
 
         $stmt = $this->conn->prepare($sql);
         if (!$stmt) {
@@ -62,6 +63,34 @@ class NoteRepository{
             $note[] = $row;
         }
         return $note;
+    }
+
+    public function getPinnedNotesByAccountIdPaginated(string $accountId, int $limit, int $offset): array {
+        $sql = "SELECT n.* FROM `Account` a
+        LEFT JOIN `Note` n ON a.accountId = n.accountId
+        LEFT JOIN `Modification` m ON m.noteId = n.noteId
+        WHERE a.accountId = ? 
+        AND n.isDeleted = FALSE
+        AND m.isPinned = TRUE
+        ORDER BY n.createDate DESC
+        LIMIT ? OFFSET ?";
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Failed to prepare SQL statement: " . $this->conn->error);
+        }
+
+        $stmt->bind_param("sii", $accountId, $limit, $offset);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $notes = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $notes[] = $row; // Optionally map to a Note model
+        }
+
+        return $notes;
     }
 
     public function createNoteByAccountIdAndTitleAndContent($accountId, $title, $content): ?Note {
@@ -122,6 +151,28 @@ class NoteRepository{
             $isDeleted, // Assuming you're not modifying isDeleted here
             $isProtected  // Assuming you're not modifying isProtected here
         );
+    }
+
+    public function searchNotesByAccountId(string $accountId, string $searchTerm): array
+    {
+        $sql = "SELECT * FROM `Note` 
+            WHERE `accountId` = ? 
+            AND `isDeleted` = FALSE 
+            AND (`title` LIKE ? OR `content` LIKE ?)
+            ORDER BY `createDate` DESC";
+
+        $stmt = $this->conn->prepare($sql);
+        $likeTerm = '%' . $searchTerm . '%';
+        $stmt->bind_param("sss", $accountId, $likeTerm, $likeTerm);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $notes = [];
+        while ($row = $result->fetch_assoc()) {
+            $notes[] = $row;
+        }
+
+        return $notes;
     }
 
 }

@@ -14,6 +14,9 @@ class NoteService {
     public function getPinnedNotesByAccountId(string $accountId) {
         return $this->noteRepository->getPinnedNotesByAccountId($accountId);
     }
+    public function getPinnedNotesByAccountIdPaginated(string $accountId, int $limit, int $offset): array {
+        return $this->noteRepository->getPinnedNotesByAccountIdPaginated($accountId, $limit, $offset);
+    }
 
     public function createNoteByAccountIdAndTitleAndContent($accountId, $title, $content)
     {
@@ -55,6 +58,11 @@ class NoteService {
             'modifiedDate' => $result->getCreateDate(),
             'message' => 'Note updated'
         ];
+    }
+
+    public function searchNotesByAccountId(string $accountId, string $searchTerm): array
+    {
+        return $this->noteRepository->searchNotesByAccountId($accountId, $searchTerm);
     }
 }
 ?>

@@ -7,10 +7,8 @@ class NoteController {
     }
 
     public function getNotes() {
-        header('Content-Type: application/json');
 
-        $accountId = $_SESSION['userName'] ?? null;
-
+        $accountId = $_SESSION['accountId'] ?? null;
         $intPage = isset($_GET['page']) ? $_GET['page'] : 1;
         $perPage = isset($_GET['limit']) ? $_GET['limit'] : 10;
 
@@ -155,11 +153,31 @@ class NoteController {
 
     }
 
+    public function searchNotes()
+    {
+        $searchTerm = $_GET['query'] ?? '';
+
+        if (empty($searchTerm)) {
+            echo json_encode(['status' => false, 'message' => 'Search term is empty']);
+            return;
+        }
+
+        $accountId = $_SESSION['accountId'] ?? null;
+
+        if (!$accountId) {
+            http_response_code(401);
+            echo json_encode(['status' => false, 'message' => 'Unauthorized']);
+            return;
+        }
+
+        $notes = $this->noteService->searchNotesByAccountId($accountId, $searchTerm);
+
+        echo json_encode(['status' => true, 'data' => $notes]);
+    }
+
     public function getAllNotes() {
-        // Fetch all notes for the current user
         $notes = $this->noteService->getAllNotes();
 
-        // Return the result as a JSON response
         echo json_encode(['data' => $notes]);
     }
 }

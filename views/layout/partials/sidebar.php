@@ -10,28 +10,22 @@
             <span class="sidebar__item--title">Notes</span>
         </a>
 
-        <!-- Reminders item -->
-        <div class="sidebar-item">
-            <i class="sidebar__item--icon fa-solid fa-bell" title="Reminders"></i>
-            <span class="sidebar__item--title">Reminders</span>
-        </div>
-
         <!-- Labels item -->
-        <div class="sidebar-item">
+        <a href="/home/label" class="sidebar-item">
             <i class="sidebar__item--icon fa-solid fa-tags" title="All labels"></i>
             <span class="sidebar__item--title">Labels</span>
-        </div>
+        </a>
 
         <!-- Archive item -->
-        <div class="sidebar-item">
+        <a href="/home/archive" class="sidebar-item">
             <i class="sidebar__item--icon fa-solid fa-box-archive" title="Archive"></i>
             <span class="sidebar__item--title">Archive</span>
-        </div>
+        </a>
 
         <!-- Trash item -->
-        <div class="sidebar-item">
+        <a href="/home/trash" class="sidebar-item">
             <i class="sidebar__item--icon fa-solid fa-trash" title="Trash"></i>
             <span class="sidebar__item--title">Trash</span>
-        </div>
+        </a>
     </div>
 </div>

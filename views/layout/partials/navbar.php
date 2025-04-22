@@ -4,7 +4,7 @@
 <nav class="navbar fixed-top">
     <div class="d-flex align-items-center w-100">
         <!-- Left side: Menu icon (sidebar toggle) and Logo -->
-        <div class="d-flex align-items-center" style="padding-right: 25px">
+        <div class="d-flex align-items-center" style="padding-right: 20px">
             <button id="sidebar-toggle" class="sidebar-toggle">
                 <i class="navbar__item--icon fa-solid fa-bars"></i>
             </button>
@@ -15,7 +15,7 @@
         </div>
 
         <!-- Middle: Search bar -->
-        <div class="flex-grow-1 d-flex justify-content-center">
+        <div class="search-main-container">
             <div class="search-bar-container">
                 <div id="search-container" class="search-expanded">
                     <button id="search-icon" class="search-icon-btn">
@@ -32,11 +32,11 @@
                 <i class="navbar__item--icon fa-solid fa-border-all"></i>
             </button>
 
-            <a href="/user/preferences" type="button" class="btn icon-btn">
+            <a href="/home/account" type="button" class="btn icon-btn">
                 <i class="navbar__item--icon fa-solid fa-gear"></i>
             </a>
 
-            <button data-bs-toggle="modal" class="info-modal" data-bs-target="#myModal" data-bs-backdrop="false" data-bs-scroll="true">
+            <button data-bs-toggle="modal" class="info-modal" data-bs-target="#infoModal" data-bs-backdrop="false" data-bs-scroll="true">
                 <i class="navbar__item--icon fa-regular fa-circle-user"></i>
             </button>
         </div>
@@ -44,7 +44,7 @@
 </nav>
 
 <!-- The Modal -->
-<div class="modal fade" id="myModal" data-bs-backdrop="false" data-bs-scroll="true">
+<div class="modal fade" id="infoModal" data-bs-backdrop="false" data-bs-scroll="true">
     <div class="modal-dialog">
         <div class="modal-content">
 

@@ -1,7 +1,3 @@
-<?php
-
-?>
-
 <!-- Main container with sidebar and content -->
 <div class="container main-container d-flex" style="margin-top: 56px;">
 

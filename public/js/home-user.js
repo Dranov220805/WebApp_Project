@@ -14,12 +14,13 @@ class HomeUser {
         this.searchContainer = document.getElementById('search-container');
         this.searchIcon = document.getElementById('search-icon');
         this.searchInput = document.getElementById('search-input');
+        this.searchTimeout = null;
 
         this.sidebarVisible = false;
         this.searchExpanded = false;
 
         this.attachEventListeners();
-        this.checkVerification();
+        // this.checkVerification();
     }
 
     closeToast = () => {
@@ -56,15 +57,11 @@ class HomeUser {
 
     attachEventListeners() {
         this.sidebarToggle?.addEventListener('click', () => this.toggleSidebar());
-        // this.sidebar?.addEventListener('mouseenter', () => this.toggleSidebar());
-        // this.sidebar?.addEventListener('mouseleave', () => this.toggleSidebar());
-        this.searchIcon?.addEventListener('click', () => this.toggleSearch());
+        this.searchInput?.addEventListener('input', () => this.handleSearch());
 
         this.toggleGridBtns.forEach(btn =>
             btn.addEventListener('click', (e) => this.toggleLayout(e))
         );
-
-        // document.addEventListener('click', (event) => this.handleGlobalClick(event));
     }
 
     checkVerification() {
@@ -124,37 +121,6 @@ class HomeUser {
         this.sidebarVisible = !this.sidebarVisible;
     }
 
-    toggleSearch() {
-        if (!this.searchExpanded) {
-            this.searchContainer.classList.add('expanded');
-            this.searchInput.focus();
-        } else {
-            this.searchContainer.classList.remove('expanded');
-            this.searchInput.value = '';
-        }
-
-        this.searchExpanded = !this.searchExpanded;
-    }
-
-    // handleGlobalClick(event) {
-    //     if (
-    //         this.searchExpanded &&
-    //         !this.searchContainer.contains(event.target) &&
-    //         !this.searchIcon.contains(event.target)
-    //     ) {
-    //         this.toggleSearch();
-    //     }
-    //
-    //     if (
-    //         this.sidebarVisible &&
-    //         window.innerWidth < 800 &&
-    //         !this.sidebar.contains(event.target) &&
-    //         !this.sidebarToggle.contains(event.target)
-    //     ) {
-    //         this.toggleSidebar();
-    //     }
-    // }
-
     handleDeviceLayout() {
 
     }
@@ -195,6 +161,73 @@ class HomeUser {
                 setTimeout(() => card.classList.remove('animate-in'), 300);
             });
         }, 150);
+    }
+
+    handleSearch() {
+        clearTimeout(this.searchTimeout);
+
+        const query = this.searchInput.value.trim();
+        if (!query) {
+            this.clearSearchResults();
+            return;
+        }
+
+        this.searchTimeout = setTimeout(() => {
+            this.performSearch(query);
+        }, 500); // Delay of 500ms
+    }
+
+    performSearch(query) {
+        fetch(`/note/search?query=${encodeURIComponent(query)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status && data.data.length > 0) {
+                    this.displaySearchResults(data.data);
+                } else {
+                    this.clearSearchResults();
+                }
+            })
+            .catch(err => console.error('Search failed:', err));
+    }
+
+    displaySearchResults(notes) {
+        const container = document.querySelector('.search-note__load');
+        if (!container) return;
+
+        notes.forEach(note => {
+            const div = document.createElement("div");
+            div.className = "note-sheet d-flex flex-column";
+            div.dataset.id = note.noteId;
+            // div.onclick = () => this.expandNote(div);
+            div.onclick = () => this.openNoteInModal(note);
+
+
+            div.innerHTML = `
+            <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
+                <h3 class="note-sheet__title">${note.title}</h3>
+                <div class="note-sheet__content">
+                    ${note.content.replace(/\n/g, '<br>')}
+                </div>
+            </div>
+            <div class="note-sheet__menu" onclick="event.stopPropagation()">
+                <div>
+                    <button class="search-note-pin-btn" title="Unpin Note"><i class="fa-solid fa-thumbtack"></i></button>
+                    <button title="Label"><i class="fa-solid fa-tags"></i></button>
+                    <button title="Image"><i class="fa-solid fa-images"></i></button>
+                    <button class="search-note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
+                    <button class="search-note-delete-btn" title="Delete" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
+                </div>
+                <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
+            </div>
+        `;
+            // Append to container
+            container.appendChild(div);
+        });
+    }
+
+    clearSearchResults() {
+        const container = document.querySelector('.search-note__load');
+        container.innerHTML = ''; // Clear search results
     }
 }
 

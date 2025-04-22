@@ -1,8 +1,10 @@
+<!-- Main container with sidebar and content -->
 <?php
+    /*
+     * @var $data
+     * */
 
 ?>
-
-<!-- Main container with sidebar and content -->
 <div class="container main-container d-flex" style="margin-top: 56px;">
 
     <?php
@@ -38,26 +40,87 @@
                 </form>
             </div>
 
-            <!-- Pinned Notes grid -->
+<!--            Search Note grid-->
             <div class="pinned-note">
-                <h6 class="note-layout__title">Pinned</h6>
+                <h6 class="note-layout__title">Search Result</h6>
                 <div class="note-grid d-flex justify-content-center">
-                    <div class="pinned-note__load load-grid" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center">
-<!--                        Start of Pinned Note Grid-->
-
-<!--                        End of Pinned Note Grid-->
+                    <div class="search-note__load load-grid" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center">
+<!--                        Search Result Note Grid-->
+<!--                        End of Pinned Note-->
                     </div>
                 </div>
             </div>
 
-            <!-- Other Notes grid -->
+<!--            Pinned Notes grid -->
             <div class="pinned-note">
+                <h6 class="note-layout__title">Pinned</h6>
+                <div class="note-grid d-flex justify-content-center">
+                    <div class="pinned-note__load load-grid" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center">
+                        <!-- Render pinned notes -->
+                        <?php if (!empty($data['pinnedNotes'])): ?>
+                            <?php foreach ($data['pinnedNotes'] as $note): ?>
+                                <div class="note-sheet d-flex flex-column"
+                                     data-note-id="<?= htmlspecialchars($note['noteId']) ?>"
+                                     data-note-title="<?= htmlspecialchars($note['title']) ?>"
+                                     data-note-content="<?= htmlspecialchars($note['content']) ?>">
+                                    <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
+                                        <h3 class="note-sheet__title"><?= htmlspecialchars($note['title']) ?></h3>
+                                        <div class="note-sheet__content">
+                                            <?= htmlspecialchars($note['content']) ?>
+                                        </div>
+                                    </div>
+                                    <div class="note-sheet__menu" onclick="event.stopPropagation()">
+                                        <div>
+                                            <button class="pinned-note-pin-btn" title="Unpin Note"><i class="fa-solid fa-thumbtack"></i></button>
+                                            <button title="Label"><i class="fa-solid fa-tags"></i></button>
+                                            <button title="Image"><i class="fa-solid fa-images"></i></button>
+                                            <button class="pinned-note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
+                                            <button class="pinned-note-delete-btn" title="Delete" data-note-id="<?= htmlspecialchars($note['noteId']) ?>"><i class="fa-solid fa-trash"></i></button>
+                                        </div>
+                                        <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p>No pinned notes available.</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+<!--            Other Note Grid-->
+            <div class="other-note">
                 <h6 class="note-layout__title">Others</h6>
                 <div class="note-grid d-flex justify-content-center">
                     <div class="other-note__load load-grid" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center">
-<!--                        Start of Others Note Grid-->
-
-<!--                        End of Others Note Grid-->
+                        <!-- Render other notes -->
+                        <?php if (!empty($data['otherNotes'])): ?>
+                            <?php foreach ($data['otherNotes'] as $note): ?>
+                                <div class="note-sheet d-flex flex-column"
+                                     data-note-id="<?= htmlspecialchars($note['noteId']) ?>"
+                                     data-note-title="<?= htmlspecialchars($note['title']) ?>"
+                                     data-note-content="<?= htmlspecialchars($note['content']) ?>">
+                                    <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
+                                        <h3 class="note-sheet__title"><?= htmlspecialchars($note['title']) ?></h3>
+                                        <div class="note-sheet__content">
+                                            <?= htmlspecialchars($note['content']) ?>
+                                        </div>
+                                    </div>
+                                    <div class="note-sheet__menu" onclick="event.stopPropagation()">
+                                        <div>
+                                            <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
+                                            <button title="Label"><i class="fa-solid fa-tags"></i></button>
+                                            <button title="Image"><i class="fa-solid fa-images"></i></button>
+                                            <button class="note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
+                                            <button class="note-delete-btn" title="Delete" data-note-id="<?= htmlspecialchars($note['noteId']) ?>"><i class="fa-solid fa-trash"></i></button>
+                                        </div>
+                                        <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p>No other notes available.</p>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -76,8 +139,11 @@
                     <textarea class="note-content-input form-control" style="height: 300px; resize: none;"></textarea>
                 </div>
                 <div class="modal-footer d-flex justify-content-between align-items-center">
-                    <div class="save-status-icon">
-                        <i class="fa-solid fa-check-circle text-success"></i>
+                    <div class="save-status-icon d-flex flex-row">
+                        <p class="text-success" style="padding-right: 5px; margin-bottom: 0px; align-items: center;">Saved</p>
+                        <span>
+                            <i class="fa-solid fa-check-circle text-success"></i>
+                        </span>
                     </div>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
@@ -105,9 +171,39 @@
     </div>
 
     <?php
-include "./views/layout/partials/overlay_loading.php";
-?>
-
+        include "./views/layout/partials/overlay_loading.php";
+    ?>
+</div>
 
 <!-- JavaScript for loading note content -->
 <script src="/public/js/note.js" type="module"></script>
+
+<script>
+    // let currentPage = 1;
+    // let isLoading = false;
+    //
+    // window.addEventListener("scroll", () => {
+    //     const scrollPosition = window.scrollY + window.innerHeight;
+    //     const pageHeight = document.documentElement.scrollHeight;
+    //
+    //     if (scrollPosition >= pageHeight - 100 && !isLoading) {
+    //         loadMoreNotes();
+    //     }
+    // });
+    //
+    // function loadMoreNotes() {
+    //     isLoading = true;
+    //     currentPage++;
+    //
+    //     fetch(`/home/load-notes?page=${currentPage}&limit=10`)
+    //         .then(res => res.text())
+    //         .then(html => {
+    //             const container = document.querySelector(".other-note__load");
+    //             container.insertAdjacentHTML("beforeend", html);
+    //         })
+    //         .catch(err => console.error("Error loading more notes", err))
+    //         .finally(() => {
+    //             isLoading = false;
+    //         });
+    // }
+</script>

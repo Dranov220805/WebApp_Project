@@ -8,51 +8,6 @@ include "./views/layout/partials/header.php";
 ?>
 
 <body>
-<!--<section class="min-vh-100 d-flex align-items-center justify-content-center bg-light">-->
-<!--    <div class="card shadow-sm p-4 rounded-4" style="max-width: 400px; width: 100%;">-->
-<!--        <div class="text-center mb-4">-->
-<!--            <i class="bi bi-journal-text fs-2 mb-2"></i>-->
-<!--            <figure class="text-center mb-4 mt-3">-->
-<!--                <img src="/public/img/logo/logo-pernote-brand-nobg.png" alt="login img" style="width: 200px;" draggable="false" class="img-fluid login-section-2__form--image">-->
-<!--            </figure>-->
-<!--            <p class="text-muted">Create your account</p>-->
-<!--        </div>-->
-<!---->
-<!--        <form action="#" onsubmit="return false">-->
-<!--            <div class="mb-3">-->
-<!--                <label for="email" class="form-label">Email address</label>-->
-<!--                <input type="email" class="form-control rounded-3" id="email" placeholder="Enter email" required>-->
-<!--            </div>-->
-<!---->
-<!--            <div class="mb-3">-->
-<!--                <label for="displayName" class="form-label">Display name</label>-->
-<!--                <input type="text" class="form-control rounded-3" id="displayName" placeholder="Enter display name" required>-->
-<!--            </div>-->
-<!---->
-<!--            <div class="mb-3">-->
-<!--                <label for="password" class="form-label">Password</label>-->
-<!--                <input type="password" class="form-control rounded-3" id="password" placeholder="Enter password" required>-->
-<!--            </div>-->
-<!---->
-<!--            <div class="mb-3">-->
-<!--                <label for="confirmPassword" class="form-label">Confirm password</label>-->
-<!--                <input type="password" class="form-control rounded-3" id="confirmPassword" placeholder="Re-enter password" required>-->
-<!--            </div>-->
-<!---->
-<!--            <p class="small text-muted mb-3">-->
-<!--                By signing up, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.-->
-<!--            </p>-->
-<!---->
-<!--            <div class="d-grid mb-2">-->
-<!--                <button id="register-button" class="btn btn-primary rounded-3 fw-semibold">Create account</button>-->
-<!--            </div>-->
-<!---->
-<!--            <p class="text-center mt-3 mb-0">-->
-<!--                Already have an account? <a href="/log/login">Sign in</a>-->
-<!--            </p>-->
-<!--        </form>-->
-<!--    </div>-->
-<!--</section>-->
 
 <section class="login-section py-5">
     <div class="container">
@@ -115,7 +70,7 @@ include "./views/layout/partials/header.php";
                     </div>
 
                     <p class="text-center">Already have an account?
-                        <a href="/" id="login-link" class="login-section-2__form--link-signup">Sign in</a>
+                        <a href="/log/login" id="login-link" class="login-section-2__form--link-signup">Sign in</a>
                     </p>
                 </form>
             </div>

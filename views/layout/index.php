@@ -10,6 +10,9 @@
     ?>
 <body>
     <?php
+        include "./views/layout/partials/toast.php";
+    ?>
+    <?php
         include "./views/layout/partials/navbar.php";
     ?>
     <?php
@@ -18,9 +21,6 @@
 <!--    --><?php
 //        include "./views/layout/partials/footer.php";
 //    ?>
-    <?php
-        include "./views/layout/partials/toast.php";
-    ?>
     <?php
         include "./views/layout/partials/overlay_loading.php";
     ?>

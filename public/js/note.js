@@ -7,22 +7,41 @@ class Notes {
         this.lastScrollTop = 0;
 
         this.setupEvents();
-        this.loadPinnedNotes();
-        this.loadNotes();
+        // this.loadPinnedNotes();
+        // this.loadNotes();
     }
 
     setupEvents() {
         const createNoteBtn = document.querySelector(".create-note-btn");
         const noteInput = document.querySelector(".note-post__input");
-        const noteModalClose = document.querySelector(".note-modal-close");
         const notePinBtn = document.querySelector(".note-pin-btn");
 
         if (createNoteBtn) createNoteBtn.addEventListener("click", () => this.createNote_POST());
         if (noteInput) noteInput.addEventListener("input", this.autoResizeInput);
         if (notePinBtn) notePinBtn.addEventListener("click", () => this.pinNewNote());
 
+        // Event delegation for delete buttons
+        document.addEventListener("click", (event) => {
+            const deleteBtn = event.target.closest(".note-delete-btn, .pinned-note-delete-btn");
+            if (deleteBtn) {
+                const noteId = deleteBtn.dataset.noteId;
+                const note = { noteId };
+                this.deleteNoteInModal(note);
+            }
+        });
 
-        window.addEventListener("scroll", () => this.handleScroll());
+        document.querySelectorAll('.note-sheet').forEach(noteEl => {
+            noteEl.addEventListener('click', () => {
+                const note = {
+                    noteId: noteEl.dataset.noteId,
+                    title: noteEl.dataset.noteTitle,
+                    content: noteEl.dataset.noteContent
+                };
+                this.openNoteInModal(note);
+            });
+        });
+
+        // window.addEventListener("scroll", () => this.handleScroll());
         this.initNotePostTrigger();
     }
 
@@ -60,8 +79,9 @@ class Notes {
         this.isLoading = true;
 
         fetch(`/note/list?page=${this.currentPage}&limit=${this.limit}`, {
+            method: 'GET',
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                'Content-Type': 'application/json'
             }
         })
             .then(res => res.json())
@@ -104,7 +124,7 @@ class Notes {
                     <button title="Label"><i class="fa-solid fa-tags"></i></button>
                     <button title="Image"><i class="fa-solid fa-images"></i></button>
                     <button class="note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
-                    <button class="note-delete-btn" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                    <button class="note-delete-btn" title="Delete"><i class="fa-solid fa-trash" data-note-id="${note.noteId}"></i></button>
                 </div>
                 <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
             </div>
@@ -119,8 +139,9 @@ class Notes {
         this.isLoadingPinned = true;
 
         fetch(`/note/pinned/list`, {
+            method: 'GET',
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                'Content-Type': 'application/json'
             }
         })
             .then(res => res.json())
@@ -163,7 +184,7 @@ class Notes {
                     <button title="Label"><i class="fa-solid fa-tags"></i></button>
                     <button title="Image"><i class="fa-solid fa-images"></i></button>
                     <button class="pinned-note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
-                    <button class="pinned-note-delete-btn" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                    <button class="pinned-note-delete-btn" title="Delete" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
                 </div>
                 <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
             </div>
@@ -255,40 +276,152 @@ class Notes {
         });
     }
 
+    // openNoteInModal(note) {
+    //     const modalEl = document.getElementById('noteModal');
+    //     const modal = new bootstrap.Modal(modalEl);
+    //
+    //     // Fill modal fields
+    //     const titleInput = modalEl.querySelector('.note-title-input');
+    //     const contentInput = modalEl.querySelector('.note-content-input');
+    //     const icon = modalEl.querySelector('.save-status-icon i');
+    //     const iconText = modalEl.querySelector('.save-status-icon p');
+    //
+    //     titleInput.value = note.title;
+    //     contentInput.value = note.content;
+    //     icon.className = 'fa-solid fa-check-circle text-success';
+    //     iconText.innerHTML = 'Saved';
+    //
+    //     // Show modal
+    //     modal.show();
+    //
+    //     // Setup auto-save (reuse logic)
+    //     this.setupAutoSaveModal(note.noteId, titleInput, contentInput, icon, iconText);
+    // }
+
     openNoteInModal(note) {
         const modalEl = document.getElementById('noteModal');
         const modal = new bootstrap.Modal(modalEl);
 
-        // Fill modal fields
+        // Ensure modal elements exist
+        if (!modalEl) {
+            console.error("Modal element not found");
+            return;
+        }
+
         const titleInput = modalEl.querySelector('.note-title-input');
         const contentInput = modalEl.querySelector('.note-content-input');
         const icon = modalEl.querySelector('.save-status-icon i');
+        const iconText = modalEl.querySelector('.save-status-icon p');
 
-        titleInput.value = note.title;
-        contentInput.value = note.content;
+        if (!titleInput || !contentInput || !icon || !iconText) {
+            console.error("Modal fields are missing");
+            return;
+        }
+
+        // Populate modal fields with note data
+        titleInput.value = note.title || '';
+        contentInput.value = note.content || '';
         icon.className = 'fa-solid fa-check-circle text-success';
+        iconText.innerHTML = 'Saved';
+
+        // Show the modal
+        modal.show();
+
+        // Setup auto-save functionality for the modal
+        this.setupAutoSaveModal(note.noteId, titleInput, contentInput, icon, iconText);
+    }
+
+    deleteNoteInModal(note) {
+        const modalEl = document.getElementById('deleteNoteModal');
+        const modal = new bootstrap.Modal(modalEl);
+        const confirmBtn = modalEl.querySelector('#confirmDeleteNoteBtn');
+
+        // Set the noteId to the confirm button for reference
+        confirmBtn.noteId = note.noteId;
 
         // Show modal
         modal.show();
 
-        // Setup auto-save (reuse logic)
-        this.setupAutoSaveModal(note.noteId, titleInput, contentInput, icon);
+        // Add click event listener to the confirm button
+        const onConfirm = () => {
+            this.deleteNote_POST(note.noteId);
+            confirmBtn.removeEventListener("click", onConfirm); // Remove listener after execution
+            modal.hide(); // Hide the modal after deletion
+        };
+
+        confirmBtn.addEventListener("click", onConfirm);
     }
 
-    setupAutoSaveModal(noteId, titleInput, contentInput, icon) {
+    deleteNote_POST(note) {
+        fetch(`/note/delete`, {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ noteId })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === true) {
+                    this.showToast("Note deleted successfully", "success");
+                    noteElement.remove(); // Remove from DOM
+                } else {
+                    this.showToast(data.message || "Failed to delete note", "danger");
+                }
+            })
+            .catch(err => {
+                console.error("Delete error:", err);
+                this.showToast("An error occurred while deleting the note", "danger");
+            })
+            .finally(() => {
+                confirmBtn.removeEventListener("click", onConfirm);
+                modal.hide();
+            });
+    }
+
+    noteSheetModel(note) {
+        const div = document.createElement("div");
+        div.className = "note-sheet d-flex flex-column";
+        div.dataset.id = note.noteId;
+
+        div.innerHTML = `
+            <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
+                <h3 class="note-sheet__title">${note.title}</h3>
+                <div class="note-sheet__content">
+                    ${note.content.replace(/\n/g, '<br>')}
+                </div>
+            </div>
+            <div class="note-sheet__menu" onclick="event.stopPropagation()">
+                <div>
+                    <button class="pinned-note-pin-btn" title="Unpin Note"><i class="fa-solid fa-thumbtack"></i></button>
+                    <button title="Label"><i class="fa-solid fa-tags"></i></button>
+                    <button title="Image"><i class="fa-solid fa-images"></i></button>
+                    <button class="pinned-note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
+                    <button class="pinned-note-delete-btn" title="Delete" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
+                </div>
+                <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
+            </div>
+            `;
+    }
+
+    setupAutoSaveModal(noteId, titleInput, contentInput, icon, iconText) {
         let timeout = null;
         let isSaving = false;
 
         const showSavingIcon = () => {
             icon.className = 'fa-solid fa-spinner fa-spin text-warning';
+            iconText.innerHTML = 'Saving...';
+            iconText.className = 'text-warning'
         };
 
         const showSavedIcon = () => {
             icon.className = 'fa-solid fa-check-circle text-success';
+            iconText.innerHTML = 'Saved';
+            iconText.className = 'text-success'
         };
 
         const showErrorIcon = () => {
             icon.className = 'fa-solid fa-exclamation-circle text-danger';
+            iconText.innerHTML = 'Error';
+            iconText.className = 'text-danger'
         };
 
         const autoSave = () => {
@@ -309,9 +442,20 @@ class Notes {
                 .then(data => {
                     if (data.status) {
                         showSavedIcon();
-                        document.querySelector(".other-note__load").innerHTML = '';
-                        this.currentPage = 1;
-                        this.loadNewNotes();
+                        // Remove old note element
+                        const oldNote = document.querySelector(`.note-sheet[data-note-id="${noteId}"]`);
+                        if (oldNote) oldNote.remove();
+
+                        // Prepend new HTML to notes list
+                        const notesList = document.getElementById('other-note__load');
+                        const pinnedNoteList = document.getElementById('pinned-note__load');
+                        if (notesList) {
+                            // const tempDiv = document.createElement('div');
+                            // tempDiv.innerHTML = data.updatedNoteHtml.trim();
+                            // const newNoteElement = tempDiv.firstElementChild;
+                            const newNoteElement = this.noteSheetModel(data);
+                            notesList.prepend(newNoteElement);
+                        }
                     }
                     else showErrorIcon();
                 })
@@ -377,40 +521,6 @@ class Notes {
                 console.error('Create note error:', err);
                 this.showToast('An error occurred while creating the note.', 'danger');
             });
-    }
-
-    deleteNote_POST(noteId, noteElement) {
-        const modalEl = document.getElementById('deleteNoteModal');
-        const confirmBtn = modalEl.querySelector('#confirmDeleteBtn');
-        const modal = new bootstrap.Modal(modalEl);
-
-        const onConfirm = () => {
-            fetch(`/note/delete`, {
-                method: 'POST',
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ noteId })
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === true) {
-                        this.showToast("Note deleted successfully", "success");
-                        noteElement.remove(); // Remove from DOM
-                    } else {
-                        this.showToast(data.message || "Failed to delete note", "danger");
-                    }
-                })
-                .catch(err => {
-                    console.error("Delete error:", err);
-                    this.showToast("An error occurred while deleting the note", "danger");
-                })
-                .finally(() => {
-                    confirmBtn.removeEventListener("click", onConfirm);
-                    modal.hide();
-                });
-        };
-
-        confirmBtn.addEventListener("click", onConfirm);
-        modal.show();
     }
 
     expandNote(noteElement) {

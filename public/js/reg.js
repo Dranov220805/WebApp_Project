@@ -18,22 +18,23 @@ class Reg {
         const messageElement = document.getElementById("toast-message");
         const closeBtn = document.getElementById("toast-close");
 
+        // Set message and toast class based on type
         messageElement.innerText = message;
-        toast.classList.remove("d-none", "bg-success", "bg-danger");
+        toast.classList.remove("d-none", "bg-success", "bg-danger"); // Reset classes
         toast.classList.add(`bg-${type}`);
 
         // Show toast
-        toast.classList.remove(`d-none`);
+        toast.classList.remove("d-none");
 
-        // Auto hide after duration
+        // Auto-hide after duration
         const hideTimeout = setTimeout(() => {
             toast.classList.add("d-none");
         }, duration);
 
-        // Manual close
+        // Allow manual close
         closeBtn.onclick = () => {
-            toast.classList.remove("d-none");
-            clearTimeout(hideTimeout);
+            toast.classList.add("d-none");
+            clearTimeout(hideTimeout); // Clear the auto-hide timer
         };
     }
 
@@ -67,13 +68,14 @@ class Reg {
             if (!hasUppercase || !hasLowercase || !hasNumber) {
                 this.showRegisterToast(
                     'Password must contain at least one uppercase letter, lowercase letters, and numbers.',
-                    'warning'
-                );
+                    'warning');
                 return;
             }
 
             if (password.length < 8) {
-                this.showRegisterToast('Password length must be more than 8 characters', 'warning');
+                this.showRegisterToast(
+                    'Password length must be more than 8 characters',
+                    'warning');
                 return;
             }
 

@@ -10,15 +10,48 @@ class HomeUserMiddleWare {
     public function index() {
         if (!isset($_SESSION['roleId'])) {
             header('location:/log/login');
+            exit();
         } else {
             $this->homeUserController->index();
         }
     }
-    public function userAccount() {
+    public function redirectToIndex() {
+        if (!isset($_SESSION['roleId'])) {
+            header('location:/log/login');
+            exit();
+        } else {
+            header('location:/home');
+        }
+    }
+    public function showError() {
+        $this->homeUserController->showError();
+    }
+    public function homeReference() {
         if (!isset($_SESSION['roleId'])) {
             header('location:/log/login');
         } else {
-            $this->homeUserController->homeAccount();
+            $this->homeUserController->homeReference();
+        }
+    }
+    public function homeLabel() {
+        if (!isset($_SESSION['roleId'])) {
+            header('location:/log/login');
+        } else {
+            $this->homeUserController->homeLabel();
+        }
+    }
+    public function homeArchive() {
+        if (!isset($_SESSION['roleId'])) {
+            header('location:/log/login');
+        } else {
+            $this->homeUserController->homeArchive();
+        }
+    }
+    public function homeTrash() {
+        if (!isset($_SESSION['roleId'])) {
+            header('location:/log/login');
+        } else {
+            $this->homeUserController->homeTrash();
         }
     }
     public function userPreference() {

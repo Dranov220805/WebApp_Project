@@ -20,7 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             case 'note':
                 if ($_GET['param_2'] == 'list') {
                     $noteMiddleWare->getNotes();
-                } else {
+                } else if ($_GET['param_2'] == 'search') {
+                    $noteMiddleWare->SearchNotes();
                     // Return an error or other specific handling if necessary
 //                    echo json_encode(['error' => 'Invalid note action']);
                 }
@@ -32,11 +33,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     } else if (isset($_GET['param_1'])) {
         // Handling a single parameter, e.g., specific note fetching
         switch ($_GET['param_1']) {
-            case 'note':
+//            case 'note':
                 // Handle fetching specific note based on id or other parameters
                 // Example: Fetch a specific note by ID (this will depend on your logic)
 //                $noteController->getNoteById($_GET['param_2']);
-                break;
+//                break;
             default:
 //                echo json_encode(['error' => 'Invalid endpoint for note']);
                 break;
