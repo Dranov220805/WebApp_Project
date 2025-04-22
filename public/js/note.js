@@ -159,7 +159,7 @@ class Notes {
             </div>
             <div class="note-sheet__menu" onclick="event.stopPropagation()">
                 <div>
-                    <button class="pinned-note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
+                    <button class="pinned-note-pin-btn" title="Unpin Note"><i class="fa-solid fa-thumbtack"></i></button>
                     <button title="Label"><i class="fa-solid fa-tags"></i></button>
                     <button title="Image"><i class="fa-solid fa-images"></i></button>
                     <button class="pinned-note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
