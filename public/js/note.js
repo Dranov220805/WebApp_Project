@@ -377,29 +377,31 @@ class Notes {
             });
     }
 
-    noteSheetModel(note) {
+    noteSheetModel(noteId, title, content) {
         const div = document.createElement("div");
         div.className = "note-sheet d-flex flex-column";
-        div.dataset.id = note.noteId;
+        div.dataset.noteId = noteId;
 
         div.innerHTML = `
-            <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
-                <h3 class="note-sheet__title">${note.title}</h3>
-                <div class="note-sheet__content">
-                    ${note.content.replace(/\n/g, '<br>')}
-                </div>
+        <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
+            <h3 class="note-sheet__title" data-note-title="${title}">${title}</h3>
+            <div class="note-sheet__content" data-note-content="${content}">
+                ${content.replace(/\n/g, '<br>')}
             </div>
-            <div class="note-sheet__menu" onclick="event.stopPropagation()">
-                <div>
-                    <button class="pinned-note-pin-btn" title="Unpin Note"><i class="fa-solid fa-thumbtack"></i></button>
-                    <button title="Label"><i class="fa-solid fa-tags"></i></button>
-                    <button title="Image"><i class="fa-solid fa-images"></i></button>
-                    <button class="pinned-note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
-                    <button class="pinned-note-delete-btn" title="Delete" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
-                </div>
-                <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
+        </div>
+        <div class="note-sheet__menu" onclick="event.stopPropagation()">
+            <div>
+                <button class="pinned-note-pin-btn" title="Unpin Note"><i class="fa-solid fa-thumbtack"></i></button>
+                <button title="Label"><i class="fa-solid fa-tags"></i></button>
+                <button title="Image"><i class="fa-solid fa-images"></i></button>
+                <button class="pinned-note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
+                <button class="pinned-note-delete-btn" title="Delete" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
             </div>
-            `;
+            <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
+        </div>
+    `;
+
+        return div;
     }
 
     setupAutoSaveModal(noteId, titleInput, contentInput, icon, iconText) {
@@ -440,6 +442,7 @@ class Notes {
             })
                 .then(res => res.json())
                 .then(data => {
+                    const {status, noteId, title, content} = data;
                     if (data.status) {
                         showSavedIcon();
                         // Remove old note element
@@ -453,7 +456,7 @@ class Notes {
                             // const tempDiv = document.createElement('div');
                             // tempDiv.innerHTML = data.updatedNoteHtml.trim();
                             // const newNoteElement = tempDiv.firstElementChild;
-                            const newNoteElement = this.noteSheetModel(data);
+                            const newNoteElement = this.noteSheetModel(noteId, title, content);
                             notesList.prepend(newNoteElement);
                         }
                     }
