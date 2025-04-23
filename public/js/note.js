@@ -552,4 +552,4 @@ class Notes {
 
 // Initialize
 const notesInstance = new Notes();
-window.refreshNotes = () => notesInstance.loadNotes();
+// window.refreshNotes = () => notesInstance.loadNotes();
