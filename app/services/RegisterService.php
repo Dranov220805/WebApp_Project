@@ -36,7 +36,7 @@ class RegisterService {
         $_SESSION['userName'] = $user->getUsername();
         $_SESSION['email'] = $user->getEmail();
 
-        $activation_token = bin2hex(random_bytes(16));
+        $activation_token = $user->getActivationToken();
 
         if (!sendActivationEmail($user->getEmail(), $activation_token)) {
             return [

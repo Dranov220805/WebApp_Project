@@ -7,12 +7,14 @@ class Account{
     private string $email;
     private string $roleId;
     private int $isVerified;
+    private string $activation_token;
 
-    public function __construct(string $accountId, string $userName, string $password, string $email, string $roleId, int $isVerified){
+    public function __construct(string $accountId, string $userName, string $password, string $email, string $activation_token, string $roleId, int $isVerified){
         $this->accountId = $accountId;
         $this->userName = $userName;
         $this->password = $password;
         $this->email = $email;
+        $this->activation_token = $activation_token;
         $this->roleId = $roleId;
         $this->isVerified = $isVerified;
     }
@@ -65,6 +67,17 @@ class Account{
     public function setIsVerified(int $isVerified): void
     {
         $this->isVerified = $isVerified;
+    }
+
+
+    public function getActivationToken(): string
+    {
+        return $this->activation_token;
+    }
+
+    public function setActivationToken(string $activation_token): void
+    {
+        $this->activation_token = $activation_token;
     }
 
 }

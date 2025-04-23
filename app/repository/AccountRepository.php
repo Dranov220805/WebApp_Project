@@ -42,6 +42,7 @@ class AccountRepository{
             $row['userName'],
             $row['password'],
             $row['email'],
+            $row['activation_token'],
             $row['roleId'],
             $row['isVerified']
         );
@@ -62,6 +63,19 @@ class AccountRepository{
         $stmt->close();
 
         return password_verify($password, $row['password']);
+    }
+
+    public function activateAccountByActivationToken($token) {
+        $sql = "UPDATE `Account` SET `isVerified` = 1 WHERE `activation_token` = ?";
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Prepare failed: " . $this->conn->error);
+        }
+        $stmt->bind_param("s", $token);
+        $stmt->execute();
+        $affectedRows = $stmt->affected_rows;
+        $stmt->close();
+        return $affectedRows;
     }
 
     public function getRoleByEmail($email): string {
@@ -117,14 +131,15 @@ class AccountRepository{
 
         // Hash the password for secure storage
         $hashedPassword = password_hash($account_password, PASSWORD_DEFAULT);
+        $activation_token = bin2hex(random_bytes(16));
 
         // Insert into the database
         $sql = "INSERT INTO `Account` 
-            (`accountId`, `userName`, `password`, `email`, `roleId`, `isVerified`) 
-            VALUES (?, ?, ?, ?, ?, ?)";
+            (`accountId`, `userName`, `password`, `email`, `activation_token`, `roleId`, `isVerified`) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param('ssssii', $uuid, $account_username, $hashedPassword, $email, $roleId, $isVerified);
+        $stmt->bind_param('sssssii', $uuid, $account_username, $hashedPassword, $email, $activation_token, $roleId, $isVerified);
 
         $result = $stmt->execute();
         $stmt->close();
@@ -136,6 +151,7 @@ class AccountRepository{
             $account_username,
             $account_password,
             $email,
+            $activation_token,
             $roleId,
             $isVerified
         );

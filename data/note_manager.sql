@@ -23,7 +23,7 @@ CREATE TABLE `Account` (
   `userName` VARCHAR(200) NOT NULL,
   `password` VARCHAR(200) NOT NULL,
   `isDeleted` BOOLEAN NOT NULL DEFAULT FALSE,
-  `tokenExpiration` DATETIME NOT NULL DEFAULT NOW(),
+  `activation_token` VARCHAR(50) DEFAULT NULL,
   `remember_token` VARCHAR(255) NULL DEFAULT 'test token',
   `email` VARCHAR(200) NOT NULL,
   `roleId` INT NOT NULL DEFAULT 1,
@@ -144,13 +144,13 @@ SET @uuid19 = UUID();
 SET @uuid20 = UUID();
 
 -- Insert data into `Account`
-INSERT INTO `Account` (`accountId`, `userName`, `password`, `isDeleted`, `tokenExpiration`, `email`, `roleId`)
+INSERT INTO `Account` (`accountId`, `userName`, `password`, `isDeleted`, `email`, `roleId`)
 VALUES
-  (@uuid1, 'john_doe', '$2y$10$0lTiUI79Y2XYyKjMpo1S2uoNLjY3w1aozxqFXry9RCNWGDIYup8ga', FALSE, '2025-12-31 23:59:59', 'john@example.com', 1),
-  (@uuid2, 'jane_smith', '$2y$10$0lTiUI79Y2XYyKjMpo1S2uoNLjY3w1aozxqFXry9RCNWGDIYup8ga', FALSE, '2025-12-31 23:59:59', 'jane@example.com', 2),
-  (@uuid3, 'michael_adams', '$2y$10$0lTiUI79Y2XYyKjMpo1S2uoNLjY3w1aozxqFXry9RCNWGDIYup8ga', FALSE, '2025-12-31 23:59:59', 'michael@example.com', 3),
-  (@uuid4, 'emily_jones', '$2y$10$0lTiUI79Y2XYyKjMpo1S2uoNLjY3w1aozxqFXry9RCNWGDIYup8ga', FALSE, '2025-12-31 23:59:59', 'emily@example.com', 4),
-  (@uuid5, 'alex_brown', '$2y$10$0lTiUI79Y2XYyKjMpo1S2uoNLjY3w1aozxqFXry9RCNWGDIYup8ga', FALSE, '2025-12-31 23:59:59', 'alex@example.com', 2);
+  (@uuid1, 'john_doe', '$2y$10$0lTiUI79Y2XYyKjMpo1S2uoNLjY3w1aozxqFXry9RCNWGDIYup8ga', FALSE, 'john@example.com', 1),
+  (@uuid2, 'jane_smith', '$2y$10$0lTiUI79Y2XYyKjMpo1S2uoNLjY3w1aozxqFXry9RCNWGDIYup8ga', FALSE, 'jane@example.com', 2),
+  (@uuid3, 'michael_adams', '$2y$10$0lTiUI79Y2XYyKjMpo1S2uoNLjY3w1aozxqFXry9RCNWGDIYup8ga', FALSE, 'michael@example.com', 3),
+  (@uuid4, 'emily_jones', '$2y$10$0lTiUI79Y2XYyKjMpo1S2uoNLjY3w1aozxqFXry9RCNWGDIYup8ga', FALSE, 'emily@example.com', 4),
+  (@uuid5, 'alex_brown', '$2y$10$0lTiUI79Y2XYyKjMpo1S2uoNLjY3w1aozxqFXry9RCNWGDIYup8ga', FALSE, 'alex@example.com', 2);
 
 -- Insert data into `Preference`
 

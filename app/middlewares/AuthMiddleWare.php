@@ -94,5 +94,32 @@ class AuthMiddleware
         $this->authController->checkVerification();
     }
 
+
+    public function getUrlActivationLink() {
+        if (!$_SERVER['REQUEST_METHOD'] == 'GET') {
+            http_response_code(405);
+            echo json_encode([
+                'status' => false,
+                'message' => 'Method not allowed'
+            ]);
+            exit();
+        } else {
+            if (!isset($_GET['token']) && empty($_GET['token'])) {
+                http_response_code(400);
+                echo json_encode([
+                    'status' => false,
+                    'message' => 'Token not provided'
+                ]);
+            }
+            $token = $_GET['token'];
+
+            $this->authController->accountActivate($token);
+        }
+    }
+
+    public function accountActivate() {
+        $this->authController->accountActivate();
+    }
+
 }
 ?>

@@ -179,31 +179,5 @@
 <script src="/public/js/note.js" type="module"></script>
 
 <script>
-    // let currentPage = 1;
-    // let isLoading = false;
-    //
-    // window.addEventListener("scroll", () => {
-    //     const scrollPosition = window.scrollY + window.innerHeight;
-    //     const pageHeight = document.documentElement.scrollHeight;
-    //
-    //     if (scrollPosition >= pageHeight - 100 && !isLoading) {
-    //         loadMoreNotes();
-    //     }
-    // });
-    //
-    // function loadMoreNotes() {
-    //     isLoading = true;
-    //     currentPage++;
-    //
-    //     fetch(`/home/load-notes?page=${currentPage}&limit=10`)
-    //         .then(res => res.text())
-    //         .then(html => {
-    //             const container = document.querySelector(".other-note__load");
-    //             container.insertAdjacentHTML("beforeend", html);
-    //         })
-    //         .catch(err => console.error("Error loading more notes", err))
-    //         .finally(() => {
-    //             isLoading = false;
-    //         });
-    // }
+
 </script>

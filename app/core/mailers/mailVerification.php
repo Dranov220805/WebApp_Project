@@ -3,21 +3,24 @@ require 'vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+//thanhlongduong6a3@gmail.com
+//khbijbyipibbhplv
+
 function sendEmail($to, $subject, $body) {
     $mail = new PHPMailer(true);
 
     try {
-        // Cấu hình SMTP
+        // SMTP Config
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'quocdatforwork@gmail.com'; // Email của bạn
-        $mail->Password = 'ddabeyoldairwpsl'; // Mật khẩu ứng dụng
+        $mail->Username = 'thanhlongduong6a3@gmail.com'; // My email
+        $mail->Password = 'khbijbyipibbhplv'; // App password (GG Account -> Search -> App password -> Create one)
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
-        // Người gửi & người nhận
-        $mail->setFrom('quocdatforwork@gmail.com', 'Ghi chú');
+        // Sender and Receiver
+        $mail->setFrom('thanhlongduong6a3@gmail.com', 'Pernote');
         $mail->addAddress($to);
 
         // Nội dung email

@@ -72,6 +72,10 @@ class AuthService
         ]);
     }
 
+    public function accountActivate($activation_token) {
+        return $this->accountRepository->activateAccountByActivationToken($activation_token);
+    }
+
     public function checkVerification($email) {
         $result = $this->accountRepository->getAccountByEmail($email);
 
