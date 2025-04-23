@@ -1,6 +1,8 @@
 <?php
 use Repository\RefreshToken;
 
+require "app/core/mailers/sentEmail.php";
+
 class RegisterService {
     private AccountRepository $accountRepository;
     private AuthService $authService;
@@ -33,6 +35,15 @@ class RegisterService {
         $_SESSION['roleId'] = $user->getRoleId();
         $_SESSION['userName'] = $user->getUsername();
         $_SESSION['email'] = $user->getEmail();
+
+        $activation_token = bin2hex(random_bytes(16));
+
+        if (!sendActivationEmail($user->getEmail(), $activation_token)) {
+            return [
+                'status' => false,
+                'message' => 'Send activation email failed'
+            ];
+        }
 
         return [
             'status' => true,

@@ -1,43 +1,37 @@
 <?php
-
+require 'vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require 'vendor/autoload.php';
+function sendEmail($to, $subject, $body) {
+    $mail = new PHPMailer(true);
 
-$mail = new PHPMailer(true);
+    try {
+        // Cấu hình SMTP
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = 'quocdatforwork@gmail.com'; // Email của bạn
+        $mail->Password = 'ddabeyoldairwpsl'; // Mật khẩu ứng dụng
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
 
-try {
-    // Server settings
-    $mail->isSMTP();
-    $mail->Host       = 'smtp.gmail.com';
-    $mail->SMTPAuth   = true;
-    $mail->Username   = 'yourgmail@gmail.com';         // Your Gmail address
-    $mail->Password   = 'your-app-password';           // Your App Password (not your Gmail password)
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port       = 587;
+        // Người gửi & người nhận
+        $mail->setFrom('quocdatforwork@gmail.com', 'Ghi chú');
+        $mail->addAddress($to);
 
-    // Recipients
-    $mail->setFrom('yourgmail@gmail.com', 'Your App Name');
-    $mail->addAddress($userEmail);                     // Recipient's email
+        // Nội dung email
+        $mail->isHTML(true);
+        $mail->Subject = $subject;
+        $mail->Body = $body;
 
-    // Email content
-    $token = bin2hex(random_bytes(16));
-    $verificationLink = "https://yourdomain.com/verify.php?token=$token";
+        // Set content-type header for UTF-8
+        $mail->CharSet = 'UTF-8';
 
-    $mail->isHTML(true);
-    $mail->Subject = 'Verify Your Email Address';
-    $mail->Body    = "
-        <p>Hi there,</p>
-        <p>Click the link below to verify your email address:</p>
-        <p><a href='$verificationLink'>$verificationLink</a></p>
-        <p>This link will expire in 1 hour.</p>
-    ";
-
-    $mail->send();
-    echo 'Verification email has been sent';
-
-    // Store the token in your DB here...
-} catch (Exception $e) {
-    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        $mail->send();
+        return true;
+    } catch (Exception $e) {
+        return false;
+    }
 }
+?>

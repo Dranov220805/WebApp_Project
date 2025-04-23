@@ -69,7 +69,7 @@ class AuthController {
         session_destroy(); // Fully destroy the session
 
         // Perform the redirect
-        header('Location: /'); // Make sure no output is sent before this
+        header('Location: /home'); // Make sure no output is sent before this
         exit();
     }
 

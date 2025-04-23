@@ -395,8 +395,8 @@ class Notes {
                 .then(data => {
                     const { status, noteId, title, content } = data;
                     if (status === true) {
-                        console.log(data);
                         showSavedIcon();
+                        console.log(data);
                         const noteElement = document.querySelector(`.note-sheet[data-note-id="${noteId}"]`);
                         if (noteElement) {
                             noteElement.querySelector('.note-sheet__title').textContent = title;

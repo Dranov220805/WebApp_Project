@@ -9,7 +9,7 @@ use \Dotenv\Dotenv;
 require_once __DIR__ . '/vendor/autoload.php'; // Autoload everything
 
 // Load .env
-$dotenv = Dotenv::createImmutable(__DIR__ . ''); // Adjust path
+$dotenv = Dotenv::createImmutable(__DIR__ . '');
 $dotenv->load();
 
 require_once __DIR__ . '/vendor/autoload.php';
