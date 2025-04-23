@@ -7,6 +7,23 @@ class NoteController {
     }
 
     public function getNotes() {
+        $accountId = $_SESSION['accountId'] ?? null;
+
+        if (!$accountId) {
+            http_response_code(401);
+            echo json_encode(['status' => false, 'message' => 'Missing accountId']);
+            return;
+        } else {
+            $note = $this->noteService->getNotesByAccountId($accountId);
+
+            echo json_encode([
+                'status' => true,
+                'data' => $note
+            ]);
+        }
+    }
+
+    public function getNotesPaginated() {
 
         $accountId = $_SESSION['accountId'] ?? null;
         $intPage = isset($_GET['page']) ? $_GET['page'] : 1;
@@ -89,6 +106,7 @@ class NoteController {
                 echo json_encode([
                     'status' => true,
                     'accountId' => $result['accountId'],
+                    'noteId' => $result['noteId'],
                     'title' => $result['title'],
                     'content' => $result['content'],
                     'createDate' => $result['createDate'],

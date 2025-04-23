@@ -1,26 +1,25 @@
 <?php
+
 use Ramsey\Uuid\Uuid;
 
-class NoteRepository{
+class NoteRepository
+{
     private mysqli $conn;
-    public function __construct(){
+    public function __construct()
+    {
         $this->conn = DatabaseManager::getInstance()->getConnection();
     }
 
-    public function getNotePaginations($currentPageNumber, $itemsPerPage)
+    public function getNotesByAccountId(string $accountId)
     {
-
-    }
-
-    public function getNotesByAccountIdPaginated(string $userName, int $limit, int $offset): array
-    {
-        $sql = "SELECT n.* FROM `Account` a
-        LEFT JOIN `Note` n ON a.accountId = n.accountId
-        LEFT JOIN `Modification` m ON m.noteId = n.noteId
-        WHERE a.accountId = ? 
-        AND n.isDeleted = FALSE
-        ORDER BY n.createDate DESC
-        LIMIT ? OFFSET ?";
+        $sql = "SELECT n.* 
+            FROM `Account` a
+            LEFT JOIN `Note` n ON a.accountId = n.accountId
+            LEFT JOIN `Modification` m ON m.noteId = n.noteId
+            WHERE a.accountId = ? 
+              AND n.isDeleted = FALSE
+              AND (m.isPinned IS NULL OR m.isPinned = FALSE)
+            ORDER BY n.createDate DESC";
 
         $stmt = $this->conn->prepare($sql);
 
@@ -28,7 +27,8 @@ class NoteRepository{
             throw new Exception("Failed to prepare SQL statement: " . $this->conn->error);
         }
 
-        $stmt->bind_param("sii", $userName, $limit, $offset);
+        //        $stmt->bind_param("sii", $userName, $limit, $offset);
+        $stmt->bind_param("s", $accountId);
         $stmt->execute();
         $result = $stmt->get_result();
 
@@ -41,7 +41,44 @@ class NoteRepository{
         return $notes;
     }
 
-    public function getPinnedNotesByAccountId($accountId): array {
+    public function getNotesByAccountIdPaginated(string $accountId, int $limit, int $offset): array
+    {
+        //        $sql = "SELECT n.* FROM `Account` a
+        //        LEFT JOIN `Note` n ON a.accountId = n.accountId
+        //        LEFT JOIN `Modification` m ON m.noteId = n.noteId
+        //        WHERE a.accountId = ?
+        //        AND n.isDeleted = FALSE
+        //        AND m.isPinned = FALSE
+        //        ORDER BY m.pinnedTime DESC";
+        $sql = "SELECT n.* FROM `Account` a
+        LEFT JOIN `Note` n ON a.accountId = n.accountId
+        LEFT JOIN `Modification` m ON m.noteId = n.noteId
+        WHERE a.accountId = ?
+        AND n.isDeleted = FALSE
+        ORDER BY n.createDate DESC
+        LIMIT ? OFFSET ?";
+
+        $stmt = $this->conn->prepare($sql);
+
+        if (!$stmt) {
+            throw new Exception("Failed to prepare SQL statement: " . $this->conn->error);
+        }
+
+        $stmt->bind_param("sii", $accountId, $limit, $offset);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $notes = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $notes[] = $row; // Optionally map to a Note model
+        }
+
+        return $notes;
+    }
+
+    public function getPinnedNotesByAccountId($accountId): array
+    {
         $sql = "SELECT n.* FROM `Account` a
         LEFT JOIN `Note` n ON a.accountId = n.accountId
         LEFT JOIN `Modification` m ON m.noteId = n.noteId
@@ -65,7 +102,8 @@ class NoteRepository{
         return $note;
     }
 
-    public function getPinnedNotesByAccountIdPaginated(string $accountId, int $limit, int $offset): array {
+    public function getPinnedNotesByAccountIdPaginated(string $accountId, int $limit, int $offset): array
+    {
         $sql = "SELECT n.* FROM `Account` a
         LEFT JOIN `Note` n ON a.accountId = n.accountId
         LEFT JOIN `Modification` m ON m.noteId = n.noteId
@@ -93,7 +131,8 @@ class NoteRepository{
         return $notes;
     }
 
-    public function createNoteByAccountIdAndTitleAndContent($accountId, $title, $content): ?Note {
+    public function createNoteByAccountIdAndTitleAndContent($accountId, $title, $content): ?Note
+    {
         // Set timezone to UTC+7
 
         // Generate UUID
@@ -125,7 +164,8 @@ class NoteRepository{
         );
     }
 
-    public function updateNoteByAccountIdAndNoteId($accountId, $noteId, $noteTitle, $noteContent): ?Note {
+    public function updateNoteByAccountIdAndNoteId($accountId, $noteId, $noteTitle, $noteContent): ?Note
+    {
         $modifiedDate = date("Y-m-d H:i:s");
         $isDeleted = 0;
         $isProtected = 0;
@@ -133,6 +173,7 @@ class NoteRepository{
         $sql = "UPDATE `Note` 
             SET `title` = ?, `content` = ?, `createDate` = ?
             WHERE `accountId` = ? AND `noteId` = ?";
+    
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("sssss", $noteTitle, $noteContent, $modifiedDate, $accountId, $noteId);
@@ -174,7 +215,6 @@ class NoteRepository{
 
         return $notes;
     }
-
 }
 
 //    public function getNotesByAccountIdPaginated(string $accountId, int $limit, int $offset): array {
@@ -196,4 +236,3 @@ class NoteRepository{
 //
 //        return $notes;
 //    }
-?>

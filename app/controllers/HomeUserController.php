@@ -25,10 +25,10 @@ class HomeUserController extends BaseController{
         $offset = ($intPage - 1) * $perPage;
 
         // Fetch pinned notes
-        $pinnedNotes = $this->noteService->getPinnedNotesByAccountIdPaginated($accountId, $perPage, $offset);
+        $pinnedNotes = $this->noteService->getPinnedNotesByAccountId($accountId);
 
         // Fetch other notes
-        $otherNotes = $this->noteService->getNotesByAccountIdPaginated($accountId, $perPage, $offset);
+        $otherNotes = $this->noteService->getNotesByAccountId($accountId);
 
         // Pass data to the view
         $this->Views('home', [

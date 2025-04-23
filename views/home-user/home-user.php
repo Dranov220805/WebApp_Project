@@ -94,33 +94,33 @@
                 <div class="note-grid d-flex justify-content-center">
                     <div class="other-note__load load-grid" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center">
                         <!-- Render other notes -->
-                        <?php if (!empty($data['otherNotes'])): ?>
-                            <?php foreach ($data['otherNotes'] as $note): ?>
-                                <div class="note-sheet d-flex flex-column"
-                                     data-note-id="<?= htmlspecialchars($note['noteId']) ?>"
-                                     data-note-title="<?= htmlspecialchars($note['title']) ?>"
-                                     data-note-content="<?= htmlspecialchars($note['content']) ?>">
-                                    <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
-                                        <h3 class="note-sheet__title"><?= htmlspecialchars($note['title']) ?></h3>
-                                        <div class="note-sheet__content">
-                                            <?= htmlspecialchars($note['content']) ?>
-                                        </div>
-                                    </div>
-                                    <div class="note-sheet__menu" onclick="event.stopPropagation()">
-                                        <div>
-                                            <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
-                                            <button title="Label"><i class="fa-solid fa-tags"></i></button>
-                                            <button title="Image"><i class="fa-solid fa-images"></i></button>
-                                            <button class="note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
-                                            <button class="note-delete-btn" title="Delete" data-note-id="<?= htmlspecialchars($note['noteId']) ?>"><i class="fa-solid fa-trash"></i></button>
-                                        </div>
-                                        <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <p>No other notes available.</p>
-                        <?php endif; ?>
+<!--                        --><?php //if (!empty($data['otherNotes'])): ?>
+<!--                            --><?php //foreach ($data['otherNotes'] as $note): ?>
+<!--                                <div class="note-sheet d-flex flex-column"-->
+<!--                                     data-note-id="--><?php //= htmlspecialchars($note['noteId']) ?><!--"-->
+<!--                                     data-note-title="--><?php //= htmlspecialchars($note['title']) ?><!--"-->
+<!--                                     data-note-content="--><?php //= htmlspecialchars($note['content']) ?><!--">-->
+<!--                                    <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">-->
+<!--                                        <h3 class="note-sheet__title">--><?php //= htmlspecialchars($note['title']) ?><!--</h3>-->
+<!--                                        <div class="note-sheet__content">-->
+<!--                                            --><?php //= htmlspecialchars($note['content']) ?>
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="note-sheet__menu" onclick="event.stopPropagation()">-->
+<!--                                        <div>-->
+<!--                                            <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>-->
+<!--                                            <button title="Label"><i class="fa-solid fa-tags"></i></button>-->
+<!--                                            <button title="Image"><i class="fa-solid fa-images"></i></button>-->
+<!--                                            <button class="note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>-->
+<!--                                            <button class="note-delete-btn" title="Delete" data-note-id="--><?php //= htmlspecialchars($note['noteId']) ?><!--"><i class="fa-solid fa-trash"></i></button>-->
+<!--                                        </div>-->
+<!--                                        <button><i class="fa-solid fa-ellipsis-vertical"></i></button>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            --><?php //endforeach; ?>
+<!--                        --><?php //else: ?>
+<!--                            <p>No other notes available.</p>-->
+<!--                        --><?php //endif; ?>
                     </div>
                 </div>
             </div>

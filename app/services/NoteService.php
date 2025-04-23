@@ -7,6 +7,10 @@ class NoteService {
         $this->noteRepository = new NoteRepository();
     }
 
+    public function getNotesByAccountId($accountId) {
+        return $this->noteRepository->getNotesByAccountId($accountId);
+    }
+
     public function getNotesByAccountIdPaginated(string $accountId, int $page = 1, int $perPage = 10): array {
         return $this->noteRepository->getNotesByAccountIdPaginated($accountId, $page, $perPage);
     }
@@ -32,6 +36,7 @@ class NoteService {
         return [
             'status' => true,
             'accountId' => $result->getAccountId(),
+            'noteId' => $result->getNoteId(),
             'title' => $result->getTitle(),
             'content' => $result->getContent(),
             'createDate' => $result->getCreateDate(),

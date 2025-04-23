@@ -27,7 +27,14 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
         switch ($_GET['param_1']){
             case 'home':
                 $homeUserMiddleWare->index();
+                break;
+            case '':
+                $homeUserMiddleWare->redirectToIndex();
+                break;
         }
+
+    } else {
+        $homeUserMiddleWare->redirectToIndex();
     }
 
 }
