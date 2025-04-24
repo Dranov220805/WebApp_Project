@@ -95,7 +95,7 @@ class NoteService {
         if (!$result) {
             return [
                 'status' => false,
-                'message' => 'Note could not be pinged'
+                'message' => 'Note could not be pinned'
             ];
         } else {
             return [
@@ -111,12 +111,12 @@ class NoteService {
         if (!$result) {
             return [
                 'status' => false,
-                'message' => 'Note could not be pinged'
+                'message' => 'Note could not be unpinned'
             ];
         } else {
             return [
                 'status' => true,
-                'message' => 'Pinned note successfully'
+                'message' => 'Unpinned note successfully'
             ];
         }
     }

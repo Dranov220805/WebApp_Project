@@ -28,7 +28,7 @@
                                 <i class="fa-solid fa-images"></i>
                             </button>
                         </div>
-                        <button class="btn btn-primary create-note-btn" style="background-color: #f1f3f4; border: none; border-radius: 4px; color: #202124; cursor: pointer; font-size: 14px; font-weight: 500; padding: 8px 16px;">
+                        <button class="btn create-note-btn">
                             Create
                         </button>
                     </div>
@@ -128,7 +128,7 @@
             <div class="modal-content note-detail__modal">
                 <div class="modal-header">
                     <input type="text" class="modal-title note-title-input form-control border-0" id="noteModalLabel" />
-                    <i type="button" class="fa-solid fa-xmark btn-close note-modal-close" data-bs-dismiss="modal" aria-label="Close" style="font-size: 20px; margin-left: 10px;"></i>
+                    <i type="button" class="fa-solid fa-xmark note-modal-close" data-bs-dismiss="modal" aria-label="Close" style="font-size: 25px;"></i>
                 </div>
                 <div class="modal-body">
                     <textarea class="note-content-input form-control" style="height: 300px; resize: none;"></textarea>

@@ -36,12 +36,12 @@
                 <i class="navbar__item--icon fa-solid fa-gear"></i>
             </a>
 
-            <button data-bs-toggle="modal" class="info-modal" data-bs-target="#infoModal" data-bs-backdrop="false" data-bs-scroll="true">
+            <button data-bs-toggle="modal" class="info-modal" data-bs-target="#infoModal" data-bs-backdrop="false" data-bs-scroll="true" style="display: flex; justify-content: center; align-items: center; height: 40px">
 <!--                <i class="navbar__item--icon fa-regular fa-circle-user"></i>-->
                 <?php if (!empty($_SESSION['avatar_url'])): ?>
                     <img src="<?= $_SESSION['avatar_url'] ?>" style="width: 30px; border-radius: 50px">
                 <?php else: ?>
-                    <i class="fa-regular fa-circle-user"></i>
+                    <i class="fa-regular fa-circle-user" style="font-size: 25px"></i>
                 <?php endif; ?>
             </button>
         </div>
@@ -59,7 +59,7 @@
                     <?php if (!empty($_SESSION['avatar_url'])): ?>
                         <img src="<?= $_SESSION['avatar_url'] ?>" style="width: 30px; border-radius: 50px">
                     <?php else: ?>
-                        <i class="fa-regular fa-circle-user"></i>
+                        <i class="fa-regular fa-circle-user" style="font-size: 25px"></i>
                     <?php endif; ?>
                 </span>
 <!--                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>-->
@@ -71,7 +71,13 @@
                 <br>
                 <strong>Email: </strong> <?=$_SESSION['email']?>
                 <br>
-                <strong>Verify status: </strong><?php if ($_SESSION['isVerified'] = 'TRUE') {echo 'Verified';} else {echo 'Not Verified';}?>
+                <strong>Verify status: </strong>
+                <?php if ($_SESSION['isVerified'] === TRUE) {
+                    echo 'Verified';
+                } else {
+                    echo 'Not Verified';
+                }
+                ?>
             </div>
 
             <div class="modal-footer">

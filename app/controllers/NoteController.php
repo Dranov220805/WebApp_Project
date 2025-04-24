@@ -272,7 +272,7 @@ class NoteController {
                 'message' => 'Pinned note not found'
             ]);
         } else {
-            $result = $this->noteService->pinNoteByNoteId($noteId);
+            $result = $this->noteService->unpinNoteByNoteId($noteId);
 
             if ($result['status'] === true) {
                 http_response_code(201);

@@ -66,7 +66,7 @@ class NoteMiddleWare {
         if (!isset($_SESSION['roleId'])) {
             throw new Exception("Unauthenticated");
         } else {
-            $this->noteController->pinNote_POST();
+            $this->noteController->unpinNote_POST();
         }
     }
 

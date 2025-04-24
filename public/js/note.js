@@ -540,9 +540,6 @@ class Notes {
         const div = document.createElement("div");
         div.className = "note-sheet d-flex flex-column";
         div.dataset.id = noteId;
-        // div.onclick = () => this.expandNote(div);
-        div.onclick = () => this.openNoteInModal(note);
-
 
         div.innerHTML = `
             <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
@@ -647,10 +644,13 @@ class Notes {
                     this.showToast("An error occurred: " + data.message, "danger");
                 } else {
                     this.showToast("Note pinned successfully!", "success");
-                    const pinnedNote = this.PinNoteSheetModel(noteId, data.title, data.content);
+                    // const pinnedNote = this.PinNoteSheetModel(noteId, data.title, data.content);
                     const pinNoteGrid = document.querySelector('.pinned-note__load');
                     const otherNoteGrid = document.querySelector('.other-note__load');
-                    pinNoteGrid.prepend(pinnedNote);
+                    pinNoteGrid.innerHTML = '';
+                    otherNoteGrid.innerHTML = '';
+                    this.loadPinnedNotes();
+                    this.loadNewNotes();
                 }
             })
             .catch(err => {
@@ -674,10 +674,13 @@ class Notes {
                     this.showToast("An error occurred: " + data.message, "danger");
                 } else {
                     this.showToast("Note unpinned successfully!", "success");
-                    const otherNote = this.noteSheetModel(noteId, data.title, data.content);
+                    // const otherNote = this.noteSheetModel(noteId, data.title, data.content);
                     const pinNoteGrid = document.querySelector('.pinned-note__load');
                     const otherNoteGrid = document.querySelector('.other-note__load');
-                    otherNoteGrid.prepend(otherNote);
+                    pinNoteGrid.innerHTML = '';
+                    otherNoteGrid.innerHTML = '';
+                    this.loadPinnedNotes();
+                    this.loadNewNotes();
                 }
             })
             .catch(err => {
