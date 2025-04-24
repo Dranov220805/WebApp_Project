@@ -121,5 +121,17 @@ class AuthMiddleware
         $this->authController->accountActivate();
     }
 
+    public function forgotPassword() {
+        $this->authController->forgotPassword();
+    }
+
+    public function resetPassword() {
+//        echo json_encode([
+//            'status' => true,
+//            'message' => 'OK'
+//        ]);
+        $this->authController->resetPassword();
+    }
+
 }
 ?>

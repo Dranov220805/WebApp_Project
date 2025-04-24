@@ -76,6 +76,32 @@ class AuthService
         return $this->accountRepository->activateAccountByActivationToken($activation_token);
     }
 
+    public function resetPasswordByEmail($resetEmail) {
+
+        $result = $this->accountRepository->updateAccountPasswordByEmail($resetEmail);
+
+        if (!$result) {
+            return [
+                'status' => false,
+                'message' => 'Reset password failed'
+            ];
+        }
+
+        $newPassword = $result;
+
+        if (!sendRessetPasswordEmail($resetEmail, $newPassword)) {
+            return [
+                'status' => false,
+                'message' => 'Send new password failed'
+            ];
+        }
+
+        return [
+            'status' => true,
+            'message' => 'Email to reset password has been sent'
+        ];
+    }
+
     public function checkVerification($email) {
         $result = $this->accountRepository->getAccountByEmail($email);
 

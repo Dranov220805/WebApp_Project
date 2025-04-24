@@ -300,6 +300,15 @@
     max-width: 600px;
 }
 
+.note-detail__modal {
+    width: 100%;
+}
+
+.note-detail__modal--dialog {
+    width: 100%;
+    max-width: 700px;
+}
+
 /* Individual note card */
 .load-list .note-sheet {
     break-inside: avoid; /* Prevents cards from breaking across columns */
@@ -421,10 +430,27 @@ body.dark-mode .note-layout__title {
     .note-grid {
         column-count: 2;
     }
+
+    .note-detail__modal--dialog {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
 }
 
 @media (max-width: 600px) {
     .note-grid {
         column-count: 1;
+    }
+
+    .note-detail__modal--dialog {
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+@media (max-width: 500px) {
+    .note-detail__modal--dialog {
+        height: 55%;
     }
 }

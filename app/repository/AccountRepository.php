@@ -78,6 +78,22 @@ class AccountRepository{
         return $affectedRows;
     }
 
+    public function updateAccountPasswordByEmail($email): string{
+        $resetPassword = "@Pernote20192025";
+        $hashedPassword = password_hash($resetPassword, PASSWORD_DEFAULT);
+
+        $sql = "UPDATE `Account` SET `password` = ? WHERE `email` = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ss", $hashedPassword, $email);
+        $result = $stmt->execute();
+        $stmt->close();
+        if ($result) {
+            return $resetPassword;
+        } else {
+            return 'false';
+        }
+    }
+
     public function getRoleByEmail($email): string {
         $sql = "SELECT `roleId` from `Account`
                 WHERE `email` = ?";

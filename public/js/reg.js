@@ -128,7 +128,7 @@ class Reg {
                                             } else if (String(roleId) === '2') {
                                                 window.location.href = '/admin-dashboard';
                                             }
-                                        }, 1000);
+                                        }, 200);
                                     } else {
                                         // Show error toast message
                                         // this.showLoginToast(message, 'danger');

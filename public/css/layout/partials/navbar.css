@@ -20,7 +20,7 @@
 }
 
 .logo-link {
-    padding-left: 20px;
+    margin-left: 20px;
 }
 
 .search-bar-container {
@@ -70,7 +70,8 @@
 }
 
 .navbar__item--icon {
-    border: 1px solid white;
+    /* border: 1px solid white; */ /* Remove this line */
+    border: none;
     border-radius: 50%;
     transition: background-color 0.3s ease;
     width: 40px;
@@ -79,6 +80,7 @@
     padding-bottom: 8px;
     font-size: 24px;
 }
+
 
 .navbar__item--icon:hover {
     background-color: #f1f3f4;
@@ -94,8 +96,9 @@
 }
 
 .modal-dialog {
-    margin-right: 10px;
+    left: 0;
     margin-left: auto;
+    max-width: 500px;
 }
 
 .modal-backdrop {
@@ -109,8 +112,80 @@
 }
 
 .modal-content {
-    width: 90%;
+    width: 95%;
 }
+
+.create-note-btn {
+    transition: background-color 0.3s ease-in-out;
+}
+
+.create-note-btn:hover {
+    background-color: #5d8598;
+}
+
+/* ─────── DARK MODE SUPPORT ─────── */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body.dark-mode .navbar {
+    background-color: #1e1e1e;
+    border-bottom: 1px solid #333;
+}
+
+body.dark-mode .search-expanded {
+    background-color: #2a2a2a;
+}
+
+body.dark-mode .search-icon-btn,
+body.dark-mode .icon-btn,
+body.dark-mode .navbar__item--icon,
+body.dark-mode .info-modal,
+body.dark-mode .btn-close {
+    color: #ccc;
+}
+
+body.dark-mode .navbar__item--icon:hover {
+    background-color: #333;
+}
+
+body.dark-mode .search-input {
+    color: #e0e0e0;
+}
+
+body.dark-mode .create-note-btn:hover {
+    background-color: #37606e;
+}
+
+body.dark-mode .modal-content {
+    background-color: #1f1f1f;
+    color: #e0e0e0;
+}
+
+body.dark-mode .search-bar-container {
+    color: #e0e0e0;
+}
+
+body.dark-mode .modal-dialog {
+    background-color: #2a2a2a;
+}
+
+/* Add this globally for smooth transitions */
+body,
+.navbar,
+.search-expanded,
+.search-input,
+.icon-btn,
+.navbar__item--icon,
+.info-modal,
+.modal-content,
+.modal-dialog,
+.create-note-btn {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Toggle dark mode by toggling the `dark-mode` class on the <body> tag */
 
 @media (max-width: 800px) {
     .navbar {
@@ -150,6 +225,10 @@
         justify-content: center;
         margin-left: 0px;
         margin-right: 0px;
+        width: 90%;
+    }
+
+    .modal-content {
         width: 90%;
     }
 

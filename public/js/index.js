@@ -36,3 +36,7 @@ window.resetIdleTimer = () => {
 window.handleIdleTimeout = () => {
     auth.handleIdleTimeout();
 };
+
+window.forgotPassword = () => {
+    auth.forgotPassword();
+}

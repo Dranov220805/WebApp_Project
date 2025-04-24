@@ -69,7 +69,52 @@ class Auth {
                             } else if (String(roleId) === '2') {
                                 window.location.href = '/admin-dashboard';
                             }
-                        }, 1000);
+                        }, 200);
+                    } else {
+                        // Show error toast message
+                        this.showLoginToast(message, 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Login error:', error);
+                    // Show error toast for network issues
+                    this.showLoginToast('Something went wrong. Please try again later.', 'danger');
+                });
+        });
+    }
+
+    checkResetPassword() {
+
+    }
+
+    forgotPassword() {
+        $('#reset-password-button').click(() => {
+            const email = $('#reset-email-input').val();
+
+            fetch('/auth/forgot', {
+                method: 'POST',
+                body: JSON.stringify({
+                    email
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    const { status, message } = data;
+
+                    if (status === true) {
+
+                        // Show success toast message
+                        this.showLoginToast(message, 'success');
+
+                        // setTimeout(() => {
+                        //     // Redirect user based on role
+                        //     if (String(roleId) === '1') {
+                        //         window.location.href = '/home';
+                        //     } else if (String(roleId) === '2') {
+                        //         window.location.href = '/admin-dashboard';
+                        //     }
+                        // }, 200);
                     } else {
                         // Show error toast message
                         this.showLoginToast(message, 'danger');

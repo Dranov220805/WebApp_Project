@@ -174,7 +174,7 @@ class HomeUser {
 
         this.searchTimeout = setTimeout(() => {
             this.performSearch(query);
-        }, 500); // Delay of 500ms
+        }, 2000); // Delay of 2000ms
     }
 
     performSearch(query) {
@@ -198,9 +198,6 @@ class HomeUser {
             const div = document.createElement("div");
             div.className = "note-sheet d-flex flex-column";
             div.dataset.id = note.noteId;
-            // div.onclick = () => this.expandNote(div);
-            div.onclick = () => this.openNoteInModal(note);
-
 
             div.innerHTML = `
             <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">

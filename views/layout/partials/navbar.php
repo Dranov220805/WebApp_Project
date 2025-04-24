@@ -2,7 +2,7 @@
 ?>
 
 <nav class="navbar fixed-top">
-    <div class="d-flex align-items-center w-100">
+    <div class="d-flex align-items-center w-100 navbar__content">
         <!-- Left side: Menu icon (sidebar toggle) and Logo -->
         <div class="d-flex align-items-center" style="padding-right: 20px">
             <button id="sidebar-toggle" class="sidebar-toggle">
@@ -45,24 +45,21 @@
 
 <!-- The Modal -->
 <div class="modal fade" id="infoModal" data-bs-backdrop="false" data-bs-scroll="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog" style="margin-right: 10px; margin-left: auto">
         <div class="modal-content">
 
             <div class="modal-header">
-                <h4 class="modal-title">Modal Heading</h4>
+                <h4 class="modal-title" style="flex-grow: 1">Hello, <?=$_SESSION['userName']?></h4>
+                <span style="justify-content: center"><?php if ($_SESSION['isVerified']) {echo '<i class="navbar__item--icon fa-regular fa-circle-user" style="display: flex;justify-content:center"></i>';} else {echo'<i class="navbar__item--icon fa-solid fa-border-all"></i>';} ?></span>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
             <div class="modal-body">
-                <strong>AccountId:</strong> <?=$_SESSION['accountId']?>
+                <strong>Username: </strong> <?=$_SESSION['userName']?>
                 <br>
-                <strong>Name:</strong> <?=$_SESSION['userName']?>
+                <strong>Email: </strong> <?=$_SESSION['email']?>
                 <br>
-                <strong>Email:</strong> <?=$_SESSION['email']?>
-                <br>
-                <strong>Role:</strong> <?=$_SESSION['roleId']?>
-                <br>
-                <strong>Verify status:</strong> <?=$_SESSION['isVerified']?>
+                <strong>Verify status: </strong><?php if ($_SESSION['isVerified'] = 1) {echo 'Verified';} else {echo 'Not Verified';}?>
             </div>
 
             <div class="modal-footer">

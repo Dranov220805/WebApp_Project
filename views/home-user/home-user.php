@@ -22,15 +22,10 @@
                     <div style="display: flex; justify-content: space-between; margin-top: 12px;">
                         <div>
                             <button style="background: none; border: none; cursor: pointer; padding: 8px;">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="#5f6368">
-                                    <path d="M19 3H5C3.9 3 3 3.9 3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/>
-                                    <path d="M18 9l-1.4-1.4-6.6 6.6-2.6-2.6L6 13l4 4z"/>
-                                </svg>
+                                <i class="fa-solid fa-images"></i>
                             </button>
                             <button style="background: none; border: none; cursor: pointer; padding: 8px;">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="#5f6368">
-                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-2-7H7c-.55 0-1-.45-1-1s.45-1 1-1h10c.55 0 1 .45 1 1s-.45 1-1 1z"/>
-                                </svg>
+                                <i class="fa-solid fa-images"></i>
                             </button>
                         </div>
                         <button class="btn btn-primary create-note-btn" style="background-color: #f1f3f4; border: none; border-radius: 4px; color: #202124; cursor: pointer; font-size: 14px; font-weight: 500; padding: 8px 16px;">
@@ -57,33 +52,33 @@
                 <div class="note-grid d-flex justify-content-center">
                     <div class="pinned-note__load load-grid" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center">
                         <!-- Render pinned notes -->
-                        <?php if (!empty($data['pinnedNotes'])): ?>
-                            <?php foreach ($data['pinnedNotes'] as $note): ?>
-                                <div class="note-sheet d-flex flex-column"
-                                     data-note-id="<?= htmlspecialchars($note['noteId']) ?>"
-                                     data-note-title="<?= htmlspecialchars($note['title']) ?>"
-                                     data-note-content="<?= htmlspecialchars($note['content']) ?>">
-                                    <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
-                                        <h3 class="note-sheet__title"><?= htmlspecialchars($note['title']) ?></h3>
-                                        <div class="note-sheet__content">
-                                            <?= htmlspecialchars($note['content']) ?>
-                                        </div>
-                                    </div>
-                                    <div class="note-sheet__menu" onclick="event.stopPropagation()">
-                                        <div>
-                                            <button class="pinned-note-pin-btn" title="Unpin Note"><i class="fa-solid fa-thumbtack"></i></button>
-                                            <button title="Label"><i class="fa-solid fa-tags"></i></button>
-                                            <button title="Image"><i class="fa-solid fa-images"></i></button>
-                                            <button class="pinned-note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
-                                            <button class="pinned-note-delete-btn" title="Delete" data-note-id="<?= htmlspecialchars($note['noteId']) ?>"><i class="fa-solid fa-trash"></i></button>
-                                        </div>
-                                        <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <p>No pinned notes available.</p>
-                        <?php endif; ?>
+<!--                        --><?php //if (!empty($data['pinnedNotes'])): ?>
+<!--                            --><?php //foreach ($data['pinnedNotes'] as $note): ?>
+<!--                                <div class="note-sheet d-flex flex-column"-->
+<!--                                     data-note-id="--><?php //= htmlspecialchars($note['noteId']) ?><!--"-->
+<!--                                     data-note-title="--><?php //= htmlspecialchars($note['title']) ?><!--"-->
+<!--                                     data-note-content="--><?php //= htmlspecialchars($note['content']) ?><!--">-->
+<!--                                    <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">-->
+<!--                                        <h3 class="note-sheet__title">--><?php //= htmlspecialchars($note['title']) ?><!--</h3>-->
+<!--                                        <div class="note-sheet__content">-->
+<!--                                            --><?php //= htmlspecialchars($note['content']) ?>
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="note-sheet__menu" onclick="event.stopPropagation()">-->
+<!--                                        <div>-->
+<!--                                            <button class="pinned-note-pin-btn" title="Unpin Note"><i class="fa-solid fa-thumbtack"></i></button>-->
+<!--                                            <button title="Label"><i class="fa-solid fa-tags"></i></button>-->
+<!--                                            <button title="Image"><i class="fa-solid fa-images"></i></button>-->
+<!--                                            <button class="pinned-note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>-->
+<!--                                            <button class="pinned-note-delete-btn" title="Delete" data-note-id="--><?php //= htmlspecialchars($note['noteId']) ?><!--"><i class="fa-solid fa-trash"></i></button>-->
+<!--                                        </div>-->
+<!--                                        <button><i class="fa-solid fa-ellipsis-vertical"></i></button>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            --><?php //endforeach; ?>
+<!--                        --><?php //else: ?>
+<!--                            <p>No pinned notes available.</p>-->
+<!--                        --><?php //endif; ?>
                     </div>
                 </div>
             </div>
@@ -129,8 +124,8 @@
 
     <!-- Modal Structure for show Note Detail-->
     <div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" data-bs-backdrop="true" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable note-modal-display position-fixed top-50 start-50 translate-middle fade show">
-            <div class="modal-content">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable note-modal-display position-fixed top-50 start-50 translate-middle fade show note-detail__modal--dialog">
+            <div class="modal-content note-detail__modal">
                 <div class="modal-header">
                     <input type="text" class="modal-title note-title-input form-control border-0" id="noteModalLabel" />
                     <button type="button" class="btn-close note-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -153,7 +148,7 @@
 
     <!-- Delete Confirmation Modal -->
     <div class="modal fade" id="deleteNoteModal" tabindex="-1" aria-labelledby="deleteNoteModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered ">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="deleteNoteModalLabel">Confirm Delete</h5>

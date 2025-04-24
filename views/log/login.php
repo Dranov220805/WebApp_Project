@@ -39,7 +39,7 @@ include "./views/layout/partials/header.php";
                             <input class="form-check-input" type="checkbox" id="login-section-2__form--remember-me" value="isRemembered">
                             <label class="form-check-label" for="login-section-2__form--remember-me">Remember me</label>
                         </div>
-                        <a href="#" id="login-section-2__form--forgot_password" class="small">Forgot password?</a>
+                        <a href="auth/forgot" id="login-section-2__form--forgot_password" class="small">Forgot password?</a>
                     </div>
 
                     <div class="d-grid mb-3">

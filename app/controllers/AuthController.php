@@ -1,9 +1,10 @@
 <?php
-
-class AuthController {
+include_once "./app/controllers/Base/BaseController.php";
+class AuthController extends BaseController {
     private AuthService $authService;
 
     public function __construct() {
+        parent::__construct();
         $this->authService = new AuthService();
     }
 
@@ -122,6 +123,38 @@ EOD;
             echo json_encode([
                 'status' => false,
                 'message' => $result
+            ]);
+        }
+    }
+
+    public function forgotPassword() {
+        include "./views/log/forgot-password.php";
+    }
+
+    public function resetPassword() {
+        $content = trim(file_get_contents("php://input"));
+        $data = json_decode($content, true);
+
+        if (empty($data['email'])) {
+            http_response_code(400);
+            echo json_encode([
+                'status' => false,
+                'message' => 'Missing email'
+            ]);
+        }
+
+        $result = $this->authService->resetPasswordByEmail($data['email']);
+
+        if ($result['status'] === true) {
+            echo json_encode([
+                'status' => true,
+                'message' => $result['message']
+            ]);
+        } else {
+            http_response_code(400);
+            echo json_encode([
+                'status' => false,
+                'message' => $result['message']
             ]);
         }
     }

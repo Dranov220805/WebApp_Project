@@ -11,6 +11,14 @@
             <div class="preferences-container">
                 <h2 class="mb-4">User Preferences</h2>
 
+                <div class="section-title">Avatar</div>
+                <div class="setting-row" style="width: 80px; height: 80px">
+                    <div class="setting-label">
+                        <?php if ($_SESSION['isVerified'] == 1) {echo '<i style="width: 80px; height: 80px" class="user__item--icon fa-regular fa-circle-user"></i>';} else {echo 'no avatar';} ?>
+                    </div>
+                    <div class="setting-label">Upload new avatar</div>
+                </div>
+
                 <!-- Appearance Section -->
                 <div class="section-title">Appearance</div>
 
