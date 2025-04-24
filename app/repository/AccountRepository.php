@@ -79,7 +79,21 @@ class AccountRepository{
     }
 
     public function updateAccountPasswordByEmail($email): string{
-        $resetPassword = "@Pernote20192025";
+        // Generate a random password with at least one uppercase, one lowercase, and one number
+        $uppercase = chr(rand(65, 90)); // A-Z
+        $lowercase = chr(rand(97, 122)); // a-z
+        $number = chr(rand(48, 57)); // 0-9
+
+        // Add more random characters to increase password length (total: 10 characters)
+        $others = '';
+        $pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        for ($i = 0; $i < 7; $i++) {
+            $others .= $pool[rand(0, strlen($pool) - 1)];
+        }
+
+        // Shuffle all characters to avoid predictable order
+        $resetPassword = str_shuffle($uppercase . $lowercase . $number . $others);
+
         $hashedPassword = password_hash($resetPassword, PASSWORD_DEFAULT);
 
         $sql = "UPDATE `Account` SET `password` = ? WHERE `email` = ?";
@@ -91,6 +105,21 @@ class AccountRepository{
             return $resetPassword;
         } else {
             return 'false';
+        }
+    }
+
+    public function updatePasswordByEmail($email, $newPassword): bool {
+        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
+        $sql = "UPDATE `Account` SET `password` = ? WHERE `email` = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ss", $hashedPassword, $email);
+        $result = $stmt->execute();
+        $stmt->close();
+        if ($result) {
+            return true;
+        } else {
+            return false;
         }
     }
 

@@ -5,44 +5,34 @@ require 'vendor/autoload.php';
 use Cloudinary\Configuration\Configuration;
 use Cloudinary\Api\Upload\UploadApi;
 
-// Use the SearchApi class for searching assets
-use Cloudinary\Api\Search\SearchApi;
-// Use the AdminApi class for managing assets
-use Cloudinary\Api\Admin\AdminApi;
-// Use the UploadApi class for uploading assets
-
-//Configuration::instance('cloudinary://184481963549152:UsBSDvYPSAkheYpFz4H0hLyNYco@dydpf7z8u?secure=true');
-
-function uploadToCloudinary($filePath, $folder = 'my_app_uploads')
+function uploadToCloudinary($filePath, $folder = 'Pernote/user-icon')
 {
-    // Setup Cloudinary config (use environment variables or config file in production)
     Configuration::instance([
         'cloud' => [
             'cloud_name' => 'dydpf7z8u',
             'api_key' => '184481963549152',
             'api_secret' => 'UsBSDvYPSAkheYpFz4H0hLyNYco',
         ],
-        'url' => [
-            'secure' => true
-        ]
+        'url' => ['secure' => true]
     ]);
 
     try {
-        $result = (new UploadApi())->upload($filePath, [
-            'folder' => $folder
-        ]);
-
-        return [
-            'success' => true,
-            'url' => $result['secure_url'],
-            'public_id' => $result['public_id'],
-            'original_filename' => $result['original_filename']
-        ];
-
+        $result = (new UploadApi())->upload($filePath, ['folder' => $folder]);
+        return ['success' => true, 'url' => $result['secure_url']];
     } catch (Exception $e) {
-        return [
-            'success' => false,
-            'error' => $e->getMessage()
-        ];
+        return ['success' => false, 'error' => $e->getMessage()];
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['avatar'])) {
+    $tempPath = $_FILES['avatar']['tmp_name'];
+    $uploadResult = uploadToCloudinary($tempPath);
+
+    if ($uploadResult['success']) {
+        $_SESSION['avatar_url'] = $uploadResult['url']; // Save avatar URL in session
+        // Optionally save in DB too
+        echo "Upload successful!";
+    } else {
+        echo "Upload failed: " . $uploadResult['error'];
     }
 }

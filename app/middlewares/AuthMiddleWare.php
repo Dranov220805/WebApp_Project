@@ -73,23 +73,23 @@ class AuthMiddleware
         // Update activity timestamp
         $_SESSION['last_activity'] = time();
 
-        return [
+        echo json_encode ([
             'userId' => $_SESSION['userId'],
             'userName' => $_SESSION['userName'],
             'email' => $_SESSION['email'],
             'roleId' => $_SESSION['roleId'],
             'last_activity' => $_SESSION['last_activity']
-        ];
+        ]);
     }
 
     public function checkVerification() {
-        if (!isset($_SESSION['userId'])) {
-            http_response_code(401);
-            echo json_encode([
-                'status' => false,
-                'message' => 'Unauthorized'
-            ]);
-        }
+//        if (!isset($_SESSION['userId'])) {
+//            http_response_code(401);
+//            echo json_encode([
+//                'status' => false,
+//                'message' => 'Unauthorized'
+//            ]);
+//        }
 
         $this->authController->checkVerification();
     }
@@ -131,6 +131,22 @@ class AuthMiddleware
 //            'message' => 'OK'
 //        ]);
         $this->authController->resetPassword();
+    }
+
+    public function changePassword() {
+//        echo json_encode([
+//            'status' => true,
+//            'message' => 'OK'
+//        ]);
+//        if (!isset($_SESSION['userId'])) {
+//            http_response_code(401);
+//            echo json_encode([
+//                'status' => false,
+//                'message' => 'Unauthorized'
+//            ]);
+//        } else {
+            $this->authController->changePassword();
+//        }
     }
 
 }

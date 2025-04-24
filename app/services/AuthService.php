@@ -102,6 +102,22 @@ class AuthService
         ];
     }
 
+    public function updatePasswordByEmail($email, $newPassword) {
+        $result = $this->accountRepository->updatePasswordByEmail($email, $newPassword);
+
+        if (!$result) {
+            return [
+                'status' => false,
+                'message' => 'Update password failed'
+            ];
+        } else {
+            return [
+                'status' => true,
+                'message' => 'Password has been updated'
+            ];
+        }
+    }
+
     public function checkVerification($email) {
         $result = $this->accountRepository->getAccountByEmail($email);
 

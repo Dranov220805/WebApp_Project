@@ -12,11 +12,20 @@
                 <h2 class="mb-4">User Preferences</h2>
 
                 <div class="section-title">Avatar</div>
-                <div class="setting-row" style="width: 80px; height: 80px">
+                <div class="setting-row" style="display: flex; flex-grow: 1; width: 100%; height: 80px">
                     <div class="setting-label">
-                        <?php if ($_SESSION['isVerified'] == 1) {echo '<i style="width: 80px; height: 80px" class="user__item--icon fa-regular fa-circle-user"></i>';} else {echo 'no avatar';} ?>
+<!--                        --><?php //if ($_SESSION['isVerified'] == 1) {echo '<i style="width: 80px; height: 80px" class="user__item--icon fa-regular fa-circle-user"></i>';} else {echo 'no avatar';} ?>
+                        <?php if (!empty($_SESSION['avatar_url'])): ?>
+                            <img src="<?= $_SESSION['avatar_url'] ?>" style="width: 80px;">
+                        <?php else: ?>
+                            <i class="fa-regular fa-circle-user"></i>
+                        <?php endif; ?>
+
                     </div>
-                    <div class="setting-label">Upload new avatar</div>
+                    <form id="avatar-upload-form" enctype="multipart/form-data">
+                        <input type="file" id="avatar-input" name="avatar" accept="image/*" required>
+                        <button type="submit" class="btn btn-primary upload-btn">Upload Avatar</button>
+                    </form>
                 </div>
 
                 <!-- Appearance Section -->
@@ -62,15 +71,55 @@
 
                 <div class="setting-row">
                     <div class="setting-label">Change Password</div>
-                    <button class="btn btn-reset text-white">Reset Password</button>
+                    <button id="change-password-btn" class="btn btn-reset text-white" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Change Password</button>
                 </div>
 
                 <div class="section-divider"></div>
 
                 <!-- Action Buttons -->
                 <div class="action-buttons">
-                    <button class="btn btn-cancel">Cancel</button>
-                    <button class="btn btn-save text-white">Save Changes</button>
+                    <a href="/home" class="btn btn-cancel">Cancel</a>
+                    <a href="/home/savechanges" class="btn btn-save text-white">Save Changes</a>
+                </div>
+            </div>
+
+            <!-- Change Password Modal -->
+            <div class="modal fade" id="changePasswordModal" tabindex="-1" style="height: fit-content; min-height: 600px;" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+                <div class="modal-dialog" style="margin-top: 100px; margin-bottom: auto">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="change-password-form" action="#" onsubmit="return false">
+                                <div class="mb-3">
+                                    <label for="current-password" class="form-label">Current Password</label>
+                                    <input type="password" class="form-control" id="current-password-input" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Password:</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control login-section-2__form--input-box" id="new-password-input" placeholder="Password">
+                                        <span class="input-group-text bg-white">
+                                        <i id="toggle-change-password" class="fa-regular fa-eye-slash" onclick="toggleChangePassword()" style="cursor: pointer;"></i>
+                                    </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="confirmPassword" class="form-label">Confirm Password:</label>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control login-section-2__form--input-box" id="confirm-new-password-input" placeholder="Confirm Password">
+                                                <span class="input-group-text bg-white">
+                                        <i id="toggle-change-password-confirm" class="fa-regular fa-eye-slash" onclick="toggleConfirmChangePassword()" style="cursor: pointer;"></i>
+                                    </span>
+                                    </div>
+                                </div>
+                                <button id="post-change-password-btn" class="btn btn-primary w-100">Change Password</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -85,6 +134,11 @@
     <script>
         // Script to handle color option selection
         document.addEventListener('DOMContentLoaded', function() {
+
+            if (window.changePassword) {
+                changePassword();
+            }
+
             const colorOptions = document.querySelectorAll('.color-option');
 
             colorOptions.forEach(option => {
@@ -180,15 +234,41 @@
             margin-top: 20px;
         }
 
+        .upload-btn {
+            background-color: #1a2e44;
+            border: none;
+        }
+
+        .upload-btn:hover {
+            background-color: #5771ff;
+        }
+
         .btn-cancel {
             background-color: transparent;
             border: 1px solid #dadce0;
             color: #202124;
         }
 
+        #change-password-btn:hover {
+            background-color: #5771ff;
+        }
+
+        .btn-cancel:hover {
+            background-color: #c9302c;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background-color: #5771ff;
+        }
+
         .btn-save {
             background-color: #1a2e44;
             border: none;
+        }
+
+        .btn-save:hover {
+            background-color: #5771ff;
         }
 
         .btn-reset {

@@ -24,6 +24,7 @@ include "./views/layout/partials/header.php";
 
                     <div class="d-grid mb-3">
                         <button id="reset-password-button" class="btn btn-primary login-section-2__form--button">Send new password through email</button>
+                        <a href="/log/login" id="back-button" class="btn btn-primary login-section-2__form--button" style="margin-top: 10px">Go back lo login</a>
                     </div>
 
                 </form>

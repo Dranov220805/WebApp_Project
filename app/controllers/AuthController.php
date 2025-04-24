@@ -51,15 +51,15 @@ class AuthController extends BaseController {
         $result = $this->authService->checkVerification($email);
 
         if($result['status'] === true) {
-            return [
+            echo json_encode([
                 'status' => true,
                 'message' => $result['message']
-            ];
+            ]);
         } else {
-            return [
+            echo json_encode ([
                 'status' => false,
                 'message' => $result['message']
-            ];
+            ]);
         }
 
     }
@@ -156,6 +156,52 @@ EOD;
                 'status' => false,
                 'message' => $result['message']
             ]);
+        }
+    }
+
+    public function changePassword() {
+        $content = trim(file_get_contents("php://input"));
+        $data = json_decode($content, true);
+
+        $email = $_SESSION['email'];
+        $currPassword = $data['currentPassword'];
+        $password = $data['newPassword'];
+
+        if (empty($email) || empty($data['currentPassword']) || empty($data['newPassword'])) {
+            http_response_code(400);
+            echo json_encode([
+                'status' => false,
+                'email' => $email,
+                'currentPassword' => $data['currentPassword'],
+                'newPassword' => $data['newPassword'],
+                'message' => 'Change password failed'
+            ]);
+        } else {
+
+            $checkCredentials = $this->authService->login($email, $currPassword);
+
+            if($checkCredentials['status'] === true) {
+                $result = $this->authService->updatePasswordByEmail($email, $password);
+
+                if ($result['status'] === true) {
+                    echo json_encode([
+                        'status' => true,
+                        'message' => $result['message']
+                    ]);
+                } else {
+                    http_response_code(400);
+                    echo json_encode([
+                        'status' => false,
+                        'message' => $result['message']
+                    ]);
+                }
+            } else {
+                http_response_code(400);
+                echo json_encode([
+                    'status' => false,
+                    'message' => 'Current password is wrong'
+                ]);
+            }
         }
     }
 

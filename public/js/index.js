@@ -13,6 +13,14 @@ window.toggleConfirmPassword = () => {
     reg.toggleConfirmPassword();
 };
 
+window.toggleConfirmChangePassword = () => {
+    auth.toggleConfirmChangePassword();
+}
+
+window.toggleChangePassword = () => {
+    auth.toggleChangePassword();
+}
+
 window.togglePassword = () => {
     auth.togglePassword();
 };
@@ -39,4 +47,12 @@ window.handleIdleTimeout = () => {
 
 window.forgotPassword = () => {
     auth.forgotPassword();
+}
+
+window.rememberMe = () => {
+    auth.rememberMe();
+}
+
+window.changePassword = () => {
+    auth.changePassword();
 }

@@ -20,7 +20,7 @@ class HomeUser {
         this.searchExpanded = false;
 
         this.attachEventListeners();
-        // this.checkVerification();
+        this.checkVerification();
     }
 
     closeToast = () => {
@@ -71,7 +71,11 @@ class HomeUser {
             .then(res => res.json())
             .then(data => {
                 const {status, message} = data;
-                this.showToast('Account has not been verified','warning');
+                if (status === true) {
+
+                } else {
+                    this.showToast('Account has not been verified','warning');
+                }
             })
             .catch(
                 err => console.log(err)

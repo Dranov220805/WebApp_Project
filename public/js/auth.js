@@ -83,8 +83,128 @@ class Auth {
         });
     }
 
-    checkResetPassword() {
+    rememberMe() {
+        const emailInput = document.getElementById("email-input");
+        const passwordInput = document.getElementById("password-input");
+        const rememberCheckbox = document.getElementById("remember-me");
 
+        // Pre-fill if saved
+        const savedEmail = localStorage.getItem("rememberedEmail");
+        const savedPassword = localStorage.getItem("rememberedPassword");
+
+        if (savedEmail && savedPassword) {
+            emailInput.value = savedEmail;
+            passwordInput.value = savedPassword;
+            rememberCheckbox.checked = true;
+        }
+
+        // Handle checkbox + email save
+        $('#login-button').on('click', () => {
+            if (rememberCheckbox.checked) {
+                localStorage.setItem("rememberedEmail", emailInput.value);
+                localStorage.setItem("rememberedPassword", passwordInput.value);
+            } else {
+                localStorage.removeItem("rememberedEmail");
+                localStorage.removeItem("rememberedPassword");
+            }
+        });
+    }
+
+    autoLoginIfRemembered() {
+        const savedEmail = localStorage.getItem("rememberedEmail");
+        const rememberMe = localStorage.getItem("rememberMe");
+
+        if (savedEmail && rememberMe === "true") {
+            // Optionally send a request to validate the session or cookie
+            fetch('/auth/auto-login', {
+                method: 'POST',
+                credentials: 'include' // allows sending cookies
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.loggedIn) {
+                        window.location.href = data.redirect || '/home';
+                    }
+                });
+        }
+    }
+
+    toggleChangePassword() {
+        const togglePassword = document.querySelector('#toggle-change-password');
+        const password = document.querySelector('#new-password-input');
+
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+
+        // Toggle the icon class
+        togglePassword.classList.toggle('fa-eye');
+        togglePassword.classList.toggle('fa-eye-slash');
+    }
+
+    toggleConfirmChangePassword() {
+        const togglePassword = document.querySelector('#toggle-change-password-confirm');
+        const password = document.querySelector('#confirm-new-password-input');
+
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+
+        // Toggle the icon class
+        togglePassword.classList.toggle('fa-eye');
+        togglePassword.classList.toggle('fa-eye-slash');
+    }
+
+    changePassword() {
+        $('#post-change-password-btn').click(() => {
+            const newPassword = $('#new-password-input').val();
+            const confirmNewPassword = $('#confirm-new-password-input').val();
+            const currentPassword = $('#current-password-input').val(); // optional
+
+            const hasUppercase = /[A-Z]/.test(newPassword);
+            const hasLowercase = /[a-z]/.test(newPassword);
+            const hasNumber = /\d/.test(newPassword);
+
+            if (newPassword !== confirmNewPassword) {
+                this.showLoginToast('Passwords do not match!', 'warning');
+                return;
+            }
+
+            if (!hasUppercase || !hasLowercase || !hasNumber) {
+                this.showLoginToast(
+                    'Password must contain at least one uppercase letter, lowercase letter, and a number.',
+                    'warning');
+                return;
+            }
+
+            if (newPassword.length < 8) {
+                this.showLoginToast(
+                    'Password length must be at least 8 characters.',
+                    'warning');
+                return;
+            }
+
+            fetch('/log/change-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    currentPassword, // optional depending on your backend
+                    newPassword
+                })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        this.showLoginToast('Password changed successfully! Please login again', 'success');
+                        window.location.href="/log/logout";
+                        $('#changePasswordModal').modal('hide'); // if using Bootstrap modal
+                    } else {
+                        this.showLoginToast(data.message || 'Failed to change password.', 'danger');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    this.showLoginToast('Something went wrong.', 'danger');
+                });
+        });
     }
 
     forgotPassword() {

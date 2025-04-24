@@ -53,6 +53,8 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
             case 'log':
                 if($_GET['param_2'] == 'login'){
                     $authMiddleware->login_POST();
+                } else if($_GET['param_2'] == 'change-password'){
+                    $authMiddleware->changePassword();
                 }
                 break;
             case 'auth':
