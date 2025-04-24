@@ -61,4 +61,11 @@ class HomeUserMiddleWare {
             $this->homeUserController->userPreference();
         }
     }
+    public function uploadAvatar() {
+        if (!isset($_SESSION['roleId'])) {
+            header('location:/log/login');
+        } else {
+            $this->homeUserController->uploadAvatar();
+        }
+    }
 }

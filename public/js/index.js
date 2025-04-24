@@ -25,6 +25,10 @@ window.togglePassword = () => {
     auth.togglePassword();
 };
 
+window.handleAvatarUpload = () => {
+    homeUser.handleAvatarUpload();
+}
+
 window.checkLogin = () => {
     auth.checkLogin();
 };

@@ -21,6 +21,7 @@ class HomeUser {
 
         this.attachEventListeners();
         this.checkVerification();
+        this.handleAvatarUpload();
     }
 
     closeToast = () => {
@@ -53,6 +54,43 @@ class HomeUser {
             toast.classList.add("d-none");
             clearTimeout(hideTimeout);
         };
+    }
+
+    handleAvatarUpload() {
+        const form = document.getElementById('avatar-upload-form');
+        if (!form) return;
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const fileInput = document.getElementById('avatar-input');
+            const formData = new FormData();
+            formData.append('avatar', fileInput.files[0]);
+
+            try {
+                const response = await fetch('/home/upload/avatar', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    this.showToast('Avatar uploaded successfully!', 'success');
+                    // Optionally update avatar preview
+                    const avatarIcon = document.querySelector('.user__item--icon');
+                    if (avatarIcon) {
+                        avatarIcon.style.backgroundImage = `url(${result.url})`;
+                        avatarIcon.style.backgroundSize = 'cover';
+                    }
+                } else {
+                    this.showToast('Upload failed: ' + result.error, 'danger');
+                }
+            } catch (err) {
+                console.error('Upload error:', err);
+                this.showToast('Something went wrong while uploading avatar', 'danger');
+            }
+        });
     }
 
     attachEventListeners() {

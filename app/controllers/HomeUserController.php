@@ -1,5 +1,6 @@
 <?php
 include_once "./app/controllers/Base/BaseController.php";
+include_once "./app/core/uploadImage/cloudinary_upload.php";
 class HomeUserController extends BaseController{
     private HomeUserService $homeUserService;
     private NoteService $noteService;
@@ -74,6 +75,27 @@ class HomeUserController extends BaseController{
         $footer = 'home';
         include "./views/layout/index.php";
     }
+    public function uploadAvatar() {
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['avatar'])) {
+            $fileTmpPath = $_FILES['avatar']['tmp_name'];
+
+            $uploadResponse = uploadAvatarToCloudinary($fileTmpPath);
+
+            if ($uploadResponse['success']) {
+                $_SESSION['avatar_url'] = $uploadResponse['url'];
+            }
+
+            echo json_encode($uploadResponse);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'error' => 'Invalid request'
+            ]);
+        }
+    }
+
 }
 
 ?>

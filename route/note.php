@@ -61,6 +61,10 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $noteMiddleWare->updateNote_POST();
                 }else if ($_GET['param_2'] == 'delete') {
                     $noteMiddleWare->deleteNote_POST();
+                } else if ($_GET['param_2'] == 'pin') {
+                    $noteMiddleWare->pinNote_POST();
+                } else if ($_GET['param_2'] == 'unpin') {
+                    $noteMiddleWare->unpinNote_POST();
                 }
                 break;
             default:

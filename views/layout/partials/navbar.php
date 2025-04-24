@@ -37,7 +37,12 @@
             </a>
 
             <button data-bs-toggle="modal" class="info-modal" data-bs-target="#infoModal" data-bs-backdrop="false" data-bs-scroll="true">
-                <i class="navbar__item--icon fa-regular fa-circle-user"></i>
+<!--                <i class="navbar__item--icon fa-regular fa-circle-user"></i>-->
+                <?php if (!empty($_SESSION['avatar_url'])): ?>
+                    <img src="<?= $_SESSION['avatar_url'] ?>" style="width: 50px;">
+                <?php else: ?>
+                    <i class="fa-regular fa-circle-user"></i>
+                <?php endif; ?>
             </button>
         </div>
     </div>
@@ -50,7 +55,13 @@
 
             <div class="modal-header">
                 <h4 class="modal-title" style="flex-grow: 1">Hello, <?=$_SESSION['userName']?></h4>
-                <span style="justify-content: center"><?php if ($_SESSION['isVerified']) {echo '<i class="navbar__item--icon fa-regular fa-circle-user" style="display: flex;justify-content:center"></i>';} else {echo'<i class="navbar__item--icon fa-solid fa-border-all"></i>';} ?></span>
+                <span style="justify-content: center">
+                    <?php if (!empty($_SESSION['avatar_url'])): ?>
+                        <img src="<?= $_SESSION['avatar_url'] ?>" style="width: 80px;">
+                    <?php else: ?>
+                        <i class="fa-regular fa-circle-user"></i>
+                    <?php endif; ?>
+                </span>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 

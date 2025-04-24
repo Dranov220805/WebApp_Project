@@ -54,6 +54,22 @@ class NoteMiddleWare {
         }
     }
 
+    public function pinNote_POST() {
+        if (!isset($_SESSION['roleId'])) {
+            throw new Exception("Unauthenticated");
+        } else {
+            $this->noteController->pinNote_POST();
+        }
+    }
+
+    public function unpinNote_POST() {
+        if (!isset($_SESSION['roleId'])) {
+            throw new Exception("Unauthenticated");
+        } else {
+            $this->noteController->pinNote_POST();
+        }
+    }
+
 }
 
 ?>

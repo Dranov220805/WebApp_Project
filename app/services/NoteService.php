@@ -69,5 +69,57 @@ class NoteService {
     {
         return $this->noteRepository->searchNotesByAccountId($accountId, $searchTerm);
     }
+
+    public function deleteNoteByAccountIdAndNoteId($accountId, $noteId) {
+        // Call the repository method to delete the note
+        $result = $this->noteRepository->deleteNoteByAccountIdAndNoteId($accountId, $noteId);
+
+        // Check if the result is null or false, indicating failure
+        if (!$result) {
+            return [
+                'status' => false,
+                'message' => 'Note could not be deleted'
+            ];
+        }
+
+        // If the deletion was successful, return a success message
+        return [
+            'status' => true,
+            'message' => 'Note deleted successfully'
+        ];
+    }
+
+    public function pinNoteByNoteId($noteId) {
+        $result = $this->noteRepository->pinNoteByNoteId($noteId);
+
+        if (!$result) {
+            return [
+                'status' => false,
+                'message' => 'Note could not be pinged'
+            ];
+        } else {
+            return [
+                'status' => true,
+                'message' => 'Pinned note successfully'
+            ];
+        }
+    }
+
+    public function unpinNoteByNoteId($noteId) {
+        $result = $this->noteRepository->unpinNoteByNoteId($noteId);
+
+        if (!$result) {
+            return [
+                'status' => false,
+                'message' => 'Note could not be pinged'
+            ];
+        } else {
+            return [
+                'status' => true,
+                'message' => 'Pinned note successfully'
+            ];
+        }
+    }
+
 }
 ?>

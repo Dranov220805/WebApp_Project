@@ -16,7 +16,7 @@
                     <div class="setting-label">
 <!--                        --><?php //if ($_SESSION['isVerified'] == 1) {echo '<i style="width: 80px; height: 80px" class="user__item--icon fa-regular fa-circle-user"></i>';} else {echo 'no avatar';} ?>
                         <?php if (!empty($_SESSION['avatar_url'])): ?>
-                            <img src="<?= $_SESSION['avatar_url'] ?>" style="width: 80px;">
+                            <img src="<?= $_SESSION['avatar_url'] ?>" style="width: 80px; border: 3px dotted black">
                         <?php else: ?>
                             <i class="fa-regular fa-circle-user"></i>
                         <?php endif; ?>
@@ -24,7 +24,7 @@
                     </div>
                     <form id="avatar-upload-form" enctype="multipart/form-data">
                         <input type="file" id="avatar-input" name="avatar" accept="image/*" required>
-                        <button type="submit" class="btn btn-primary upload-btn">Upload Avatar</button>
+                        <button type="submit" class="btn btn-primary">Upload Avatar</button>
                     </form>
                 </div>
 

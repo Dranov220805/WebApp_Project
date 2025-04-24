@@ -16,8 +16,8 @@ class Notes {
         this.lastScrollTop = 0;
 
         this.setupEvents();
-        this.loadNotes();
         this.loadPinnedNotes();
+        this.loadNotes();
     }
 
     setupEvents() {
@@ -26,30 +26,42 @@ class Notes {
         document.removeEventListener('click', this.handleDeleteClick);
 
         this.handleNoteClick = (event) => {
-            const noteEl = event.target.closest('.note-sheet');
-            if (noteEl) {
-                const note = {
-                    noteId: noteEl.dataset.noteId,
-                    title: noteEl.dataset.noteTitle,
-                    content: noteEl.dataset.noteContent
-                };
-                console.log('Clicked note:', note);
-                this.expandNote(note);
-            }
-        };
-
-        this.handleDeleteClick = (event) => {
             const deleteBtn = event.target.closest(".note-delete-btn, .pinned-note-delete-btn");
+            const pinBtn = event.target.closest(".note-pin-btn");
+            const unpinBtn = event.target.closest(".pinned-note-pin-btn");
+            const noteEl = event.target.closest('.note-sheet');
+
+            if (!noteEl) return;
+
+            const note = {
+                noteId: noteEl.dataset.noteId || noteEl.dataset.id,
+                title: noteEl.dataset.noteTitle,
+                content: noteEl.dataset.noteContent
+            };
+
             if (deleteBtn) {
-                const noteEl = deleteBtn.closest('.note-sheet');
-                const note = {
-                    noteId: noteEl.dataset.noteId,
-                    title: noteEl.dataset.noteTitle,
-                    content: noteEl.dataset.noteContent
-                };
                 console.log('Clicked delete button:', note);
-                this.expandDeleteNote(note);
+                this.expandDeleteNote(note); // Show modal
+                return;
             }
+
+            if (pinBtn) {
+                console.log('Clicked pin button:', note);
+                this.pinNote_POST(note.noteId);
+                return;
+            }
+
+            if (unpinBtn) {
+                console.log('Clicked unpin button:', note);
+                this.unpinNote_POST(note.noteId);
+                return;
+            }
+
+            // Prevent expanding the note when clicking buttons inside .note-sheet__menu
+            if (event.target.closest('.note-sheet__menu button')) return;
+
+            console.log('Clicked note:', note);
+            this.expandNote(note);
         };
 
         document.addEventListener('click', this.handleNoteClick);
@@ -62,7 +74,6 @@ class Notes {
 
         const createNoteBtn = document.querySelector(".create-note-btn");
         const noteInput = document.querySelector(".note-post__input");
-        const notePinBtn = document.querySelector(".note-pin-btn");
 
         if (createNoteBtn) {
             createNoteBtn.removeEventListener("click", this.createNoteHandler);
@@ -72,11 +83,6 @@ class Notes {
         if (noteInput) {
             noteInput.removeEventListener("input", this.autoResizeInput);
             noteInput.addEventListener("input", this.autoResizeInput);
-        }
-        if (notePinBtn) {
-            notePinBtn.removeEventListener("click", this.pinNoteHandler);
-            this.pinNoteHandler = () => this.pinNewNote();
-            notePinBtn.addEventListener("click", this.pinNoteHandler);
         }
 
         this.initNotePostTrigger();
@@ -159,13 +165,12 @@ class Notes {
                         ${note.content.replace(/\n/g, '<br>')}
                     </div>
                 </div>
-                <div class="note-sheet__menu" onclick="event.stopPropagation()">
+                <div class="note-sheet__menu">
                     <div>
                         <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
-                        <button title="Label"><i class="fa-solid fa-tags"></i></button>
-                        <button title="Image"><i class="fa-solid fa-images"></i></button>
-                        <button class="note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
-                        <button class="note-delete-btn" title="Delete" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
+                        <button title="Add Label"><i class="fa-solid fa-tags"></i></button>
+                        <button title="Add Image"><i class="fa-solid fa-images"></i></button>
+                        <button class="note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
                     </div>
                     <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
                 </div>
@@ -219,13 +224,12 @@ class Notes {
                     ${note.content.replace(/\n/g, '<br>')}
                 </div>
             </div>
-            <div class="note-sheet__menu" onclick="event.stopPropagation()">
+            <div class="note-sheet__menu">
                 <div>
                     <button class="pinned-note-pin-btn" title="Unpin Note"><i class="fa-solid fa-thumbtack"></i></button>
-                    <button title="Label"><i class="fa-solid fa-tags"></i></button>
-                    <button title="Image"><i class="fa-solid fa-images"></i></button>
-                    <button class="pinned-note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
-                    <button class="pinned-note-delete-btn" title="Delete" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
+                    <button title="Add Label"><i class="fa-solid fa-tags"></i></button>
+                    <button title="Add Image"><i class="fa-solid fa-images"></i></button>
+                    <button class="pinned-note-delete-btn" title="Delete This Note" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
                 </div>
                 <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
             </div>
@@ -258,6 +262,70 @@ class Notes {
             })
             .finally(() => this.isLoading = false);
     }
+
+    // loadTrashedNotes() {
+    //     if (this.isLoading) return;
+    //     this.isLoading = true;
+    //
+    //     fetch(`/note/list?page=${this.currentPage}&limit=${this.limit}`, {
+    //         method: 'GET',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         }
+    //     })
+    //         .then(res => res.json())
+    //         .then(data => {
+    //             console.log(data);
+    //             if (data.data?.length > 0) {
+    //                 this.appendNotesToDOM(data.data);
+    //                 this.currentPage++;
+    //             }
+    //         })
+    //         .catch(err => {
+    //             console.error('Fetch failed:', err);
+    //             this.showToast('Failed to load notes. Please try again.');
+    //         })
+    //         .finally(() => this.isLoading = false);
+    // }
+    //
+    // appendTrashedNotesToDOM(notes) {
+    //     const container = document.querySelector(".other-note__load");
+    //     if (!container) return;
+    //
+    //     notes.forEach(note => {
+    //         if (document.querySelector(`.note-sheet[data-note-id="${note.noteId}"]`)) {
+    //             console.log(`Skipping duplicate note: ${note.noteId}`);
+    //             return;
+    //         }
+    //
+    //         const div = document.createElement("div");
+    //         div.className = "note-sheet d-flex flex-column";
+    //         div.dataset.noteId = note.noteId;
+    //         div.dataset.noteTitle = note.title;
+    //         div.dataset.noteContent = note.content;
+    //
+    //         div.innerHTML = `
+    //             <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
+    //                 <h3 class="note-sheet__title">${note.title}</h3>
+    //                 <div class="note-sheet__content">
+    //                     ${note.content.replace(/\n/g, '<br>')}
+    //                 </div>
+    //             </div>
+    //             <div class="note-sheet__menu">
+    //                 <div>
+    //                     <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
+    //                     <button title="Add Label"><i class="fa-solid fa-tags"></i></button>
+    //                     <button title="Add Image"><i class="fa-solid fa-images"></i></button>
+    //                     <button class="note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
+    //                     <button class="note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
+    //                 </div>
+    //                 <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
+    //             </div>
+    //         `;
+    //         container.appendChild(div);
+    //         console.log(`Appended note: ${note.noteId}`);
+    //     });
+    // }
 
     autoResizeInput(event) {
         event.target.style.height = 'auto';
@@ -479,12 +547,11 @@ class Notes {
                     ${content.replace(/\n/g, '<br>')}
                 </div>
             </div>
-            <div class="note-sheet__menu" onclick="event.stopPropagation()">
+            <div class="note-sheet__menu">
                 <div>
-                    <button class="pinned-note-pin-btn" title="Unpin Note"><i class="fa-solid fa-thumbtack"></i></button>
+                    <button class="pinned-note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
                     <button title="Label"><i class="fa-solid fa-tags"></i></button>
                     <button title="Image"><i class="fa-solid fa-images"></i></button>
-                    <button class="pinned-note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
                     <button class="pinned-note-delete-btn" title="Delete" data-note-id="${noteId}"><i class="fa-solid fa-trash"></i></button>
                 </div>
                 <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
@@ -496,12 +563,18 @@ class Notes {
     expandDeleteNote(note) {
         const modalEl = document.getElementById('deleteNoteModal');
         const modal = new bootstrap.Modal(modalEl);
-        const noteId = note.noteId;
         const confirmBtn = modalEl.querySelector('#confirmDeleteNoteBtn');
 
-        // Show the modal
         modal.show();
-        // Setup auto-save functionality for the modal
+
+        // Cleanup any old event listeners to prevent duplicates
+        const newConfirmHandler = () => {
+            this.deleteNote_POST(note.noteId, note);
+            confirmBtn.removeEventListener('click', newConfirmHandler); // prevent multiple bindings
+            modal.hide();
+        };
+
+        confirmBtn.addEventListener('click', newConfirmHandler);
     }
 
     deleteNoteInModal(note) {
@@ -525,7 +598,65 @@ class Notes {
         confirmBtn.addEventListener("click", onConfirm);
     }
 
-    deleteNote_POST(note) {
+    pinNote_POST(noteId) {
+        fetch('/note/pin', {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                noteId
+            })
+        })
+            .then(res => res.json())  // Parse the response JSON
+            .then(data => {
+                console.log(data);  // Process the data returned from the server
+                if (data.status === false) {
+                    this.showToast("An error occurred: " + data.message, "danger");
+                } else {
+                    this.showToast("Note pinned successfully!", "success");
+                    const pinNoteGrid = document.querySelector('.pinned-note__load');
+                    const otherNoteGrid = document.querySelector('.other-note__load');
+                    pinNoteGrid.innerHTML = ``;
+                    otherNoteGrid.innerHTML = '';
+                    this.loadPinnedNotes();
+                    this.loadNewNotes();
+                }
+            })
+            .catch(err => {
+                console.error("Error:", err);  // Log network or fetch error
+                this.showToast("An error occurred while pinning the note", "danger");
+            });
+    }
+
+    unpinNote_POST(noteId) {
+        fetch('/note/unpin', {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                noteId
+            })
+        })
+            .then(res => res.json())  // Parse the response JSON
+            .then(data => {
+                console.log(data);  // Process the data returned from the server
+                if (data.status === false) {
+                    this.showToast("An error occurred: " + data.message, "danger");
+                } else {
+                    this.showToast("Note unpinned successfully!", "success");
+                    const pinNoteGrid = document.querySelector('.pinned-note__load');
+                    const otherNoteGrid = document.querySelector('.other-note__load');
+                    otherNoteGrid.innerHTML = '';
+                    pinNoteGrid.innerHTML = ``;
+                    this.loadPinnedNotes();
+                    this.loadNewNotes();
+                }
+            })
+            .catch(err => {
+                console.error("Error:", err);  // Log network or fetch error
+                this.showToast("An error occurred while unpinning the note", "danger");
+            });
+    }
+
+    deleteNote_POST(noteId) {
         fetch(`/note/delete`, {
             method: 'POST',
             headers: { "Content-Type": "application/json" },
@@ -535,7 +666,8 @@ class Notes {
             .then(data => {
                 if (data.status === true) {
                     this.showToast("Note deleted successfully", "success");
-                    noteElement.remove(); // Remove from DOM
+                    const noteEl = document.querySelector(`.note-sheet[data-note-id="${noteId}"]`);
+                    if (noteEl) noteEl.remove(); // Remove from DOM
                 } else {
                     this.showToast(data.message || "Failed to delete note", "danger");
                 }
@@ -543,10 +675,6 @@ class Notes {
             .catch(err => {
                 console.error("Delete error:", err);
                 this.showToast("An error occurred while deleting the note", "danger");
-            })
-            .finally(() => {
-                confirmBtn.removeEventListener("click", onConfirm);
-                modal.hide();
             });
     }
 

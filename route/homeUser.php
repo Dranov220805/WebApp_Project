@@ -8,7 +8,15 @@ $homeUserController = new HomeUserController();
 
 if($_SERVER['REQUEST_METHOD'] == 'GET'){
     if(isset($_GET['param_1']) && isset($_GET['param_2']) && isset($_GET['param_3'])){
-
+        switch ($_GET['param_1']) {
+            case 'home':
+                if($_GET['param_2'] == 'upload'){
+                    switch ($_GET['param_3']) {
+                        case 'upload':
+                            $homeUserMiddleWare->uploadAvatar();
+                    }
+                }
+        }
     } else if (isset($_GET['param_1']) && isset($_GET['param_2'])){
         switch ($_GET['param_1']){
             case 'home':
@@ -37,7 +45,14 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
         $homeUserMiddleWare->redirectToIndex();
     }
 
+} else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_GET['param_1'], $_GET['param_2'], $_GET['param_3'])) {
+        if ($_GET['param_1'] === 'home' && $_GET['param_2'] === 'upload' && $_GET['param_3'] === 'avatar') {
+            $homeUserMiddleWare->uploadAvatar();
+        }
+    }
 }
+
 
 //if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 //    $param1 = $_GET['param_1'] ?? null;
