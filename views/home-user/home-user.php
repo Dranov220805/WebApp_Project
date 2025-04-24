@@ -124,11 +124,11 @@
 
     <!-- Modal Structure for show Note Detail-->
     <div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" data-bs-backdrop="true" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable note-modal-display position-fixed top-50 start-50 translate-middle fade show note-detail__modal--dialog">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable note-modal-display position-fixed top-50 start-50 translate-middle fade show note-detail__modal--dialog" style="height: 60%">
             <div class="modal-content note-detail__modal">
                 <div class="modal-header">
                     <input type="text" class="modal-title note-title-input form-control border-0" id="noteModalLabel" />
-                    <button type="button" class="btn-close note-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <i type="button" class="fa-solid fa-xmark btn-close note-modal-close" data-bs-dismiss="modal" aria-label="Close" style="font-size: 20px; margin-left: 10px;"></i>
                 </div>
                 <div class="modal-body">
                     <textarea class="note-content-input form-control" style="height: 300px; resize: none;"></textarea>

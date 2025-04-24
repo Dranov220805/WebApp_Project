@@ -17,7 +17,7 @@ function uploadAvatarToCloudinary($fileTmpPath): array
 {
     try {
         $uploadResult = (new UploadApi())->upload($fileTmpPath, [
-            'folder' => 'user_avatars'
+            'folder' => 'Pernote/user-icon'
         ]);
 
         return [

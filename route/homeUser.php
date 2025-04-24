@@ -28,6 +28,8 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
                     $homeUserMiddleWare->homeArchive();
                 } else if($_GET['param_2'] == 'trash'){
                     $homeUserMiddleWare->homeTrash();
+                } else if($_GET['param_2'] == 'preferences'){
+                    $homeUserMiddleWare->userPreference();
                 }
                 break;
         }

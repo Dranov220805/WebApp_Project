@@ -3,12 +3,14 @@ include_once "./app/controllers/Base/BaseController.php";
 include_once "./app/core/uploadImage/cloudinary_upload.php";
 class HomeUserController extends BaseController{
     private HomeUserService $homeUserService;
+    private AccountService $accountService;
     private NoteService $noteService;
 
     public function __construct(){
         parent::__construct();
         $this->homeUserService = new HomeUserService();
         $this->noteService = new NoteService();
+        $this->accountService = new AccountService();
     }
     public function index()
     {
@@ -70,11 +72,6 @@ class HomeUserController extends BaseController{
         $footer = 'home';
         include "./views/layout/index.php";
     }
-    public function userPreference() {
-        $content = 'home-user-preference';
-        $footer = 'home';
-        include "./views/layout/index.php";
-    }
     public function uploadAvatar() {
         header('Content-Type: application/json');
 
@@ -92,6 +89,26 @@ class HomeUserController extends BaseController{
             echo json_encode([
                 'success' => false,
                 'error' => 'Invalid request'
+            ]);
+        }
+    }
+    public function getPreferencesByAccountId() {
+        header('Content-Type: application/json');
+
+        $accountId = $_SESSION['accountId'] ?? null;
+        $result = $this->accountService->getPreferencesByAccountId($accountId);
+        if(!$result['status'] === true) {
+            http_response_code(400);
+            echo json_encode([
+                'status' => false,
+                'message' => $result['message']
+            ]);
+        } else {
+            http_response_code(200);
+            echo json_encode([
+                'status' => true,
+                'data' => $result,
+                'message' => $result['message']
             ]);
         }
     }

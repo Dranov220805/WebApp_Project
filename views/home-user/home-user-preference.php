@@ -13,10 +13,10 @@
 
                 <div class="section-title">Avatar</div>
                 <div class="setting-row" style="display: flex; flex-grow: 1; width: 100%; height: 80px">
-                    <div class="setting-label">
+                    <div class="setting-label setting-avatar" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center">
 <!--                        --><?php //if ($_SESSION['isVerified'] == 1) {echo '<i style="width: 80px; height: 80px" class="user__item--icon fa-regular fa-circle-user"></i>';} else {echo 'no avatar';} ?>
                         <?php if (!empty($_SESSION['avatar_url'])): ?>
-                            <img src="<?= $_SESSION['avatar_url'] ?>" style="width: 80px; border: 3px dotted black">
+                            <img src="<?= $_SESSION['avatar_url'] ?>" style="width: 70px; height: 70px;">
                         <?php else: ?>
                             <i class="fa-regular fa-circle-user"></i>
                         <?php endif; ?>
@@ -24,7 +24,7 @@
                     </div>
                     <form id="avatar-upload-form" enctype="multipart/form-data">
                         <input type="file" id="avatar-input" name="avatar" accept="image/*" required>
-                        <button type="submit" class="btn btn-primary">Upload Avatar</button>
+                        <a class="btn btn-primary btn-upload">Upload Avatar</a>
                     </form>
                 </div>
 
@@ -33,7 +33,7 @@
 
                 <div class="setting-row">
                     <div class="setting-label">Theme</div>
-                    <select id="theme-selector" class="form-select dropdown-select">
+                    <select id="theme-selector" class="form-select dropdown-select" style="width: 20%">
                         <option value="light">Light</option>
                         <option value="dark">Dark</option>
                         <option value="system" selected>System default</option>
@@ -42,7 +42,7 @@
 
                 <div class="setting-row">
                     <div class="setting-label">Font Size</div>
-                    <select class="form-select dropdown-select">
+                    <select class="form-select dropdown-select" style="width: 20%">
                         <option selected>Small</option>
                         <option>Medium</option>
                         <option>Large</option>
@@ -71,22 +71,22 @@
 
                 <div class="setting-row">
                     <div class="setting-label">Change Password</div>
-                    <button id="change-password-btn" class="btn btn-reset text-white" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Change Password</button>
+                    <button id="change-password-btn" class="btn btn-reset text-white d-button" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Change Password</button>
                 </div>
 
                 <div class="section-divider"></div>
 
                 <!-- Action Buttons -->
                 <div class="action-buttons">
-                    <a href="/home" class="btn btn-cancel">Cancel</a>
-                    <a href="/home/savechanges" class="btn btn-save text-white">Save Changes</a>
+                    <a href="/home" class="btn btn-cancel d-button">Cancel</a>
+                    <a class="btn btn-save btn-save-preference text-white d-button">Save Changes</a>
                 </div>
             </div>
 
             <!-- Change Password Modal -->
             <div class="modal fade" id="changePasswordModal" tabindex="-1" style="height: fit-content; min-height: 600px;" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
                 <div class="modal-dialog" style="margin-top: 100px; margin-bottom: auto">
-                    <div class="modal-content">
+                    <div class="modal-content" style="width: 100%; max-width: 500px">
                         <div class="modal-header">
                             <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -132,26 +132,52 @@
     <!-- JavaScript and Css for functionality -->
 
     <script>
-        // Script to handle color option selection
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
 
             if (window.changePassword) {
                 changePassword();
             }
 
+            // Existing color option logic
             const colorOptions = document.querySelectorAll('.color-option');
-
             colorOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    // Remove active class from all options
+                option.addEventListener('click', function () {
                     colorOptions.forEach(opt => opt.classList.remove('active'));
-
-                    // Add active class to clicked option
                     this.classList.add('active');
                 });
             });
+
+            // Theme switch logic
+            const themeSelector = document.getElementById('theme-selector');
+
+            // Load stored theme from localStorage
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                themeSelector.value = 'dark';
+            } else if (savedTheme === 'light') {
+                document.body.classList.remove('dark-mode');
+                themeSelector.value = 'light';
+            }
+
+            themeSelector.addEventListener('change', function () {
+                const selectedTheme = themeSelector.value;
+
+                if (selectedTheme === 'dark') {
+                    document.body.classList.add('dark-mode');
+                    localStorage.setItem('theme', 'dark');
+                } else if (selectedTheme === 'light') {
+                    document.body.classList.remove('dark-mode');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    // For system default, clear preference
+                    localStorage.removeItem('theme');
+                    document.body.classList.remove('dark-mode');
+                }
+            });
         });
     </script>
+
 
     <style>
         body {

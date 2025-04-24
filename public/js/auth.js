@@ -57,6 +57,8 @@ class Auth {
                     console.log(data);
                     const { roleId, userName, email, message, status } = data;
 
+                    $('#email-input').val('');
+                    $('#password-input').val('');
                     if (status === true) {
 
                         // Show success toast message

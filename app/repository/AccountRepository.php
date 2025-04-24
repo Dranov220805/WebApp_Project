@@ -7,22 +7,6 @@ class AccountRepository{
         $this->conn = DatabaseManager::getInstance()->getConnection();
     }
 
-//    public function getAccountByUsernameAndPassword($account_username, $account_password): ?Account{
-//        $sql = "SELECT * FROM `Account`
-//         WHERE `userName` = ? AND `password` = ?";
-//        $stmt = $this->conn->prepare($sql);
-//        $stmt->bind_param("ss", $account_username, $account_password);
-//        $stmt->execute();
-//        $result = $stmt->get_result();
-//        if (!$result || $result->num_rows === 0) {
-//            return null;
-//        }
-//        $row = $result->fetch_assoc();
-//        $stmt->close();
-//        return new Account($row['accountId'], $row['userName'],
-//            $row['password'], $row['email'], $row['roleId']);
-//    }
-
     public function getAccountByEmail($email): ?Account {
         $sql = "SELECT * FROM `Account` WHERE `email` = ?";
         $stmt = $this->conn->prepare($sql);
@@ -138,19 +122,6 @@ class AccountRepository{
         return $role_name;
     }
 
-//    public function checkAccountByUsernameAndPassword($account_username, $account_password): bool{
-//        $sql = "SELECT * from `Account`
-//                WHERE `userName` = ? AND `password` = ?";
-//        $stmt = $this->conn->prepare($sql);
-//        $stmt->bind_param('ss', $account_username, $account_password);
-//        $stmt->execute();
-//
-//        $result = $stmt->get_result();
-//
-//        $stmt->close();
-//        return $result->num_rows === 1;
-//    }
-
     public function getRoleByUserNameAndPassword($account_username, $account_password): string {
         $sql = "SELECT `roleId` from `Account`
                 WHERE `userName` = ? AND `password` = ? ";
@@ -167,32 +138,30 @@ class AccountRepository{
     }
 
     public function createAccountByUsernameAndPasswordAndEmail($account_username, $account_password, $email): ?Account {
-        // Generate UUID
-        $uuid = Uuid::uuid4()->toString();
-
-        // Default parameter
+        $accountId = Uuid::uuid4()->toString();
         $roleId = 1;
         $isVerified = 0;
-
-        // Hash the password for secure storage
-        $hashedPassword = password_hash($account_password, PASSWORD_DEFAULT);
         $activation_token = bin2hex(random_bytes(16));
+        $hashedPassword = password_hash($account_password, PASSWORD_DEFAULT);
 
-        // Insert into the database
         $sql = "INSERT INTO `Account` 
-            (`accountId`, `userName`, `password`, `email`, `activation_token`, `roleId`, `isVerified`) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)";
+        (`accountId`, `userName`, `password`, `email`, `activation_token`, `roleId`, `isVerified`) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param('sssssii', $uuid, $account_username, $hashedPassword, $email, $activation_token, $roleId, $isVerified);
+        $stmt->bind_param('sssssii', $accountId, $account_username, $hashedPassword, $email, $activation_token, $roleId, $isVerified);
 
         $result = $stmt->execute();
         $stmt->close();
 
         if (!$result) return null;
 
+        // Create default preferences after account creation
+        $prefCreated = $this->createDefaultPreferencesForAccount($accountId);
+        if (!$prefCreated) return null;
+
         return new Account(
-            $uuid,
+            $accountId,
             $account_username,
             $account_password,
             $email,
@@ -200,6 +169,59 @@ class AccountRepository{
             $roleId,
             $isVerified
         );
+    }
+
+    public function createDefaultPreferencesForAccount(string $accountId): bool {
+        $preferenceId = Uuid::uuid4()->toString();
+
+        // Default preferences
+        $defaultLayout = 'list';
+        $defaultNoteFont = '16px';
+        $defaultNoteColor = '#000000';
+        $defaultFont = 'Arial';
+        $defaultDarkTheme = false;
+
+        $sql = "INSERT INTO `Preference` 
+            (`preferenceId`, `accountId`, `layout`, `noteFont`, `noteColor`, `font`, `isDarkTheme`) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ssssssi", $preferenceId, $accountId, $defaultLayout, $defaultNoteFont, $defaultNoteColor, $defaultFont, $defaultDarkTheme);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        return $result;
+    }
+
+    public function getPreferencesByAccountId($accountId) {
+        $sql = "SELECT Preference.* FROM `Preference`
+            LEFT JOIN `Account` ON `Account`.`accountId` = `Preference`.`accountId`
+            WHERE `Account`.`accountId` = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param('s', $accountId);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        if ($row = $result->fetch_assoc()) {
+            return [
+                'status' => true,
+                'preferenceId' => $row['preferenceId'],
+                'accountId' => $row['accountId'],
+                'layout' => $row['layout'],
+                'noteFont' => $row['noteFont'],
+                'noteColor' => $row['noteColor'],
+                'font' => $row['font'],
+                'isDarkTheme' => $row['isDarkTheme'],
+                'message' => 'Account preferences found',
+            ];
+        } else {
+            return [
+                'status' => false,
+                'message' => 'Account preferences not found'
+            ];
+        }
     }
 
 }

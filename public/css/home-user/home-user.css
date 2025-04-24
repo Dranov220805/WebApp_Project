@@ -302,11 +302,13 @@
 
 .note-detail__modal {
     width: 100%;
+    height: 100%;
 }
 
 .note-detail__modal--dialog {
     width: 100%;
     max-width: 700px;
+    height: 60%;
 }
 
 /* Individual note card */
@@ -325,6 +327,35 @@
 .note-modal-display {
     width: 80%;
     height: 70%;
+}
+
+.btn-upload {
+    background-color: #1a2e44;
+    border: none;
+}
+
+.btn-upload:hover {
+    background-color: #5771ff;
+    color: white;
+}
+
+.setting-avatar {
+    border: 3px dotted black;
+}
+
+.close-info-modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+}
+
+.note-title-input {
+    background-color: #ffffff;
+}
+
+.note-content-input {
+    background-color: #ffffff;
 }
 
 /* ─────── DARK MODE SUPPORT ─────── */
@@ -397,6 +428,65 @@ body.dark-mode .note-text__content {
 
 body.dark-mode .note-layout__title {
     color: #e0e0e0;
+}
+
+.body.dark-mode .note-title-input {
+    background-color: #202124;
+}
+
+.body.dark-mode .note-content-input {
+    background-color: #202124;
+}
+
+body.dark-mode .preferences-container {
+    background-color: #1c1c1c;
+    color: #e0e0e0;
+}
+
+/*body.dark-mode .setting-label {*/
+/*    border: 3px dotted white;*/
+/*}*/
+
+body.dark-mode .section-title {
+    color: #e0e0e0;
+}
+
+body.dark-mode .setting-label {
+    color: #e0e0e0;
+}
+
+body.dark-mode .setting-avatar {
+    border: 3px dotted white;
+}
+
+body.dark-mode .btn-upload {
+    background-color: #5771ff;
+}
+
+body.dark-mode .btn-upload:hover {
+    color: #1a2e44;
+    background-color: white;
+}
+
+body.dark-mode .d-button {
+    background-color: #5771ff;
+    border: none;
+    color: white;
+}
+
+body.dark-mode .d-button:hover {
+    background-color: white;
+    color: #1a2e44;
+    border: none;
+}
+
+body.dark-mode .btn-reset:hover {
+    background-color: white;
+    color: #1a2e44;
+}
+
+body.dark-mode .btn-close {
+    color: white;
 }
 
 /* Toggle dark mode by toggling the `dark-mode` class on the <body> tag */

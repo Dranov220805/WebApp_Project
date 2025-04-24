@@ -39,7 +39,7 @@
             <button data-bs-toggle="modal" class="info-modal" data-bs-target="#infoModal" data-bs-backdrop="false" data-bs-scroll="true">
 <!--                <i class="navbar__item--icon fa-regular fa-circle-user"></i>-->
                 <?php if (!empty($_SESSION['avatar_url'])): ?>
-                    <img src="<?= $_SESSION['avatar_url'] ?>" style="width: 50px;">
+                    <img src="<?= $_SESSION['avatar_url'] ?>" style="width: 30px; border-radius: 50px">
                 <?php else: ?>
                     <i class="fa-regular fa-circle-user"></i>
                 <?php endif; ?>
@@ -55,14 +55,15 @@
 
             <div class="modal-header">
                 <h4 class="modal-title" style="flex-grow: 1">Hello, <?=$_SESSION['userName']?></h4>
-                <span style="justify-content: center">
+                <span style="display: flex; justify-content: center; align-items: center; width: 40px; height: 40px">
                     <?php if (!empty($_SESSION['avatar_url'])): ?>
-                        <img src="<?= $_SESSION['avatar_url'] ?>" style="width: 80px;">
+                        <img src="<?= $_SESSION['avatar_url'] ?>" style="width: 30px; border-radius: 50px">
                     <?php else: ?>
                         <i class="fa-regular fa-circle-user"></i>
                     <?php endif; ?>
                 </span>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+<!--                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>-->
+                <i class="fa-solid fa-xmark close-info-modal" data-bs-dismiss="modal" style="width: 40px; height: 40px; margin-left: 10px"></i>
             </div>
 
             <div class="modal-body">
@@ -70,7 +71,7 @@
                 <br>
                 <strong>Email: </strong> <?=$_SESSION['email']?>
                 <br>
-                <strong>Verify status: </strong><?php if ($_SESSION['isVerified'] = 1) {echo 'Verified';} else {echo 'Not Verified';}?>
+                <strong>Verify status: </strong><?php if ($_SESSION['isVerified'] = 'TRUE') {echo 'Verified';} else {echo 'Not Verified';}?>
             </div>
 
             <div class="modal-footer">

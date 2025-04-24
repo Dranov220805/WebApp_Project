@@ -2,6 +2,21 @@
 class Preference {
     public string $preferenceId;
     public string $accountId;
+    public string $layout;
+    public string $noteFont;
+    public string $noteColor;
+    public string $font;
+    public bool $isDarkTheme;
+
+    public function __construct($preferenceId, $accountId, $layout, $noteFont, $noteColor, $font, $isDarkTheme) {
+        $this->preferenceId = $preferenceId;
+        $this->accountId = $accountId;
+        $this->layout = $layout;
+        $this->noteFont = $noteFont;
+        $this->noteColor = $noteColor;
+        $this->font = $font;
+        $this->isDarkTheme = $isDarkTheme;
+    }
 
     public function getPreferenceId(): string
     {
@@ -71,20 +86,5 @@ class Preference {
     public function setAccountId(string $accountId): void
     {
         $this->accountId = $accountId;
-    }
-    public string $layout;
-    public string $noteFont;
-    public string $noteColor;
-    public string $font;
-    public bool $isDarkTheme;
-
-    public function __construct($preferenceId, $accountId, $layout, $noteFont, $noteColor, $font, $isDarkTheme) {
-        $this->preferenceId = $preferenceId;
-        $this->accountId = $accountId;
-        $this->layout = $layout;
-        $this->noteFont = $noteFont;
-        $this->noteColor = $noteColor;
-        $this->font = $font;
-        $this->isDarkTheme = $isDarkTheme;
     }
 }

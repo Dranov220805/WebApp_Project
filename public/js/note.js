@@ -210,32 +210,36 @@ class Notes {
         if (!container) return;
 
         notes.forEach(note => {
+            if (document.querySelector(`.note-sheet[data-note-id="${note.noteId}"]`)) {
+                console.log(`Skipping duplicate note: ${note.noteId}`);
+                return;
+            }
+
             const div = document.createElement("div");
             div.className = "note-sheet d-flex flex-column";
-            div.dataset.id = note.noteId;
-            // div.onclick = () => this.expandNote(div);
-            div.onclick = () => this.openNoteInModal(note);
-
+            div.dataset.noteId = note.noteId;
+            div.dataset.noteTitle = note.title;
+            div.dataset.noteContent = note.content;
 
             div.innerHTML = `
-            <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
-                <h3 class="note-sheet__title">${note.title}</h3>
-                <div class="note-sheet__content">
-                    ${note.content.replace(/\n/g, '<br>')}
+                <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
+                    <h3 class="note-sheet__title">${note.title}</h3>
+                    <div class="note-sheet__content">
+                        ${note.content.replace(/\n/g, '<br>')}
+                    </div>
                 </div>
-            </div>
-            <div class="note-sheet__menu">
-                <div>
-                    <button class="pinned-note-pin-btn" title="Unpin Note"><i class="fa-solid fa-thumbtack"></i></button>
-                    <button title="Add Label"><i class="fa-solid fa-tags"></i></button>
-                    <button title="Add Image"><i class="fa-solid fa-images"></i></button>
-                    <button class="pinned-note-delete-btn" title="Delete This Note" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
+                <div class="note-sheet__menu">
+                    <div>
+                        <button class="pinned-note-pin-btn" title="Unpin Note"><i class="fa-solid fa-thumbtack"></i></button>
+                        <button title="Add Label"><i class="fa-solid fa-tags"></i></button>
+                        <button title="Add Image"><i class="fa-solid fa-images"></i></button>
+                        <button class="pinned-note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                    <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
                 </div>
-                <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
-            </div>
-        `;
-            // Append to container
+            `;
             container.appendChild(div);
+            console.log(`Appended note: ${note.noteId}`);
         });
     }
 
@@ -549,10 +553,40 @@ class Notes {
             </div>
             <div class="note-sheet__menu">
                 <div>
-                    <button class="pinned-note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
+                    <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
                     <button title="Label"><i class="fa-solid fa-tags"></i></button>
                     <button title="Image"><i class="fa-solid fa-images"></i></button>
-                    <button class="pinned-note-delete-btn" title="Delete" data-note-id="${noteId}"><i class="fa-solid fa-trash"></i></button>
+                    <button class="note-delete-btn" title="Delete" data-note-id="${noteId}"><i class="fa-solid fa-trash"></i></button>
+                </div>
+                <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
+            </div>
+        `;
+        otherNoteGrid.prepend(div);
+    }
+
+    PinNoteSheetModel(noteId, title, content) {
+        const otherNoteGrid = document.querySelector('.other-note__load');
+
+        const div = document.createElement("div");
+        div.className = "note-sheet d-flex flex-column";
+        div.dataset.id = noteId;
+        // div.onclick = () => this.expandNote(div);
+        div.onclick = () => this.openNoteInModal(note);
+
+
+        div.innerHTML = `
+            <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
+                <h3 class="note-sheet__title" data-note-title="${title}">${title}</h3>
+                <div class="note-sheet__content" data-note-content="${content}">
+                    ${content.replace(/\n/g, '<br>')}
+                </div>
+            </div>
+            <div class="note-sheet__menu">
+                <div>
+                    <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
+                    <button title="Label"><i class="fa-solid fa-tags"></i></button>
+                    <button title="Image"><i class="fa-solid fa-images"></i></button>
+                    <button class="note-delete-btn" title="Delete" data-note-id="${noteId}"><i class="fa-solid fa-trash"></i></button>
                 </div>
                 <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
             </div>
@@ -613,12 +647,10 @@ class Notes {
                     this.showToast("An error occurred: " + data.message, "danger");
                 } else {
                     this.showToast("Note pinned successfully!", "success");
+                    const pinnedNote = this.PinNoteSheetModel(noteId, data.title, data.content);
                     const pinNoteGrid = document.querySelector('.pinned-note__load');
                     const otherNoteGrid = document.querySelector('.other-note__load');
-                    pinNoteGrid.innerHTML = ``;
-                    otherNoteGrid.innerHTML = '';
-                    this.loadPinnedNotes();
-                    this.loadNewNotes();
+                    pinNoteGrid.prepend(pinnedNote);
                 }
             })
             .catch(err => {
@@ -642,12 +674,10 @@ class Notes {
                     this.showToast("An error occurred: " + data.message, "danger");
                 } else {
                     this.showToast("Note unpinned successfully!", "success");
+                    const otherNote = this.noteSheetModel(noteId, data.title, data.content);
                     const pinNoteGrid = document.querySelector('.pinned-note__load');
                     const otherNoteGrid = document.querySelector('.other-note__load');
-                    otherNoteGrid.innerHTML = '';
-                    pinNoteGrid.innerHTML = ``;
-                    this.loadPinnedNotes();
-                    this.loadNewNotes();
+                    otherNoteGrid.prepend(otherNote);
                 }
             })
             .catch(err => {

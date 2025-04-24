@@ -6,7 +6,6 @@ class HomeUser {
     initialize() {
         this.sidebarToggle = document.getElementById('sidebar-toggle');
         this.sidebar = document.getElementById('sidebar');
-        this.sidebar = document.getElementById('sidebar');
         this.content = document.getElementById('content');
         this.sidebarItems = document.querySelectorAll('.sidebar-item');
         this.toggleGridBtns = document.querySelectorAll('.toggle-grid');
@@ -14,14 +13,87 @@ class HomeUser {
         this.searchContainer = document.getElementById('search-container');
         this.searchIcon = document.getElementById('search-icon');
         this.searchInput = document.getElementById('search-input');
+        this.btnSavePreference = document.getElementById('btn-save-preference');
         this.searchTimeout = null;
 
         this.sidebarVisible = false;
         this.searchExpanded = false;
 
+        this.loadUserPreference();
         this.attachEventListeners();
         this.checkVerification();
         this.handleAvatarUpload();
+    }
+
+    loadUserPreference() {
+        const storedPrefs = sessionStorage.getItem('userPreferences');
+
+        // If preferences already exist in sessionStorage, use them first
+        if (storedPrefs) {
+            this.applyPreferences(JSON.parse(storedPrefs)); // Use this.applyPreferences instead of just applyPreferences
+        }
+
+        // Fetch fresh preferences from server only if not cached, or for sync check
+        fetch('/home/preferences')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to load preferences');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (!data.status || !data.data) {
+                    throw new Error('Invalid preference data');
+                }
+
+                const prefs = data.data;
+
+                // Compare with session storage
+                const currentPrefs = storedPrefs ? JSON.parse(storedPrefs) : null;
+
+                if (!currentPrefs || JSON.stringify(currentPrefs) !== JSON.stringify(prefs)) {
+                    // Preferences differ or not stored — update and apply
+                    sessionStorage.setItem('userPreferences', JSON.stringify(prefs));
+                    this.applyPreferences(prefs); // Again, use this.applyPreferences
+                }
+            })
+            .catch(error => {
+                console.error('Error loading user preferences:', error);
+            });
+    }
+
+    applyPreferences(prefs) {
+        // Theme
+        const themeSelector = document.getElementById('theme-selector');
+        if (prefs.isDarkTheme === 1) {
+            document.body.classList.add('dark-mode');
+            if (themeSelector) themeSelector.value = 'dark';
+        } else {
+            document.body.classList.remove('dark-mode');
+            if (themeSelector) themeSelector.value = 'light';
+        }
+
+        // Font size
+        const fontSizeSelector = document.querySelector('select.form-select:not(#theme-selector)');
+        if (prefs.noteFont) {
+            document.body.style.fontSize = prefs.noteFont;
+
+            if (fontSizeSelector) {
+                fontSizeSelector.value =
+                    prefs.noteFont === '14px' ? 'Small' :
+                        prefs.noteFont === '16px' ? 'Medium' :
+                            prefs.noteFont === '18px' ? 'Large' : '';
+            }
+        }
+
+        // Font family
+        document.body.style.fontFamily = prefs.font || 'Arial';
+
+        // Note color
+        document.documentElement.style.setProperty('--note-color', prefs.noteColor || '#000000');
+
+        // Layout (used for note layout maybe?)
+        document.body.setAttribute('data-layout', prefs.layout || 'list');
     }
 
     closeToast = () => {
@@ -58,14 +130,19 @@ class HomeUser {
 
     handleAvatarUpload() {
         const form = document.getElementById('avatar-upload-form');
-        if (!form) return;
+        const fileInput = document.getElementById('avatar-input');
+        const uploadButton = document.querySelector('.btn-upload'); // Button for triggering file upload
 
-        form.addEventListener('submit', async (e) => {
+        if (!form || !fileInput || !uploadButton) return;
+
+        // Trigger file input when the upload button is clicked
+        uploadButton.addEventListener('click', async(e) => {
             e.preventDefault();
+            const selectedFile = fileInput.files[0];
+            if (!selectedFile) return;
 
-            const fileInput = document.getElementById('avatar-input');
             const formData = new FormData();
-            formData.append('avatar', fileInput.files[0]);
+            formData.append('avatar', selectedFile);
 
             try {
                 const response = await fetch('/home/upload/avatar', {

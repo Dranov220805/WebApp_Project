@@ -80,7 +80,7 @@ class Reg {
             }
 
             // Register POST
-            fetch('register', {
+            fetch('/reg/register', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json"
@@ -98,12 +98,19 @@ class Reg {
                     if (status === true) {
                         if (message === "Email already exists") {
                             this.showRegisterToast('Email already exists!', 'warning');
+                            const email = $('#email-input').val('');
+                            const username = $('#username-input').val('');
+                            const password = $('#password-input').val('');
+                            const confirmPassword = $('#password-input-confirm').val('');
                         } else {
                             this.showRegisterToast('Registration successful! Logging you in...', 'success');
 
                             // Proceed to login if registration is successful
                             return fetch('/log/login', {
                                 method: 'POST',
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
                                 body: JSON.stringify({
                                     email,
                                     password
