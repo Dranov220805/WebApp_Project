@@ -19,19 +19,20 @@ class HomeUser {
         this.sidebarVisible = false;
         this.searchExpanded = false;
 
-        this.loadUserPreference();
+        // this.loadUserPreference();
         this.attachEventListeners();
         this.checkVerification();
         this.handleAvatarUpload();
+        this.attachPreferenceSaveHandler();
     }
 
     loadUserPreference() {
         const storedPrefs = sessionStorage.getItem('userPreferences');
 
         // If preferences already exist in sessionStorage, use them first
-        if (storedPrefs) {
-            this.applyPreferences(JSON.parse(storedPrefs)); // Use this.applyPreferences instead of just applyPreferences
-        }
+        // if (storedPrefs) {
+        //     this.applyPreferences(JSON.parse(storedPrefs)); // Use this.applyPreferences instead of just applyPreferences
+        // }
 
         // Fetch fresh preferences from server only if not cached, or for sync check
         fetch('/home/preferences')
@@ -49,7 +50,7 @@ class HomeUser {
                 const prefs = data.data;
 
                 // Compare with session storage
-                const currentPrefs = storedPrefs ? JSON.parse(storedPrefs) : null;
+                // const currentPrefs = storedPrefs ? JSON.parse(storedPrefs) : null;
 
                 if (!currentPrefs || JSON.stringify(currentPrefs) !== JSON.stringify(prefs)) {
                     // Preferences differ or not stored — update and apply
@@ -60,6 +61,47 @@ class HomeUser {
             .catch(error => {
                 console.error('Error loading user preferences:', error);
             });
+    }
+
+    attachPreferenceSaveHandler() {
+        const saveBtn = document.querySelector('.btn-save-preference');
+        if (!saveBtn) return;
+
+        saveBtn.addEventListener('click', async () => {
+            const theme = document.getElementById('theme-selector')?.value || 'system';
+            const fontSize = document.getElementById('font-size-selector')?.value || '14px';
+            const selectedColorElement = document.querySelector('.color-option.active');
+            const noteColor = selectedColorElement ? selectedColorElement.dataset.color : '#000000';
+
+            const body = {
+                theme,
+                noteFont: fontSize,
+                noteColor
+            };
+
+            try {
+                const response = await fetch('/home/preferences', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                const result = await response.json();
+
+                if (result.status === true) {
+                    this.showToast('Preferences saved successfully', 'success');
+                    sessionStorage.setItem('userPreferences', JSON.stringify(result.data));
+                    this.applyPreferences(result.data);
+                } else {
+                    this.showToast('Failed to save preferences', 'danger');
+                }
+            } catch (err) {
+                console.error('Error saving preferences:', err);
+                this.showToast('Something went wrong while saving preferences', 'danger');
+            }
+        });
     }
 
     applyPreferences(prefs) {
@@ -293,7 +335,7 @@ class HomeUser {
 
         this.searchTimeout = setTimeout(() => {
             this.performSearch(query);
-        }, 2000); // Delay of 2000ms
+        }, 200); // Delay of 200ms
     }
 
     performSearch(query) {
@@ -345,6 +387,8 @@ class HomeUser {
         const container = document.querySelector('.search-note__load');
         container.innerHTML = ''; // Clear search results
     }
+
+
 }
 
 export default new HomeUser();

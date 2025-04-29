@@ -53,6 +53,12 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
             $homeUserMiddleWare->uploadAvatar();
         }
     }
+} else if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+    if (isset($_GET['param_1'], $_GET['param_2'])) {
+        if ($_GET['param_1'] === 'home' && $_GET['param_2'] === 'preferences') {
+            $homeUserMiddleWare->updatePreference();
+        }
+    }
 }
 
 

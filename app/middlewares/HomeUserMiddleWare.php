@@ -68,4 +68,12 @@ class HomeUserMiddleWare {
             $this->homeUserController->uploadAvatar();
         }
     }
+
+    public function updatePreference() {
+        if (!isset($_SESSION['roleId'])) {
+            header('location:/log/login');
+        } else {
+            $this->homeUserController->updatePreference();
+        }
+    }
 }

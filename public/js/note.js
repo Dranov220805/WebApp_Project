@@ -97,7 +97,7 @@ class Notes {
         this.lastScrollTop = Math.max(currentScrollTop, 0);
     }
 
-    showToast(message, type = 'danger', duration = 3000) {
+    showToast(message, type = 'danger', duration = 2000) {
         const toast = document.getElementById("toast");
         const messageElement = document.getElementById("toast-message");
         const closeBtn = document.getElementById("toast-close");
@@ -482,7 +482,7 @@ class Notes {
         const handleTyping = () => {
             clearTimeout(timeout);
             showSavingIcon();
-            timeout = setTimeout(autoSave, 1000);
+            timeout = setTimeout(autoSave, 300); // Delay 300ms
         };
 
         titleInput.removeEventListener('input', this.handleTyping);
@@ -539,7 +539,9 @@ class Notes {
 
         const div = document.createElement("div");
         div.className = "note-sheet d-flex flex-column";
-        div.dataset.id = noteId;
+        div.dataset.noteId = noteId;
+        div.dataset.noteTitle = title;
+        div.dataset.noteContent = content;
 
         div.innerHTML = `
             <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
@@ -649,8 +651,8 @@ class Notes {
                     const otherNoteGrid = document.querySelector('.other-note__load');
                     pinNoteGrid.innerHTML = '';
                     otherNoteGrid.innerHTML = '';
-                    this.loadPinnedNotes();
                     this.loadNewNotes();
+                    this.loadPinnedNotes();
                 }
             })
             .catch(err => {

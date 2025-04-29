@@ -13,7 +13,7 @@ class Reg {
         togglePassword.classList.toggle('fa-eye-slash');
     }
 
-    showRegisterToast(message, type = 'success', duration = 2000) {
+    showRegisterToast(message, type = 'success', duration = 1000) {
         const toast = document.getElementById("toast");
         const messageElement = document.getElementById("toast-message");
         const closeBtn = document.getElementById("toast-close");

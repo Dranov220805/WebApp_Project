@@ -193,7 +193,7 @@ class AccountRepository{
         return $result;
     }
 
-    public function getPreferencesByAccountId($accountId) {
+    public function getPreferencesByAccountId($accountId, $arr) {
         $sql = "SELECT Preference.* FROM `Preference`
             LEFT JOIN `Account` ON `Account`.`accountId` = `Preference`.`accountId`
             WHERE `Account`.`accountId` = ?";
@@ -205,23 +205,32 @@ class AccountRepository{
         $stmt->close();
 
         if ($row = $result->fetch_assoc()) {
-            return [
-                'status' => true,
-                'preferenceId' => $row['preferenceId'],
-                'accountId' => $row['accountId'],
-                'layout' => $row['layout'],
-                'noteFont' => $row['noteFont'],
-                'noteColor' => $row['noteColor'],
-                'font' => $row['font'],
-                'isDarkTheme' => $row['isDarkTheme'],
-                'message' => 'Account preferences found',
-            ];
+            return $arr;
         } else {
             return [
                 'status' => false,
                 'message' => 'Account preferences not found'
             ];
         }
+    }
+
+    public function updatePreferenceByAccountId($accountId, $theme, $noteFont, $noteColor) {
+        // Convert theme to boolean
+        $isDarkTheme = $theme === 'dark' ? 1 : 0;
+
+        $sql = "UPDATE `Preference` 
+            SET `isDarkTheme` = ?, 
+                `noteFont` = ?, 
+                `noteColor` = ? 
+            WHERE `accountId` = ?";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("isss", $isDarkTheme, $noteFont, $noteColor, $accountId);
+
+        $result = $stmt->execute();
+        $stmt->close();
+
+        return $result;
     }
 
 }

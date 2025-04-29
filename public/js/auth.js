@@ -14,7 +14,7 @@ class Auth {
     }
 
     // Show toast message with manual close
-    showLoginToast(message, type = 'success', duration = 2000) {
+    showLoginToast(message, type = 'success', duration = 1000) {
         const toast = document.getElementById("toast");
         const messageElement = document.getElementById("toast-message");
         const closeBtn = document.getElementById("toast-close");
@@ -33,10 +33,10 @@ class Auth {
         }, duration);
 
         // Allow manual close
-        closeBtn.onclick = () => {
-            toast.classList.add("d-none");
-            clearTimeout(hideTimeout); // Clear the auto-hide timer
-        };
+        // closeBtn.onclick = () => {
+        //     toast.classList.add("d-none");
+        //     clearTimeout(hideTimeout);
+        // };
     }
 
     // Handle login logic
@@ -71,7 +71,7 @@ class Auth {
                             } else if (String(roleId) === '2') {
                                 window.location.href = '/admin-dashboard';
                             }
-                        }, 200);
+                        }, 100);
                     } else {
                         // Show error toast message
                         this.showLoginToast(message, 'danger');

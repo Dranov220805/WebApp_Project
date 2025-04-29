@@ -10,9 +10,9 @@
 >
     <div class="toast-body position-relative w-100 d-flex flex-row justify-content-center align-items-center text-center">
         <span id="toast-message" style="font-size: 18px">Sample Response</span>
-        <div class="toast-icon mt-2" id="toast-close" style="cursor: pointer;">
-            <i class="fa-regular fa-circle-xmark"></i>
-        </div>
+<!--        <div class="toast-icon mt-2" id="toast-close" style="cursor: pointer;">-->
+<!--            <i class="fa-regular fa-circle-xmark"></i>-->
+<!--        </div>-->
     </div>
 </div>
 

@@ -26,7 +26,34 @@ class AccountService{
     }
 
     public function getPreferencesByAccountId($accountId) {
-        return $this->accountRepository->getPreferencesByAccountId($accountId);
+        return $this->accountRepository->getPreferencesByAccountId($accountId, [
+            'status' => true,
+            'preferenceId' => $row['preferenceId'],
+            'accountId' => $row['accountId'],
+            'layout' => $row['layout'],
+            'noteFont' => $row['noteFont'],
+            'noteColor' => $row['noteColor'],
+            'font' => $row['font'],
+            'isDarkTheme' => $row['isDarkTheme'],
+            'message' => 'Account preferences found',
+        ]);
+    }
+
+    public function updatePreferenceByAccountId($account_id, $theme, $fontSize, $noteColor){
+        $result = $this->accountRepository->updatePreferenceByAccountId($account_id, $theme, $fontSize, $noteColor);
+
+        if ($result) {
+            return [
+                'status' => true,
+                'data' => $result,
+                'message' => 'Update user preference successfully'
+            ];
+        } else {
+            return [
+                'status' => false,
+                'message' => 'Update user preference failed'
+            ];
+        }
     }
 
 }

@@ -42,10 +42,10 @@
 
                 <div class="setting-row">
                     <div class="setting-label">Font Size</div>
-                    <select class="form-select dropdown-select" style="width: 20%">
-                        <option selected>Small</option>
-                        <option>Medium</option>
-                        <option>Large</option>
+                    <select id="font-size-selector" class="form-select dropdown-select" style="width: 20%">
+                        <option value="14px">Small</option>
+                        <option value="16px">Medium</option>
+                        <option value="18px">Large</option>
                     </select>
                 </div>
 
@@ -57,10 +57,10 @@
                 <div class="setting-row">
                     <div class="setting-label">Default Note Color</div>
                     <div class="d-flex align-items-center">
-                        <div class="color-option color-white active"></div>
-                        <div class="color-option color-light"></div>
-                        <div class="color-option color-gray"></div>
-                        <div class="color-option color-blue"></div>
+                        <div class="color-option color-white active" data-color="#ffffff"></div>
+                        <div class="color-option color-light" data-color="#f0f0f0"></div>
+                        <div class="color-option color-gray" data-color="#cccccc"></div>
+                        <div class="color-option color-blue" data-color="#007bff"></div>
                     </div>
                 </div>
 

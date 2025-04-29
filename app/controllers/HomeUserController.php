@@ -113,6 +113,42 @@ class HomeUserController extends BaseController{
         }
     }
 
+    public function updatePreference() {
+//        echo json_encode([
+//            'status' => true,
+//            'message' => 'OK'
+//        ]);
+
+        header('Content-Type: application/json');
+        $accountId = $_SESSION['accountId'] ?? null;
+        $content = trim(file_get_contents("php://input"));
+        $data = json_decode($content, true);
+
+        if (!empty($data['theme']) || !empty($data['noteFont']) || !empty($data['noteColor'])) {
+            $result = $this->accountService->updatePreferenceByAccountId($accountId, $data['theme'], $data['noteFont'], $data['noteColor']);
+
+            if ($result['status'] === true) {
+                http_response_code(200);
+                echo json_encode([
+                    'status' => true,
+                    'message' => $result['message']
+                ]);
+            } else {
+                http_response_code(400);
+                echo json_encode([
+                    'status' => false,
+                    'message' => $result['message']
+                ]);
+            }
+        } else {
+            http_response_code(400);
+            echo json_encode([
+                'status' => false,
+                'message' => "Missing data"
+            ]);
+        }
+    }
+
 }
 
 ?>
