@@ -26,6 +26,7 @@ class AccountRepository{
             $row['userName'],
             $row['password'],
             $row['email'],
+            $row['profilePicture'],
             $row['activation_token'],
             $row['roleId'],
             $row['isVerified']
@@ -143,13 +144,14 @@ class AccountRepository{
         $isVerified = 0;
         $activation_token = bin2hex(random_bytes(16));
         $hashedPassword = password_hash($account_password, PASSWORD_DEFAULT);
+        $profilePicture = '';
 
         $sql = "INSERT INTO `Account` 
-        (`accountId`, `userName`, `password`, `email`, `activation_token`, `roleId`, `isVerified`) 
-        VALUES (?, ?, ?, ?, ?, ?, ?)";
+        (`accountId`, `userName`, `password`, `email`, `profilePicture`, `activation_token`, `roleId`, `isVerified`) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param('sssssii', $accountId, $account_username, $hashedPassword, $email, $activation_token, $roleId, $isVerified);
+        $stmt->bind_param('ssssssii', $accountId, $account_username, $hashedPassword, $email, $profilePicture, $activation_token, $roleId, $isVerified);
 
         $result = $stmt->execute();
         $stmt->close();
@@ -165,10 +167,29 @@ class AccountRepository{
             $account_username,
             $account_password,
             $email,
+            $profilePicture,
             $activation_token,
             $roleId,
             $isVerified
         );
+    }
+
+    public function updateProfilePictureByAccountId($accountId, $profilePicture) {
+        $sql = "UPDATE `Account` SET `profilePicture` = ? WHERE `accountId` = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ss", $profilePicture, $accountId);
+        $result = $stmt->execute();
+        $stmt->close();
+        if ($result) {
+            return [
+                'status' => 'true'
+            ];
+        }
+        else {
+            return [
+                'status' => 'false'
+            ];
+        }
     }
 
     public function createDefaultPreferencesForAccount(string $accountId): bool {

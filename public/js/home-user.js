@@ -164,10 +164,6 @@ class HomeUser {
         toast.classList.remove("d-none");
 
         const hideTimeout = setTimeout(() => toast.classList.add("d-none"), duration);
-        closeBtn.onclick = () => {
-            toast.classList.add("d-none");
-            clearTimeout(hideTimeout);
-        };
     }
 
     handleAvatarUpload() {
@@ -193,7 +189,7 @@ class HomeUser {
                 });
 
                 const result = await response.json();
-
+                console.log(result);
                 if (result.success) {
                     this.showToast('Avatar uploaded successfully!', 'success');
                     // Optionally update avatar preview

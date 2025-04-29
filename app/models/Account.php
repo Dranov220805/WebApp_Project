@@ -8,12 +8,14 @@ class Account{
     private string $roleId;
     private int $isVerified;
     private string $activation_token;
+    private string $profilePicture;
 
-    public function __construct(string $accountId, string $userName, string $password, string $email, string $activation_token, string $roleId, int $isVerified){
+    public function __construct(string $accountId, string $userName, string $password, string $email, string $profilePicture, string $activation_token, string $roleId, int $isVerified){
         $this->accountId = $accountId;
         $this->userName = $userName;
         $this->password = $password;
         $this->email = $email;
+        $this->profilePicture = $profilePicture;
         $this->activation_token = $activation_token;
         $this->roleId = $roleId;
         $this->isVerified = $isVerified;
@@ -78,6 +80,16 @@ class Account{
     public function setActivationToken(string $activation_token): void
     {
         $this->activation_token = $activation_token;
+    }
+
+    public function getProfilePicture(): string
+    {
+        return $this->profilePicture;
+    }
+
+    public function setProfilePicture(string $profilePicture): void
+    {
+        $this->profilePicture = $profilePicture;
     }
 
 }

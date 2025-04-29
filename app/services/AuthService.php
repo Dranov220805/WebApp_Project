@@ -26,6 +26,7 @@ class AuthService
         $_SESSION['accountId'] = $user->getAccountId();
         $_SESSION['userName'] = $user->getUsername();
         $_SESSION['email'] = $user->getEmail();
+        $_SESSION['profilePicture'] = $user->getProfilePicture();
         $_SESSION['roleId'] = $user->getRoleId();
         $_SESSION['last_activity'] = time(); // Track activity for inactivity logout
         $_SESSION['isVerified'] = $user->getIsVerified();

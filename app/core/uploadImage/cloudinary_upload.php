@@ -21,14 +21,14 @@ function uploadAvatarToCloudinary($fileTmpPath): array
         ]);
 
         return [
-            'success' => true,
+            'status' => true,
             'url' => $uploadResult['secure_url'],
             'public_id' => $uploadResult['public_id']
         ];
     } catch (Exception $e) {
         return [
-            'success' => false,
-            'error' => $e->getMessage()
+            'status' => false,
+            'message' => $e->getMessage()
         ];
     }
 }

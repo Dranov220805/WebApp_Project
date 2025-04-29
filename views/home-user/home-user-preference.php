@@ -15,8 +15,8 @@
                 <div class="setting-row" style="display: flex; flex-grow: 1; width: 100%; height: 80px">
                     <div class="setting-label setting-avatar" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center">
 <!--                        --><?php //if ($_SESSION['isVerified'] == 1) {echo '<i style="width: 80px; height: 80px" class="user__item--icon fa-regular fa-circle-user"></i>';} else {echo 'no avatar';} ?>
-                        <?php if (!empty($_SESSION['avatar_url'])): ?>
-                            <img src="<?= $_SESSION['avatar_url'] ?>" style="width: 70px; height: 70px;">
+                        <?php if (!empty($_SESSION['profilePicture'])): ?>
+                            <img src="<?= $_SESSION['profilePicture'] ?>" style="width: 70px; height: 70px;">
                         <?php else: ?>
                             <i class="fa-regular fa-circle-user"></i>
                         <?php endif; ?>

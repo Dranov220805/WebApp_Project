@@ -80,11 +80,26 @@ class HomeUserController extends BaseController{
 
             $uploadResponse = uploadAvatarToCloudinary($fileTmpPath);
 
-            if ($uploadResponse['success']) {
-                $_SESSION['avatar_url'] = $uploadResponse['url'];
+            if ($uploadResponse['status'] === true) {
+                $result = $this->accountService->updateProfilePictureByAccountId($_SESSION['accountId'], $uploadResponse['url']);
+                if ($result['status'] === true) {
+                    $_SESSION['profilePicture'] = $uploadResponse['url'];
+                    echo json_encode([
+                        'status' => true,
+                        'Picture' => $uploadResponse['url'],
+                        'message' => $result['message']]);
+                } else {
+                    echo json_encode([
+                        'status' => false,
+                        'message' => $result['message']
+                    ]);
+                }
+            } else {
+                echo json_encode([
+                    'status' => false,
+                    'message' => $uploadResponse['message']
+                ]);
             }
-
-            echo json_encode($uploadResponse);
         } else {
             echo json_encode([
                 'success' => false,

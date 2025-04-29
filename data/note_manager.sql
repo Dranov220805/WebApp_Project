@@ -26,6 +26,7 @@ CREATE TABLE `Account` (
   `activation_token` VARCHAR(50) DEFAULT NULL,
   `remember_token` VARCHAR(255) NULL DEFAULT 'test token',
   `email` VARCHAR(200) NOT NULL,
+  `profilePicture` VARCHAR(255) DEFAULT NULL,
   `roleId` INT NOT NULL DEFAULT 1,
   `isVerified` BOOLEAN NOT NULL DEFAULT FALSE
 );

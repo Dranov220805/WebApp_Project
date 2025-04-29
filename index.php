@@ -6,10 +6,8 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
-
-require_once __DIR__ . '/vendor/autoload.php'; // Autoload everything
+//$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+//$dotenv->load();
 
 require_once __DIR__ . '/vendor/autoload.php';
     include "./config/DatabaseManager.php";
