@@ -35,8 +35,8 @@ class Notes {
 
             const note = {
                 noteId: noteEl.dataset.noteId || noteEl.dataset.id,
-                title: noteEl.dataset.noteTitle,
-                content: noteEl.dataset.noteContent
+                title: noteEl.dataset.noteTitle || noteEl.dataset.title,
+                content: noteEl.dataset.noteContent || noteEl.dataset.content,
             };
 
             if (deleteBtn) {
@@ -47,13 +47,13 @@ class Notes {
 
             if (pinBtn) {
                 console.log('Clicked pin button:', note);
-                this.pinNote_POST(note.noteId);
+                this.pinNote_POST(note.noteId, note.title, note.content);
                 return;
             }
 
             if (unpinBtn) {
                 console.log('Clicked unpin button:', note);
-                this.unpinNote_POST(note.noteId);
+                this.unpinNote_POST(note.noteId, note.title, note.content);
                 return;
             }
 
@@ -111,10 +111,6 @@ class Notes {
         toast.classList.remove("d-none");
 
         const hideTimeout = setTimeout(() => toast.classList.add("d-none"), duration);
-        closeBtn.onclick = () => {
-            toast.classList.add("d-none");
-            clearTimeout(hideTimeout);
-        };
     }
 
     loadNotes() {
@@ -192,7 +188,7 @@ class Notes {
         })
             .then(res => res.json())
             .then(data => {
-                console.log(data);
+                console.log('Pin note loaded', data);
                 if (data.data?.length > 0) {
                     this.appendPinnedNotesToDOM(data.data);
                     this.currentPage++;
@@ -522,8 +518,9 @@ class Notes {
                     titleInput.value = '';
                     titleInput.style.display = 'none';
                     contentInput.value = '';
-                        const newNote = this.noteSheetModel(noteId, title, content);
-                        console.log(`Prepended note: ${noteId}`);
+                    const newNote = this.noteSheetModel(noteId, title, content);
+                    console.log(`Prepended note: ${noteId}`);
+                    this.initNotePostTrigger();
                 } else {
                     this.showToast(message || 'Failed to create note.', 'danger');
                 }
@@ -563,34 +560,36 @@ class Notes {
         otherNoteGrid.prepend(div);
     }
 
-    PinNoteSheetModel(noteId, title, content) {
-        const otherNoteGrid = document.querySelector('.other-note__load');
+    pinNoteSheetModel(noteId, title, content) {
+        const pinnedNoteGrid = document.querySelector('.pinned-note__load');
 
         const div = document.createElement("div");
         div.className = "note-sheet d-flex flex-column";
         div.dataset.id = noteId;
-        // div.onclick = () => this.expandNote(div);
-        div.onclick = () => this.openNoteInModal(note);
+        div.dataset.title = title;
+        div.dataset.content = content;
 
+        const safeTitle = title ?? "(No Title)";
+        const safeContent = (content ?? "").replace(/\n/g, '<br>');
 
         div.innerHTML = `
             <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
                 <h3 class="note-sheet__title" data-note-title="${title}">${title}</h3>
-                <div class="note-sheet__content" data-note-content="${content}">
+                <div class="note-sheet__content">
                     ${content.replace(/\n/g, '<br>')}
-                </div>
+                </div>      
             </div>
             <div class="note-sheet__menu">
                 <div>
-                    <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
-                    <button title="Label"><i class="fa-solid fa-tags"></i></button>
-                    <button title="Image"><i class="fa-solid fa-images"></i></button>
-                    <button class="note-delete-btn" title="Delete" data-note-id="${noteId}"><i class="fa-solid fa-trash"></i></button>
+                    <button class="pinned-note-pin-btn" title="Unpin Note"><i class="fa-solid fa-thumbtack"></i></button>
+                    <button title="Add Label"><i class="fa-solid fa-tags"></i></button>
+                    <button title="Add Image"><i class="fa-solid fa-images"></i></button>
+                    <button class="pinned-note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${noteId}"><i class="fa-solid fa-trash"></i></button>
                 </div>
                 <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
             </div>
         `;
-        otherNoteGrid.prepend(div);
+        pinnedNoteGrid.prepend(div);
     }
 
     expandDeleteNote(note) {
@@ -631,62 +630,78 @@ class Notes {
         confirmBtn.addEventListener("click", onConfirm);
     }
 
-    pinNote_POST(noteId) {
+    pinNote_POST(noteId, title, content) {
         fetch('/note/pin', {
             method: 'POST',
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                noteId
-            })
+            body: JSON.stringify({ noteId })
         })
-            .then(res => res.json())  // Parse the response JSON
+            .then(res => res.json())
             .then(data => {
-                console.log(data);  // Process the data returned from the server
+                console.log(data);
+
                 if (data.status === false) {
                     this.showToast("An error occurred: " + data.message, "danger");
-                } else {
-                    this.showToast("Note pinned successfully!", "success");
-                    // const pinnedNote = this.PinNoteSheetModel(noteId, data.title, data.content);
-                    const pinNoteGrid = document.querySelector('.pinned-note__load');
-                    const otherNoteGrid = document.querySelector('.other-note__load');
-                    pinNoteGrid.innerHTML = '';
-                    otherNoteGrid.innerHTML = '';
-                    this.loadNewNotes();
-                    this.loadPinnedNotes();
+                    return;
                 }
+
+                this.showToast("Note pinned successfully!", "success");
+
+                // Remove note from 'other notes'
+                const noteEl = document.querySelector(`.other-note__load .note-sheet[id="${noteId}"]`);
+                if (noteEl) noteEl.remove();
+
+                // Create and prepend the pinned note
+                const pinNoteGrid = document.querySelector('.pinned-note__load');
+                const otherNoteGrid = document.querySelector('.other-note__load');
+                console.log(noteId, title, content);
+                const newPinnedNote = this.pinNoteSheetModel(noteId, title, content);
+                // pinNoteGrid.prepend(newPinnedNote);
+                otherNoteGrid.innerHTML = '';
+                this.loadNewNotes();
+                this.loadPinnedNotes();
+
             })
             .catch(err => {
-                console.error("Error:", err);  // Log network or fetch error
+                console.error("Error:", err);
                 this.showToast("An error occurred while pinning the note", "danger");
             });
     }
 
-    unpinNote_POST(noteId) {
+    unpinNote_POST(noteId, title, content) {
         fetch('/note/unpin', {
             method: 'POST',
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                noteId
-            })
+            body: JSON.stringify({ noteId })
         })
-            .then(res => res.json())  // Parse the response JSON
+            .then(res => res.json())
             .then(data => {
-                console.log(data);  // Process the data returned from the server
+                console.log(data);
+
                 if (data.status === false) {
                     this.showToast("An error occurred: " + data.message, "danger");
-                } else {
-                    this.showToast("Note unpinned successfully!", "success");
-                    // const otherNote = this.noteSheetModel(noteId, data.title, data.content);
-                    const pinNoteGrid = document.querySelector('.pinned-note__load');
-                    const otherNoteGrid = document.querySelector('.other-note__load');
-                    pinNoteGrid.innerHTML = '';
-                    otherNoteGrid.innerHTML = '';
-                    this.loadPinnedNotes();
-                    this.loadNewNotes();
+                    return;
                 }
+
+                this.showToast("Note unpinned successfully!", "success");
+
+                // Remove note from 'pinned notes'
+                const noteEl = document.querySelector(`.pinned-note__load .note-sheet[id="${noteId}"]`);
+                if (noteEl) noteEl.remove();
+
+                // Create and prepend the unpinned note to the 'other notes' section
+                const otherNoteGrid = document.querySelector('.other-note__load');
+                const pinNoteGrid = document.querySelector('.pinned-note__load');
+                console.log(noteId, title, content);
+
+                const newOtherNote = this.noteSheetModel(noteId, title, content);
+                pinNoteGrid.innerHTML = '';
+
+                this.loadPinnedNotes();
+                this.loadNewNotes();
             })
             .catch(err => {
-                console.error("Error:", err);  // Log network or fetch error
+                console.error("Error:", err);
                 this.showToast("An error occurred while unpinning the note", "danger");
             });
     }
