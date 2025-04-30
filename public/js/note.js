@@ -626,7 +626,7 @@ class Notes {
 
         // Cleanup any old event listeners to prevent duplicates
         const newConfirmHandler = () => {
-            this.deleteNote_POST(note.noteId, note);
+            this.deleteNote_POST(note.noteId, note.title, note.content);
             confirmBtn.removeEventListener('click', newConfirmHandler); // prevent multiple bindings
             modal.hide();
         };
@@ -634,26 +634,26 @@ class Notes {
         confirmBtn.addEventListener('click', newConfirmHandler);
     }
 
-    deleteNoteInModal(note) {
-        const modalEl = document.getElementById('deleteNoteModal');
-        const modal = new bootstrap.Modal(modalEl);
-        const confirmBtn = modalEl.querySelector('#confirmDeleteNoteBtn');
-
-        // Set the noteId to the confirm button for reference
-        confirmBtn.noteId = note.noteId;
-
-        // Show modal
-        modal.show();
-
-        // Add click event listener to the confirm button
-        const onConfirm = () => {
-            this.deleteNote_POST(note.noteId);
-            confirmBtn.removeEventListener("click", onConfirm); // Remove listener after execution
-            modal.hide(); // Hide the modal after deletion
-        };
-
-        confirmBtn.addEventListener("click", onConfirm);
-    }
+    // deleteNoteInModal(note) {
+    //     const modalEl = document.getElementById('deleteNoteModal');
+    //     const modal = new bootstrap.Modal(modalEl);
+    //     const confirmBtn = modalEl.querySelector('#confirmDeleteNoteBtn');
+    //
+    //     // Set the noteId to the confirm button for reference
+    //     confirmBtn.noteId = note.noteId;
+    //
+    //     // Show modal
+    //     modal.show();
+    //
+    //     // Add click event listener to the confirm button
+    //     const onConfirm = () => {
+    //         this.deleteNote_POST(note.noteId);
+    //         confirmBtn.removeEventListener("click", onConfirm); // Remove listener after execution
+    //         modal.hide(); // Hide the modal after deletion
+    //     };
+    //
+    //     confirmBtn.addEventListener("click", onConfirm);
+    // }
 
     pinNote_POST(noteId, title, content) {
         fetch('/note/pin', {
@@ -721,8 +721,6 @@ class Notes {
 
                 const newOtherNote = this.noteSheetModel(noteId, title, content);
                 pinNoteGrid.innerHTML = '';
-
-                // this.loadPinnedNotes();
                 this.loadNewPinnedNotes();
             })
             .catch(err => {
@@ -731,7 +729,7 @@ class Notes {
             });
     }
 
-    deleteNote_POST(noteId) {
+    deleteNote_POST(noteId, title, content) {
         fetch(`/note/delete`, {
             method: 'POST',
             headers: { "Content-Type": "application/json" },
@@ -743,6 +741,15 @@ class Notes {
                     this.showToast("Note deleted successfully", "success");
                     const noteEl = document.querySelector(`.note-sheet[id="${noteId}"]`);
                     if (noteEl) noteEl.remove(); // Remove from DOM
+                    const otherNoteGrid = document.querySelector('.other-note__load');
+                    const pinNoteGrid = document.querySelector('.pinned-note__load');
+                    console.log(noteId, title, content);
+                    // otherNoteGrid.innerHTML = '';
+                    pinNoteGrid.innerHTML = '';
+
+                    // this.loadPinnedNotes();
+                    this.loadNewPinnedNotes();
+                    // this.loadNewNotes();
                 } else {
                     this.showToast(data.message || "Failed to delete note", "danger");
                 }

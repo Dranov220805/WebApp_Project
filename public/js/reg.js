@@ -100,8 +100,6 @@ class Reg {
                             this.showRegisterToast('Email already exists!', 'warning');
                             const email = $('#email-input').val('');
                             const username = $('#username-input').val('');
-                            const password = $('#password-input').val('');
-                            const confirmPassword = $('#password-input-confirm').val('');
                         } else {
                             this.showRegisterToast('Registration successful! Logging you in...', 'success');
 
