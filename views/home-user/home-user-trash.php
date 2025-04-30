@@ -13,7 +13,7 @@
             <div class="pinned-note">
                 <h6 class="note-layout__title">Trash</h6>
                 <div class="note-grid d-flex justify-content-center">
-                    <div class="other-note__load load-grid" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center">
+                    <div class="trash-note__load load-grid" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center">
 
                     </div>
                 </div>

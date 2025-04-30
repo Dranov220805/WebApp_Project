@@ -287,69 +287,67 @@ class Notes {
             .finally(() => this.isLoading = false);
     }
 
-    // loadTrashedNotes() {
-    //     if (this.isLoading) return;
-    //     this.isLoading = true;
-    //
-    //     fetch(`/note/list?page=${this.currentPage}&limit=${this.limit}`, {
-    //         method: 'GET',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         }
-    //     })
-    //         .then(res => res.json())
-    //         .then(data => {
-    //             console.log(data);
-    //             if (data.data?.length > 0) {
-    //                 this.appendNotesToDOM(data.data);
-    //                 this.currentPage++;
-    //             }
-    //         })
-    //         .catch(err => {
-    //             console.error('Fetch failed:', err);
-    //             this.showToast('Failed to load notes. Please try again.');
-    //         })
-    //         .finally(() => this.isLoading = false);
-    // }
-    //
-    // appendTrashedNotesToDOM(notes) {
-    //     const container = document.querySelector(".other-note__load");
-    //     if (!container) return;
-    //
-    //     notes.forEach(note => {
-    //         if (document.querySelector(`.note-sheet[data-note-id="${note.noteId}"]`)) {
-    //             console.log(`Skipping duplicate note: ${note.noteId}`);
-    //             return;
-    //         }
-    //
-    //         const div = document.createElement("div");
-    //         div.className = "note-sheet d-flex flex-column";
-    //         div.dataset.noteId = note.noteId;
-    //         div.dataset.noteTitle = note.title;
-    //         div.dataset.noteContent = note.content;
-    //
-    //         div.innerHTML = `
-    //             <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
-    //                 <h3 class="note-sheet__title">${note.title}</h3>
-    //                 <div class="note-sheet__content">
-    //                     ${note.content.replace(/\n/g, '<br>')}
-    //                 </div>
-    //             </div>
-    //             <div class="note-sheet__menu">
-    //                 <div>
-    //                     <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
-    //                     <button title="Add Label"><i class="fa-solid fa-tags"></i></button>
-    //                     <button title="Add Image"><i class="fa-solid fa-images"></i></button>
-    //                     <button class="note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
-    //                     <button class="note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
-    //                 </div>
-    //                 <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
-    //             </div>
-    //         `;
-    //         container.appendChild(div);
-    //         console.log(`Appended note: ${note.noteId}`);
-    //     });
-    // }
+    loadTrashedNotes() {
+        if (this.isLoading) return;
+        this.isLoading = true;
+        this.currentPage = 1;
+
+        fetch(`/note/trash-list?page=${this.currentPage}&limit=${this.limit}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                if (data.data?.length > 0) {
+                    this.appendNotesToDOM(data.data);
+                    this.currentPage++;
+                }
+            })
+            .catch(err => {
+                console.error('Fetch failed:', err);
+                this.showToast('Failed to load notes. Please try again.');
+            })
+            .finally(() => this.isLoading = false);
+    }
+
+    appendTrashedNotesToDOM(notes) {
+        const container = document.querySelector(".trash-note__load");
+        if (!container) return;
+
+        notes.forEach(note => {
+            if (document.querySelector(`.note-sheet[data-note-id="${note.noteId}"]`)) {
+                console.log(`Skipping duplicate note: ${note.noteId}`);
+                return;
+            }
+
+            const div = document.createElement("div");
+            div.className = "note-sheet d-flex flex-column";
+            div.dataset.noteId = note.noteId;
+            div.dataset.noteTitle = note.title;
+            div.dataset.noteContent = note.content;
+
+            div.innerHTML = `
+                <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
+                    <h3 class="note-sheet__title">${note.title}</h3>
+                    <div class="note-sheet__content">
+                        ${note.content.replace(/\n/g, '<br>')}
+                    </div>
+                </div>
+                <div class="note-sheet__menu">
+                    <div>
+                        <button class="note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
+                        <button class="note-delete-btn" title="Delete Permanently" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash-can-arrow-up"></i></button>
+                    </div>
+                    <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                </div>
+            `;
+            container.appendChild(div);
+            console.log(`Appended note: ${note.noteId}`);
+        });
+    }
 
     autoResizeInput(event) {
         event.target.style.height = 'auto';

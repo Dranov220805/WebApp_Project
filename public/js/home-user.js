@@ -23,119 +23,7 @@ class HomeUser {
         this.attachEventListeners();
         // this.checkVerification();
         this.handleAvatarUpload();
-        // this.attachPreferenceSaveHandler();
-    }
-
-    loadUserPreference() {
-        const storedPrefs = sessionStorage.getItem('userPreferences');
-
-        // If preferences already exist in sessionStorage, use them first
-        // if (storedPrefs) {
-        //     this.applyPreferences(JSON.parse(storedPrefs)); // Use this.applyPreferences instead of just applyPreferences
-        // }
-
-        // Fetch fresh preferences from server only if not cached, or for sync check
-        fetch('/home/preferences')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to load preferences');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (!data.status || !data.data) {
-                    throw new Error('Invalid preference data');
-                }
-
-                const prefs = data.data;
-
-                // Compare with session storage
-                // const currentPrefs = storedPrefs ? JSON.parse(storedPrefs) : null;
-
-                if (!currentPrefs || JSON.stringify(currentPrefs) !== JSON.stringify(prefs)) {
-                    // Preferences differ or not stored — update and apply
-                    sessionStorage.setItem('userPreferences', JSON.stringify(prefs));
-                    this.applyPreferences(prefs); // Again, use this.applyPreferences
-                }
-            })
-            .catch(error => {
-                console.error('Error loading user preferences:', error);
-            });
-    }
-
-    attachPreferenceSaveHandler() {
-        const saveBtn = document.querySelector('.btn-save-preference');
-        if (!saveBtn) return;
-
-        saveBtn.addEventListener('click', async () => {
-            const theme = document.getElementById('theme-selector')?.value || 'system';
-            const fontSize = document.getElementById('font-size-selector')?.value || '14px';
-            const selectedColorElement = document.querySelector('.color-option.active');
-            const noteColor = selectedColorElement ? selectedColorElement.dataset.color : '#000000';
-
-            const body = {
-                theme,
-                noteFont: fontSize,
-                noteColor
-            };
-
-            try {
-                const response = await fetch('/home/preferences', {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(body)
-                });
-
-                const result = await response.json();
-
-                if (result.status === true) {
-                    this.showToast('Preferences saved successfully', 'success');
-                    sessionStorage.setItem('userPreferences', JSON.stringify(result.data));
-                    this.applyPreferences(result.data);
-                } else {
-                    this.showToast('Failed to save preferences', 'danger');
-                }
-            } catch (err) {
-                console.error('Error saving preferences:', err);
-                this.showToast('Something went wrong while saving preferences', 'danger');
-            }
-        });
-    }
-
-    applyPreferences(prefs) {
-        // Theme
-        const themeSelector = document.getElementById('theme-selector');
-        if (prefs.isDarkTheme === 1) {
-            document.body.classList.add('dark-mode');
-            if (themeSelector) themeSelector.value = 'dark';
-        } else {
-            document.body.classList.remove('dark-mode');
-            if (themeSelector) themeSelector.value = 'light';
-        }
-
-        // Font size
-        const fontSizeSelector = document.querySelector('select.form-select:not(#theme-selector)');
-        if (prefs.noteFont) {
-            document.body.style.fontSize = prefs.noteFont;
-
-            if (fontSizeSelector) {
-                fontSizeSelector.value =
-                    prefs.noteFont === '14px' ? 'Small' :
-                        prefs.noteFont === '16px' ? 'Medium' :
-                            prefs.noteFont === '18px' ? 'Large' : '';
-            }
-        }
-
-        // Font family
-        document.body.style.fontFamily = prefs.font || 'Arial';
-
-        // Note color
-        document.documentElement.style.setProperty('--note-color', prefs.noteColor || '#000000');
-
-        // Layout (used for note layout maybe?)
-        document.body.setAttribute('data-layout', prefs.layout || 'list');
+        this.attachPreferenceSaveHandler();
     }
 
     closeToast = () => {
@@ -166,6 +54,80 @@ class HomeUser {
         const hideTimeout = setTimeout(() => toast.classList.add("d-none"), duration);
     }
 
+    attachPreferenceSaveHandler() {
+        const saveBtn = document.querySelector('.btn-save-preference');
+        if (!saveBtn) return;
+
+        saveBtn.addEventListener('click', async () => {
+            const theme = document.getElementById('theme-selector')?.value || 'system';
+            const fontSize = document.getElementById('font-size-selector')?.value || '14px';
+            const selectedColorElement = document.querySelector('.color-option.active');
+            const noteColor = selectedColorElement ? selectedColorElement.dataset.color : '#000000';
+
+            const body = {
+                theme,
+                noteFont: fontSize,
+                noteColor
+            };
+
+            try {
+                const response = await fetch('/home/preferences', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                const result = await response.json();
+                console.log(result);
+                if (result.status === true) {
+                    this.showToast('Preferences saved successfully', 'success');
+                    // this.applyPreferences(result.data);
+                } else {
+                    this.showToast('Failed to save preferences', 'danger');
+                }
+            } catch (err) {
+                console.error('Error saving preferences:', err);
+                this.showToast('Something went wrong while saving preferences', 'danger');
+            }
+        });
+    }
+
+    // applyPreferences(prefs) {
+    //     // Theme
+    //     const themeSelector = document.getElementById('theme-selector');
+    //     if (prefs.isDarkTheme === 1) {
+    //         document.body.classList.add('dark-mode');
+    //         if (themeSelector) themeSelector.value = 'dark';
+    //     } else {
+    //         document.body.classList.remove('dark-mode');
+    //         if (themeSelector) themeSelector.value = 'light';
+    //     }
+    //
+    //     // Font size
+    //     const fontSizeSelector = document.querySelector('select.form-select:not(#theme-selector)');
+    //     if (prefs.noteFont) {
+    //         document.body.style.fontSize = prefs.noteFont;
+    //
+    //         if (fontSizeSelector) {
+    //             fontSizeSelector.value =
+    //                 prefs.noteFont === '14px' ? 'Small' :
+    //                     prefs.noteFont === '16px' ? 'Medium' :
+    //                         prefs.noteFont === '18px' ? 'Large' : '';
+    //         }
+    //     }
+    //
+    //     // Font family
+    //     document.body.style.fontFamily = prefs.font || 'Arial';
+    //
+    //     // Note color
+    //     document.documentElement.style.setProperty('--note-color', prefs.noteColor || '#000000');
+    //
+    //     // Layout (used for note layout maybe?)
+    //     document.body.setAttribute('data-layout', prefs.layout || 'list');
+    // }
+
     handleAvatarUpload() {
         const form = document.getElementById('avatar-upload-form');
         const fileInput = document.getElementById('avatar-input');
@@ -190,7 +152,7 @@ class HomeUser {
 
                 const result = await response.json();
                 console.log(result);
-                if (result.success) {
+                if (result['status'] = true) {
                     this.showToast('Avatar uploaded successfully!', 'success');
                     // Optionally update avatar preview
                     const avatarIcon = document.querySelector('.user__item--icon');

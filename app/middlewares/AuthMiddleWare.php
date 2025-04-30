@@ -86,19 +86,6 @@ class AuthMiddleware
         ]);
     }
 
-    public function checkVerification() {
-//        if (!isset($_SESSION['userId'])) {
-//            http_response_code(401);
-//            echo json_encode([
-//                'status' => false,
-//                'message' => 'Unauthorized'
-//            ]);
-//        }
-
-        $this->authController->checkVerification();
-    }
-
-
     public function getUrlActivationLink() {
         if (!$_SERVER['REQUEST_METHOD'] == 'GET') {
             http_response_code(405);

@@ -43,22 +43,15 @@ class NoteRepository
 
     public function getNotesByAccountIdPaginated(string $accountId, int $limit, int $offset): array
     {
-                $sql = "SELECT n.* 
-                FROM `Account` a
-                LEFT JOIN `Note` n ON a.accountId = n.accountId
-                LEFT JOIN `Modification` m ON m.noteId = n.noteId
-                WHERE a.accountId = ? 
-                AND n.isDeleted = FALSE
-                AND (m.isPinned IS NULL OR m.isPinned = FALSE)
-                ORDER BY n.createDate DESC
-                LIMIT ? OFFSET ?";
-//        $sql = "SELECT n.* FROM `Account` a
-//        LEFT JOIN `Note` n ON a.accountId = n.accountId
-//        LEFT JOIN `Modification` m ON m.noteId = n.noteId
-//        WHERE a.accountId = ?
-//        AND n.isDeleted = FALSE
-//        ORDER BY n.createDate DESC
-//        LIMIT ? OFFSET ?";
+        $sql = "SELECT n.* 
+            FROM `Account` a
+            LEFT JOIN `Note` n ON a.accountId = n.accountId
+            LEFT JOIN `Modification` m ON m.noteId = n.noteId
+            WHERE a.accountId = ? 
+            AND n.isDeleted = FALSE
+            AND (m.isPinned IS NULL OR m.isPinned = FALSE)
+            ORDER BY n.createDate DESC
+            LIMIT ? OFFSET ?";
 
         $stmt = $this->conn->prepare($sql);
 
@@ -128,6 +121,36 @@ class NoteRepository
 
         while ($row = $result->fetch_assoc()) {
             $notes[] = $row; // Optionally map to a Note model
+        }
+
+        return $notes;
+    }
+
+    public function getTrashedNotesByAccountIdPaginated(string $accountId, int $limit, int $offset): array {
+        $sql = "SELECT n.* 
+            FROM `Account` a
+            LEFT JOIN `Note` n ON a.accountId = n.accountId
+            LEFT JOIN `Modification` m ON m.noteId = n.noteId
+            WHERE a.accountId = ? 
+            AND n.isDeleted = TRUE
+            AND (m.isPinned IS NULL OR m.isPinned = FALSE)
+            ORDER BY n.createDate DESC
+            LIMIT ? OFFSET ?";
+
+        $stmt = $this->conn->prepare($sql);
+
+        if (!$stmt) {
+            throw new Exception("Failed to prepare SQL statement: " . $this->conn->error);
+        }
+
+        $stmt->bind_param("sii", $accountId, $limit, $offset);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $notes = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $notes[] = $row;
         }
 
         return $notes;

@@ -9,9 +9,12 @@
         include "./views/layout/partials/header.php";
     ?>
 <body class="<?php
-if ($_SESSION["preferences"]['isDarkTheme']) {
+if ($_SESSION['isDarkTheme'] == 1) {
     echo 'dark-mode';
+} else {
+    echo '';
 } ?>">
+<?= print_r('Is Dark Theme: ', $_SESSION['isDarkTheme']);?>
     <?php
         include "./views/layout/partials/toast.php";
     ?>

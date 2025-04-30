@@ -72,6 +72,26 @@ class HomeUserController extends BaseController{
         $footer = 'home';
         include "./views/layout/index.php";
     }
+
+    public function checkVerification() {
+        $email = $_SESSION['email'];
+
+        $result = $this->accountService->checkVerification($email);
+
+        if($result['status'] === true) {
+            return [
+                'status' => true,
+                'message' => $result['message']
+            ];
+        } else {
+            return[
+                'status' => false,
+                'message' => $result['message']
+            ];
+        }
+
+    }
+
     public function uploadAvatar() {
         header('Content-Type: application/json');
 
@@ -146,6 +166,7 @@ class HomeUserController extends BaseController{
                 http_response_code(200);
                 echo json_encode([
                     'status' => true,
+                    'data' => $result['data'],
                     'message' => $result['message']
                 ]);
             } else {

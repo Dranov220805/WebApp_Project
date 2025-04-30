@@ -12,7 +12,7 @@
                 <h2 class="mb-4">User Preferences</h2>
 
                 <div class="section-title">Avatar</div>
-                <div class="setting-row" style="display: flex; flex-grow: 1; width: 100%; height: 80px">
+                <div class="setting-row setting-row-avatar">
                     <div class="setting-label setting-avatar" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center">
 <!--                        --><?php //if ($_SESSION['isVerified'] == 1) {echo '<i style="width: 80px; height: 80px" class="user__item--icon fa-regular fa-circle-user"></i>';} else {echo 'no avatar';} ?>
                         <?php if (!empty($_SESSION['profilePicture'])): ?>
@@ -34,15 +34,8 @@
                 <div class="setting-row">
                     <div class="setting-label">Theme</div>
                     <select id="theme-selector" class="form-select dropdown-select" style="width: 20%">
-                        <?php
-                        if ($_SESSION['accountId']) {?>
-                            <option value="dark">Dark</option>
-                        <?php } else {
-                            ?>
-                            <option value="light">light</option>
-                        <?php
-                        }
-                        ?>
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
                         <option value="system" selected>System default</option>
                     </select>
                 </div>

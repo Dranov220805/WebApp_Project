@@ -45,25 +45,6 @@ class AuthController extends BaseController {
         }
     }
 
-    public function checkVerification() {
-        $email = $_SESSION['email'];
-
-        $result = $this->authService->checkVerification($email);
-
-        if($result['status'] === true) {
-            echo json_encode([
-                'status' => true,
-                'message' => $result['message']
-            ]);
-        } else {
-            echo json_encode ([
-                'status' => false,
-                'message' => $result['message']
-            ]);
-        }
-
-    }
-
     public function accountActivate($activation_token) {
         $result = $this->authService->accountActivate($activation_token);
         if ($result) {

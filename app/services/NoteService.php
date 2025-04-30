@@ -22,6 +22,10 @@ class NoteService {
         return $this->noteRepository->getPinnedNotesByAccountIdPaginated($accountId, $limit, $offset);
     }
 
+    public function getTrashedNotesByAccountIdPaginated(string $accountId, int $limit, int $offset): array {
+        return $this->noteRepository->getTrashedNotesByAccountIdPaginated($accountId, $limit, $offset);
+    }
+
     public function createNoteByAccountIdAndTitleAndContent($accountId, $title, $content)
     {
         $result = $this->noteRepository->createNoteByAccountIdAndTitleAndContent($accountId, $title, $content);

@@ -2,7 +2,7 @@
 ?>
 <!-- Toast Container -->
 <div id="toast"
-     class="toast d-none position-fixed top-1 start-50 translate-middle fade show"
+     class="toast d-none position-fixed top-50 start-50 translate-middle fade show"
      role="alert"
      aria-live="assertive"
      aria-atomic="true"

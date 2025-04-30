@@ -226,7 +226,15 @@ class AccountRepository{
         $stmt->close();
 
         if ($row = $result->fetch_assoc()) {
-            return $row;
+            return new Preference(
+                $row['preferenceId'],
+                $row['accountId'],
+                $row['layout'],
+                $row['noteFont'],
+                $row['noteColor'],
+                $row['font'],
+                $row['isDarkTheme']
+            );
         } else {
             return [
                 'status' => false,
@@ -235,25 +243,77 @@ class AccountRepository{
         }
     }
 
-    public function updatePreferenceByAccountId($accountId, $theme, $noteFont, $noteColor) {
-        // Convert theme to boolean
+    public function updatePreferenceByAccountId($accountId, $theme, $noteFont, $noteColor): mixed {
         $isDarkTheme = $theme === 'dark' ? 1 : 0;
 
-        $sql = "UPDATE `Preference` 
-            SET `isDarkTheme` = ?, 
-                `noteFont` = ?, 
-                `noteColor` = ? 
+        $sql = "UPDATE `Preference`
+            SET `isDarkTheme` = ?,
+                `noteFont` = ?,
+                `noteColor` = ?
             WHERE `accountId` = ?";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("isss", $isDarkTheme, $noteFont, $noteColor, $accountId);
+        $stmt->execute();
 
-        $result = $stmt->execute();
+        if ($stmt->affected_rows > 0) {
+            $stmt->close();
+            return $this->getPreferencesByAccountId($accountId); // <- fetch the updated row if needed
+        }
+
         $stmt->close();
-
-        return $result;
+        return [
+            'status' => false,
+            'message' => 'No changes made or account not found'
+        ];
     }
-
+//    public function updatePreferenceByAccountId($accountId, $theme, $noteFont, $noteColor): ?Preference {
+//        // Convert theme to boolean
+//        $isDarkTheme = $theme === 'dark' ? 1 : 0;
+//
+//        $sql = "UPDATE `Preference`
+//            SET `isDarkTheme` = ?,
+//                `noteFont` = ?,
+//                `noteColor` = ?
+//            WHERE `accountId` = ?";
+//
+//        $stmt = $this->conn->prepare($sql);
+//        if (!$stmt) {
+//            return null; // Return null if preparation fails
+//        }
+//
+//        $stmt->bind_param("isss", $isDarkTheme, $noteFont, $noteColor, $accountId);
+//        $stmt->execute();
+//
+//        // After update, fetch the updated record
+//        $stmt->close();
+//
+//        $selectSql = "SELECT * FROM `Preference` WHERE `accountId` = ?";
+//        $selectStmt = $this->conn->prepare($selectSql);
+//        if (!$selectStmt) {
+//            return null;
+//        }
+//
+//        $selectStmt->bind_param("s", $accountId);
+//        $selectStmt->execute();
+//        $result = $selectStmt->get_result();
+//        $selectStmt->close();
+//
+//        if ($row = $result->fetch_assoc()) {
+//            return new Preference(
+//                $row['preferenceId'],
+//                $row['accountId'],
+//                $row['layout'] ?? null,
+//                $row['noteFont'],
+//                $row['noteColor'],
+//                $row['font'] ?? null,
+//                $row['isDarkTheme']
+//            );
+//        }
+//
+//        return null;
+//    }
+//
 }
 
 ?>

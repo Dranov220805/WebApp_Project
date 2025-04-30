@@ -22,10 +22,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                     $noteMiddleWare->getNotes();
                 } else if($_GET['param_2'] == 'pinned-list') {
                     $noteMiddleWare->getPinnedNotes();
+                } else if ($_GET['param_2'] == 'trash-list') {
+                    $noteMiddleWare->getTrashNote();
                 } else if ($_GET['param_2'] == 'search') {
                     $noteMiddleWare->SearchNotes();
-                    // Return an error or other specific handling if necessary
-//                    echo json_encode(['error' => 'Invalid note action']);
                 }
                 break;
             default:
@@ -33,19 +33,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 break;
         }
     } else if (isset($_GET['param_1'])) {
-        // Handling a single parameter, e.g., specific note fetching
         switch ($_GET['param_1']) {
-//            case 'note':
-                // Handle fetching specific note based on id or other parameters
-                // Example: Fetch a specific note by ID (this will depend on your logic)
-//                $noteController->getNoteById($_GET['param_2']);
-//                break;
+
             default:
-//                echo json_encode(['error' => 'Invalid endpoint for note']);
+
                 break;
         }
     } else {
-        // Handle default case, such as listing all notes
         $noteController->getAllNotes();
     }
 }

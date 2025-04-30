@@ -22,6 +22,14 @@ class NoteMiddleWare {
         }
     }
 
+    public function getTrashNote() {
+        if (!isset($_SESSION['roleId'])) {
+            throw new Exception("Unauthenticated");
+        } else {
+            $this->noteController->getTrashNotePaginated();
+        }
+    }
+
     public function SearchNotes() {
         if (!isset($_SESSION['roleId'])) {
             throw new Exception("Unauthenticated");

@@ -367,6 +367,13 @@
     background-color: #5771ff;
 }
 
+.setting-row-avatar {
+    display: flex;
+    flex-grow: 1;
+    width: 100%;
+    height: 80px;
+}
+
 /* ─────── DARK MODE SUPPORT ─────── */
 body.dark-mode {
     background-color: #202124;
@@ -545,6 +552,14 @@ body.dark-mode .btn-close {
     }
 }
 
+@media (max-width: 700px) {
+    #avatar-upload-form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
 @media (max-width: 600px) {
     .note-grid {
         column-count: 1;
@@ -560,5 +575,16 @@ body.dark-mode .btn-close {
 @media (max-width: 500px) {
     .note-detail__modal--dialog {
         height: 55%;
+    }
+
+    #avatar-upload-form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .setting-row-avatar {
+        height: fit-content;
     }
 }

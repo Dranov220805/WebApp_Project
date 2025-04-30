@@ -26,14 +26,19 @@ class AuthService
 
         $userPreference = $this->accountRepository->getPreferencesByAccountId($accountId);
 
-
+        if (!$userPreference) {
+            return [
+                'status' => false,
+                'message' => 'Preferences not found'
+            ];
+        }
 
         // Store all required user data in session
         $_SESSION['accountId'] = $user->getAccountId();
         $_SESSION['userName'] = $user->getUsername();
         $_SESSION['email'] = $user->getEmail();
         $_SESSION['profilePicture'] = $user->getProfilePicture();
-        $_SESSION['preferences'] = $userPreference;
+        $_SESSION['isDarkTheme'] = $userPreference->isDarkTheme();
         $_SESSION['roleId'] = $user->getRoleId();
         $_SESSION['last_activity'] = time(); // Track activity for inactivity logout
         $_SESSION['isVerified'] = $user->getIsVerified();
@@ -124,23 +129,6 @@ class AuthService
                 'message' => 'Password has been updated'
             ];
         }
-    }
-
-    public function checkVerification($email) {
-        $result = $this->accountRepository->getAccountByEmail($email);
-
-        if ($result->getIsVerified()) {
-            return [
-                'status' => true,
-                'message' => 'Account is verified'
-            ];
-        }
-
-        return [
-            'status' => false,
-            'message' => 'Account is not verified'
-        ];
-
     }
 
 }

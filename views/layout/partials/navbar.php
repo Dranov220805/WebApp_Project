@@ -50,8 +50,8 @@
 
 <!-- The Modal -->
 <div class="modal fade" id="infoModal" data-bs-backdrop="false" data-bs-scroll="true">
-    <div class="modal-dialog" style="margin-right: 10px; margin-left: auto">
-        <div class="modal-content">
+    <div class="modal-dialog" style="margin-right: 30px; margin-left: auto; border-radius: 10px">
+        <div class="modal-content" style="width: 100%">
 
             <div class="modal-header">
                 <h4 class="modal-title" style="flex-grow: 1">Hello, <?=$_SESSION['userName']?></h4>
@@ -71,11 +71,15 @@
                 <br>
                 <strong>Email: </strong> <?=$_SESSION['email']?>
                 <br>
+                <strong>Is Dark Theme: </strong> <?=$_SESSION['isDarkTheme']?>
+                <br>
                 <strong>Verify status: </strong>
-                <?php if ($_SESSION['isVerified'] = 1) {
+                <?php if ($_SESSION['isVerified'] == 1) {
                     echo 'Verified';
-                } else {
+                } else if ($_SESSION['isVerified'] == 0) {
                     echo 'Not Verified';
+                } else {
+                    echo 'Unknown';
                 }
                 ?>
             </div>
