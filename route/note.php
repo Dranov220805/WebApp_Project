@@ -20,6 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             case 'note':
                 if ($_GET['param_2'] == 'list') {
                     $noteMiddleWare->getNotes();
+                } else if($_GET['param_2'] == 'pinned-list') {
+                    $noteMiddleWare->getPinnedNotes();
                 } else if ($_GET['param_2'] == 'search') {
                     $noteMiddleWare->SearchNotes();
                     // Return an error or other specific handling if necessary

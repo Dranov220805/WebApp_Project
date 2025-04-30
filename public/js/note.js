@@ -263,6 +263,30 @@ class Notes {
             .finally(() => this.isLoading = false);
     }
 
+    loadNewPinnedNotes() {
+        if (this.isLoading) return;
+        this.isLoading = true;
+        this.currentPage = 1;
+
+        fetch(`/note/pinned-list?page=${this.currentPage}&limit=${this.limit}`, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.data?.length > 0) {
+                    this.appendPinnedNotesToDOM(data.data);
+                    this.currentPage++;
+                }
+            })
+            .catch(err => {
+                console.error('Fetch failed:', err);
+                this.showToast('Failed to load notes. Please try again.');
+            })
+            .finally(() => this.isLoading = false);
+    }
+
     // loadTrashedNotes() {
     //     if (this.isLoading) return;
     //     this.isLoading = true;
@@ -455,8 +479,11 @@ class Notes {
                                 console.log(`Prepended note: ${noteId}`);
                             }
                         }
+                        const pinNoteGrid = document.querySelector('.pinned-note__load');
                         const otherNoteGrid = document.querySelector('.other-note__load');
+                        pinNoteGrid.innerHTML = '';
                         otherNoteGrid.innerHTML = '';
+                        this.loadPinnedNotes();
                         this.loadNewNotes();
                         // const otherNoteGrid = document.querySelector('.other-note__load');
                         // otherNoteGrid.innerHTML = '';
@@ -659,7 +686,7 @@ class Notes {
                 // pinNoteGrid.prepend(newPinnedNote);
                 otherNoteGrid.innerHTML = '';
                 this.loadNewNotes();
-                this.loadPinnedNotes();
+                this.loadNewPinnedNotes();
 
             })
             .catch(err => {
@@ -697,8 +724,8 @@ class Notes {
                 const newOtherNote = this.noteSheetModel(noteId, title, content);
                 pinNoteGrid.innerHTML = '';
 
-                this.loadPinnedNotes();
-                this.loadNewNotes();
+                // this.loadPinnedNotes();
+                this.loadNewPinnedNotes();
             })
             .catch(err => {
                 console.error("Error:", err);
@@ -716,7 +743,7 @@ class Notes {
             .then(data => {
                 if (data.status === true) {
                     this.showToast("Note deleted successfully", "success");
-                    const noteEl = document.querySelector(`.note-sheet[data-note-id="${noteId}"]`);
+                    const noteEl = document.querySelector(`.note-sheet[id="${noteId}"]`);
                     if (noteEl) noteEl.remove(); // Remove from DOM
                 } else {
                     this.showToast(data.message || "Failed to delete note", "danger");

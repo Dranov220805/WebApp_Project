@@ -14,6 +14,14 @@ class NoteMiddleWare {
         }
     }
 
+    public function getPinnedNotes() {
+        if (!isset($_SESSION['roleId'])) {
+            throw new Exception("Unauthenticated");
+        } else {
+            $this->noteController->getPinnedNotesPaginated();
+        }
+    }
+
     public function SearchNotes() {
         if (!isset($_SESSION['roleId'])) {
             throw new Exception("Unauthenticated");
@@ -22,13 +30,13 @@ class NoteMiddleWare {
         }
     }
 
-    public function getPinnedNotes() {
-        if (!isset($_SESSION['roleId'])) {
-            throw new Exception("Unauthenticated");
-        } else {
-            $this->noteController->getPinnedNotes();
-        }
-    }
+//    public function getPinnedNotes() {
+//        if (!isset($_SESSION['roleId'])) {
+//            throw new Exception("Unauthenticated");
+//        } else {
+//            $this->noteController->getPinnedNotes();
+//        }
+//    }
 
     public function createNote_POST() {
         if (!isset($_SESSION['roleId'])) {
