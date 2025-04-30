@@ -34,8 +34,15 @@
                 <div class="setting-row">
                     <div class="setting-label">Theme</div>
                     <select id="theme-selector" class="form-select dropdown-select" style="width: 20%">
-                        <option value="light">Light</option>
-                        <option value="dark">Dark</option>
+                        <?php
+                        if ($_SESSION['accountId']) {?>
+                            <option value="dark">Dark</option>
+                        <?php } else {
+                            ?>
+                            <option value="light">light</option>
+                        <?php
+                        }
+                        ?>
                         <option value="system" selected>System default</option>
                     </select>
                 </div>

@@ -22,11 +22,18 @@ class AuthService
             ];
         }
 
+        $accountId = $user->getAccountId();
+
+        $userPreference = $this->accountRepository->getPreferencesByAccountId($accountId);
+
+
+
         // Store all required user data in session
         $_SESSION['accountId'] = $user->getAccountId();
         $_SESSION['userName'] = $user->getUsername();
         $_SESSION['email'] = $user->getEmail();
         $_SESSION['profilePicture'] = $user->getProfilePicture();
+        $_SESSION['preferences'] = $userPreference;
         $_SESSION['roleId'] = $user->getRoleId();
         $_SESSION['last_activity'] = time(); // Track activity for inactivity logout
         $_SESSION['isVerified'] = $user->getIsVerified();

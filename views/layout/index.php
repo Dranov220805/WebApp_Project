@@ -8,7 +8,10 @@
     <?php
         include "./views/layout/partials/header.php";
     ?>
-<body>
+<body class="<?php
+if ($_SESSION["preferences"]['isDarkTheme']) {
+    echo 'dark-mode';
+} ?>">
     <?php
         include "./views/layout/partials/toast.php";
     ?>

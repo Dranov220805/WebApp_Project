@@ -214,7 +214,7 @@ class AccountRepository{
         return $result;
     }
 
-    public function getPreferencesByAccountId($accountId, $arr) {
+    public function getPreferencesByAccountId($accountId) {
         $sql = "SELECT Preference.* FROM `Preference`
             LEFT JOIN `Account` ON `Account`.`accountId` = `Preference`.`accountId`
             WHERE `Account`.`accountId` = ?";
@@ -226,7 +226,7 @@ class AccountRepository{
         $stmt->close();
 
         if ($row = $result->fetch_assoc()) {
-            return $arr;
+            return $row;
         } else {
             return [
                 'status' => false,

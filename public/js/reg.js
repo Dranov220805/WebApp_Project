@@ -32,10 +32,10 @@ class Reg {
         }, duration);
 
         // Allow manual close
-        closeBtn.onclick = () => {
-            toast.classList.add("d-none");
-            clearTimeout(hideTimeout); // Clear the auto-hide timer
-        };
+        // closeBtn.onclick = () => {
+        //     toast.classList.add("d-none");
+        //     clearTimeout(hideTimeout);
+        // };
     }
 
     checkRegister = () => {

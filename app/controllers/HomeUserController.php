@@ -116,14 +116,14 @@ class HomeUserController extends BaseController{
             http_response_code(400);
             echo json_encode([
                 'status' => false,
-                'message' => $result['message']
+                'message' => 'Failed to retrieve preferences'
             ]);
         } else {
             http_response_code(200);
             echo json_encode([
                 'status' => true,
                 'data' => $result,
-                'message' => $result['message']
+                'message' => 'Get preferences successfully'
             ]);
         }
     }

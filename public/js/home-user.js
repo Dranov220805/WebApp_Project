@@ -21,9 +21,9 @@ class HomeUser {
 
         // this.loadUserPreference();
         this.attachEventListeners();
-        this.checkVerification();
+        // this.checkVerification();
         this.handleAvatarUpload();
-        this.attachPreferenceSaveHandler();
+        // this.attachPreferenceSaveHandler();
     }
 
     loadUserPreference() {
