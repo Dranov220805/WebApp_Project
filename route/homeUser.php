@@ -43,8 +43,6 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
                 break;
         }
 
-    } else {
-        $homeUserMiddleWare->redirectToIndex();
     }
 
 } else if ($_SERVER['REQUEST_METHOD'] === 'POST') {

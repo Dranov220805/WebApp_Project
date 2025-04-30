@@ -483,7 +483,7 @@ class Notes {
                         const otherNoteGrid = document.querySelector('.other-note__load');
                         pinNoteGrid.innerHTML = '';
                         otherNoteGrid.innerHTML = '';
-                        this.loadPinnedNotes();
+                        this.loadNewPinnedNotes();
                         this.loadNewNotes();
                         // const otherNoteGrid = document.querySelector('.other-note__load');
                         // otherNoteGrid.innerHTML = '';

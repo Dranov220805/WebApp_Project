@@ -16,12 +16,8 @@ class HomeUserMiddleWare {
         }
     }
     public function redirectToIndex() {
-        if (!isset($_SESSION['roleId'])) {
-            header('location:/log/login');
-            exit();
-        } else {
-            header('location:/home');
-        }
+        header('location:/home');
+        exit();
     }
     public function showError() {
         $this->homeUserController->showError();

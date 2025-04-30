@@ -72,7 +72,7 @@
                 <strong>Email: </strong> <?=$_SESSION['email']?>
                 <br>
                 <strong>Verify status: </strong>
-                <?php if ($_SESSION['isVerified'] === TRUE) {
+                <?php if ($_SESSION['isVerified'] = 1) {
                     echo 'Verified';
                 } else {
                     echo 'Not Verified';

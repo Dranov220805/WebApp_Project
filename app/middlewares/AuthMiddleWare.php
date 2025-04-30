@@ -19,6 +19,10 @@ class AuthMiddleware
         }
     }
 
+    public function redirect() {
+        header('Location: /home');
+    }
+
     public function logout()
     {
         $this->authController->logout();

@@ -34,7 +34,6 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
                 break;
         }
     } else if (isset($_GET['param_1'])){
-
     }
 
 } else if($_SERVER['REQUEST_METHOD'] == 'POST'){

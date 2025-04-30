@@ -12,6 +12,9 @@ RewriteEngine on
 #
 #AddType application/javascript .js .mjs
 
+# Redirect root "/" to "/home"
+RewriteRule ^$ /home [L,R=302]
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 #RewriteCond %{REQUEST_FILENAME}% !-l
