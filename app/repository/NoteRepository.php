@@ -130,10 +130,8 @@ class NoteRepository
         $sql = "SELECT n.* 
             FROM `Account` a
             LEFT JOIN `Note` n ON a.accountId = n.accountId
-            LEFT JOIN `Modification` m ON m.noteId = n.noteId
             WHERE a.accountId = ? 
             AND n.isDeleted = TRUE
-            AND (m.isPinned IS NULL OR m.isPinned = FALSE)
             ORDER BY n.createDate DESC
             LIMIT ? OFFSET ?";
 
@@ -154,6 +152,56 @@ class NoteRepository
         }
 
         return $notes;
+    }
+
+    public function getTrashedNotesByAccountId($accountId): array {
+        $sql = "SELECT n.* 
+            FROM `Account` a
+            LEFT JOIN `Note` n ON a.accountId = n.accountId
+            LEFT JOIN `Modification` m ON m.noteId = n.noteId
+            WHERE a.accountId = ? 
+            AND n.isDeleted = TRUE
+            ORDER BY n.createDate DESC";
+
+        $stmt = $this->conn->prepare($sql);
+
+        if (!$stmt) {
+            throw new Exception("Failed to prepare SQL statement: " . $this->conn->error);
+        }
+
+        $stmt->bind_param("s", $accountId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $notes = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $notes[] = $row;
+        }
+
+        return $notes;
+    }
+
+    public function getLabelNoteByLabelName(string $labelName) {
+        $sql = "SELECT NoteLabel.*, Note.title, Note.content
+            FROM `NoteLabel`
+            INNER JOIN `Note` ON Note.noteId = NoteLabel.noteId
+            WHERE NoteLabel.labelName = ?";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param('s', $labelName);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $labels = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $labels[] = $row;
+        }
+
+        $stmt->close();
+
+        return $labels;
     }
 
     public function createNoteByAccountIdAndTitleAndContent($accountId, $title, $content): ?Note
@@ -352,6 +400,51 @@ class NoteRepository
         $stmt->close();
 
         return $result;
+    }
+
+    public function restoreNoteByAccountIdAndNoteId($accountId, $noteId): bool {
+        date_default_timezone_set('Asia/Bangkok');
+        $deletedDate = date("Y-m-d H:i:s");
+
+        $sql = "UPDATE `Note` 
+            SET `isDeleted` = FALSE, `createDate` = ? 
+            WHERE `accountId` = ? AND `noteId` = ? AND `isDeleted` = TRUE";
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Failed to prepare SQL statement: " . $this->conn->error);
+        }
+
+        $stmt->bind_param("sss", $deletedDate, $accountId, $noteId);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        if (!$result || $this->conn->affected_rows === 0) {
+            return false; // No row was updated, either it was already deleted or not found
+        }
+
+        return true;
+    }
+
+    public function hardDeleteNoteByAccountIdAndNoteId($accountId, $noteId): bool
+    {
+        // Delete the modification record first to avoid foreign key constraint errors
+        $modSql = "DELETE FROM `Modification` WHERE `noteId` = ?";
+        $modStmt = $this->conn->prepare($modSql);
+        $modStmt->bind_param("s", $noteId);
+        $modResult = $modStmt->execute();
+        $modStmt->close();
+
+        if (!$modResult) return false;
+
+        // Then delete the note
+        $noteSql = "DELETE FROM `Note` WHERE `noteId` = ? AND `accountId` = ?";
+        $noteStmt = $this->conn->prepare($noteSql);
+        $noteStmt->bind_param("ss", $noteId, $accountId);
+        $noteResult = $noteStmt->execute();
+        $noteStmt->close();
+
+        return $noteResult;
     }
 
 }

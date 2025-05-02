@@ -28,6 +28,8 @@
                     </form>
                 </div>
 
+                <div class="section-divider"></div>
+
                 <!-- Appearance Section -->
                 <div class="section-title">Appearance</div>
 

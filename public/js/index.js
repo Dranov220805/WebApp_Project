@@ -3,6 +3,8 @@ import auth from './auth.js';
 import reg from './reg.js';
 // import note from './note.js';
 import homeUser from './home-user.js';
+import homeUserTrash from './home-user-trash.js';
+import TrashNotes from "./home-user-trash.js";
 
 // Site functionality
 homeUser.closeToast();

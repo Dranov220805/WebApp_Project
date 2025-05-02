@@ -43,17 +43,18 @@ class AccountService{
         $result = $this->accountRepository->getAccountByEmail($email);
 
         if ($result->getIsVerified()) {
+            $_SESSION['isVerified'] = true;
             return [
                 'status' => true,
                 'message' => 'Account is verified'
             ];
+        } else {
+            $_SESSION['isVerified'] = false;
+            return [
+                'status' => false,
+                'message' => 'Account is not verified'
+            ];
         }
-
-        return [
-            'status' => false,
-            'message' => 'Account is not verified'
-        ];
-
     }
 
     public function getPreferencesByAccountId($accountId) {

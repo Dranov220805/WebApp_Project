@@ -9,4 +9,12 @@ class HomeUserService {
 
     }
 
+    public function getLabelByAccountId($accountId) {
+        return $this->homeUserRepository->getLabelByAccountId($accountId);
+    }
+
+    public function getLabelNotesByAccountIdAndLabelName($accountId, $labelName) {
+        return $this->homeUserRepository->getLabelNotesByAccountIdAndLabelName($accountId, $labelName);
+    }
+
 }

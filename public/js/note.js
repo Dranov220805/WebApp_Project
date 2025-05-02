@@ -15,6 +15,9 @@ class Notes {
         this.isLoadingPinned = false;
         this.lastScrollTop = 0;
 
+        this.isLoadingNotes = false;
+        this.isLoadingPinnedNotes = false;
+
         this.setupEvents();
         this.loadPinnedNotes();
         this.loadNotes();
@@ -90,10 +93,13 @@ class Notes {
 
     handleScroll() {
         const currentScrollTop = window.scrollY;
-        if (currentScrollTop > this.lastScrollTop &&
-            (window.innerHeight + currentScrollTop >= document.body.offsetHeight - 200)) {
-            this.loadNotes();
+        const nearBottom = (window.innerHeight + currentScrollTop >= document.body.offsetHeight - 200);
+
+        // Only load more notes when scrolling down and near bottom
+        if (!this.isLoading && currentScrollTop > this.lastScrollTop && nearBottom) {
+            this.loadNotes(); // Only call when not already loading
         }
+
         this.lastScrollTop = Math.max(currentScrollTop, 0);
     }
 
@@ -115,27 +121,29 @@ class Notes {
 
     loadNotes() {
         if (this.isLoading) return;
+
         this.isLoading = true;
 
         fetch(`/note/list?page=${this.currentPage}&limit=${this.limit}`, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            headers: { 'Content-Type': 'application/json' }
         })
             .then(res => res.json())
             .then(data => {
-                console.log(data);
                 if (data.data?.length > 0) {
                     this.appendNotesToDOM(data.data);
-                    this.currentPage++;
+                    this.currentPage++; // Only increment page after successful append
+                } else {
+                    console.log('No more notes to load');
                 }
             })
             .catch(err => {
-                console.error('Fetch failed:', err);
-                this.showToast('Failed to load notes. Please try again.');
+                console.error('Failed to fetch notes:', err);
+                this.showToast('Error loading notes');
             })
-            .finally(() => this.isLoading = false);
+            .finally(() => {
+                this.isLoading = false;
+            });
     }
 
     appendNotesToDOM(notes) {
@@ -167,8 +175,8 @@ class Notes {
                         <button title="Add Label"><i class="fa-solid fa-tags"></i></button>
                         <button title="Add Image"><i class="fa-solid fa-images"></i></button>
                         <button class="note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
+                        <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
                     </div>
-                    <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
                 </div>
             `;
             container.appendChild(div);
@@ -191,7 +199,7 @@ class Notes {
                 console.log('Pin note loaded', data);
                 if (data.data?.length > 0) {
                     this.appendPinnedNotesToDOM(data.data);
-                    this.currentPage++;
+                    // this.currentPage++;
                 }
             })
             .catch(err => {
@@ -230,8 +238,8 @@ class Notes {
                         <button title="Add Label"><i class="fa-solid fa-tags"></i></button>
                         <button title="Add Image"><i class="fa-solid fa-images"></i></button>
                         <button class="pinned-note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
+                        <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
                     </div>
-                    <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
                 </div>
             `;
             container.appendChild(div);
@@ -240,8 +248,8 @@ class Notes {
     }
 
     loadNewNotes() {
-        if (this.isLoading) return;
-        this.isLoading = true;
+        if (this.isLoadingNotes) return;
+        this.isLoadingNotes = true;
         this.currentPage = 1;
 
         fetch(`/note/list?page=${this.currentPage}&limit=${this.limit}`, {
@@ -260,12 +268,12 @@ class Notes {
                 console.error('Fetch failed:', err);
                 this.showToast('Failed to load notes. Please try again.');
             })
-            .finally(() => this.isLoading = false);
+            .finally(() => this.isLoadingNotes = false);
     }
 
     loadNewPinnedNotes() {
-        if (this.isLoading) return;
-        this.isLoading = true;
+        if (this.isLoadingPinnedNotes) return;
+        this.isLoadingPinnedNotes = true;
         this.currentPage = 1;
 
         fetch(`/note/pinned-list?page=${this.currentPage}&limit=${this.limit}`, {
@@ -284,7 +292,7 @@ class Notes {
                 console.error('Fetch failed:', err);
                 this.showToast('Failed to load notes. Please try again.');
             })
-            .finally(() => this.isLoading = false);
+            .finally(() => this.isLoadingPinnedNotes = false);
     }
 
     loadTrashedNotes() {
@@ -341,7 +349,6 @@ class Notes {
                         <button class="note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
                         <button class="note-delete-btn" title="Delete Permanently" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash-can-arrow-up"></i></button>
                     </div>
-                    <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
                 </div>
             `;
             container.appendChild(div);
@@ -404,8 +411,8 @@ class Notes {
         const modal = new bootstrap.Modal(modalEl);
         const noteId = note.noteId;
 
-        const titleInput = modalEl.querySelector('.note-title-input');
-        const contentInput = modalEl.querySelector('.note-content-input');
+        const titleInput = modalEl.querySelector('.note-title-input-autosave');
+        const contentInput = modalEl.querySelector('.note-content-input-autosave');
         const icon = modalEl.querySelector('.save-status-icon i');
         const iconText = modalEl.querySelector('.save-status-icon p');
 
@@ -578,8 +585,8 @@ class Notes {
                     <button title="Label"><i class="fa-solid fa-tags"></i></button>
                     <button title="Image"><i class="fa-solid fa-images"></i></button>
                     <button class="note-delete-btn" title="Delete" data-note-id="${noteId}"><i class="fa-solid fa-trash"></i></button>
+                    <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
                 </div>
-                <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
             </div>
         `;
         otherNoteGrid.prepend(div);
@@ -610,8 +617,8 @@ class Notes {
                     <button title="Add Label"><i class="fa-solid fa-tags"></i></button>
                     <button title="Add Image"><i class="fa-solid fa-images"></i></button>
                     <button class="pinned-note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${noteId}"><i class="fa-solid fa-trash"></i></button>
+                    <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
                 </div>
-                <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
             </div>
         `;
         pinnedNoteGrid.prepend(div);
@@ -633,27 +640,6 @@ class Notes {
 
         confirmBtn.addEventListener('click', newConfirmHandler);
     }
-
-    // deleteNoteInModal(note) {
-    //     const modalEl = document.getElementById('deleteNoteModal');
-    //     const modal = new bootstrap.Modal(modalEl);
-    //     const confirmBtn = modalEl.querySelector('#confirmDeleteNoteBtn');
-    //
-    //     // Set the noteId to the confirm button for reference
-    //     confirmBtn.noteId = note.noteId;
-    //
-    //     // Show modal
-    //     modal.show();
-    //
-    //     // Add click event listener to the confirm button
-    //     const onConfirm = () => {
-    //         this.deleteNote_POST(note.noteId);
-    //         confirmBtn.removeEventListener("click", onConfirm); // Remove listener after execution
-    //         modal.hide(); // Hide the modal after deletion
-    //     };
-    //
-    //     confirmBtn.addEventListener("click", onConfirm);
-    // }
 
     pinNote_POST(noteId, title, content) {
         fetch('/note/pin', {
@@ -681,7 +667,7 @@ class Notes {
                 const otherNoteGrid = document.querySelector('.other-note__load');
                 console.log(noteId, title, content);
                 const newPinnedNote = this.pinNoteSheetModel(noteId, title, content);
-                // pinNoteGrid.prepend(newPinnedNote);
+                pinNoteGrid.innerHTML = '';
                 otherNoteGrid.innerHTML = '';
                 this.loadNewNotes();
                 this.loadNewPinnedNotes();
@@ -744,12 +730,21 @@ class Notes {
                     const otherNoteGrid = document.querySelector('.other-note__load');
                     const pinNoteGrid = document.querySelector('.pinned-note__load');
                     console.log(noteId, title, content);
-                    // otherNoteGrid.innerHTML = '';
                     pinNoteGrid.innerHTML = '';
+                    otherNoteGrid.innerHTML = '';
+                    try {
+                        console.log("Calling loadNewNotes()");
+                        this.loadNewNotes();
+                    } catch (e) {
+                        console.error("loadNewNotes() failed:", e);
+                    }
 
-                    // this.loadPinnedNotes();
-                    this.loadNewPinnedNotes();
-                    // this.loadNewNotes();
+                    try {
+                        console.log("Calling loadNewPinnedNotes()");
+                        this.loadNewPinnedNotes();
+                    } catch (e) {
+                        console.error("loadNewPinnedNotes() failed:", e);
+                    }
                 } else {
                     this.showToast(data.message || "Failed to delete note", "danger");
                 }
@@ -762,6 +757,4 @@ class Notes {
 
 }
 
-// Initialize
 const notesInstance = new Notes();
-// window.refreshNotes = () => notesInstance.loadNotes();

@@ -57,7 +57,8 @@ class Auth {
                     console.log(data);
                     const { roleId, userName, email, message, status } = data;
 
-                    $('#email-input').val('');
+                    // $('#email-input').val('');
+                    $('#password-input').val('');
                     if (status === true) {
 
                         // Show success toast message
@@ -342,7 +343,7 @@ function resetTimers() {
 // === Heartbeat Ping ===
 function sendHeartbeat() {
     fetch('/auth/heartbeat')
-        .then(res => res.json())
+        // .then(res => res.json())
         .then(data => {
             if (data.sessionExpired) {
                 window.location.href = '/logout';

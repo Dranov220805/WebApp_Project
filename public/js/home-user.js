@@ -38,7 +38,7 @@ class HomeUser {
         })
     }
 
-    showToast(message, type = 'danger', duration = 3000) {
+    showToast(message, type, duration = 3000) {
         const toast = document.getElementById("toast");
         const messageElement = document.getElementById("toast-message");
         const closeBtn = document.getElementById("toast-close");
@@ -52,6 +52,8 @@ class HomeUser {
         toast.classList.remove("d-none");
 
         const hideTimeout = setTimeout(() => toast.classList.add("d-none"), duration);
+
+        console.log("Toast:", { message, type, toastVisible: !toast.classList.contains('d-none') });
     }
 
     attachPreferenceSaveHandler() {

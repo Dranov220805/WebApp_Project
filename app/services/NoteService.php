@@ -26,6 +26,14 @@ class NoteService {
         return $this->noteRepository->getTrashedNotesByAccountIdPaginated($accountId, $limit, $offset);
     }
 
+    public function getTrashedNotesByAccountId(string $accountId) {
+        return $this->noteRepository->getTrashedNotesByAccountId($accountId);
+    }
+
+    public function getLabelNoteByLabelName(string $labelName) {
+        return $this->noteRepository->getLabelNoteByLabelName($labelName);
+    }
+
     public function createNoteByAccountIdAndTitleAndContent($accountId, $title, $content)
     {
         $result = $this->noteRepository->createNoteByAccountIdAndTitleAndContent($accountId, $title, $content);
@@ -123,6 +131,44 @@ class NoteService {
                 'message' => 'Unpinned note successfully'
             ];
         }
+    }
+
+    public function restoreNoteByAccountIdAndNoteId($accountId, $noteId) {
+        // Call the repository method to restore the note
+        $result = $this->noteRepository->restoreNoteByAccountIdAndNoteId($accountId, $noteId);
+
+        // Check if the result is null or false, indicating failure
+        if (!$result) {
+            return [
+                'status' => false,
+                'message' => 'Note could not be restored'
+            ];
+        }
+
+        // If the restoration was successful, return a success message
+        return [
+            'status' => true,
+            'message' => 'Note restored successfully'
+        ];
+    }
+
+    public function hardDeleteNoteByAccountIdAndNoteId($accountId, $noteId) {
+        // Call the repository method to delete the note
+        $result = $this->noteRepository->hardDeleteNoteByAccountIdAndNoteId($accountId, $noteId);
+
+        // Check if the result is null or false, indicating failure
+        if ($result === false) {
+            return [
+                'status' => false,
+                'message' => 'Note could not be deleted'
+            ];
+        }
+
+        // If the deletion was successful, return a success message
+        return [
+            'status' => true,
+            'message' => 'Note deleted successfully'
+        ];
     }
 
 }

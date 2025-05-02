@@ -62,15 +62,67 @@ class HomeUserController extends BaseController{
         $footer = 'home';
         include "./views/layout/index.php";
     }
+    public function getUserLabel() {
+        $labelNotes = $this->homeUserService->getLabelByAccountId($_SESSION['accountId']);
+
+        return $labelNotes;
+//        var_dump($labelNotes);
+
+//        $this->Views('home-user-label', [
+//            'status' => true,
+//            'labelNotes' => $labelNotes,
+//            'message' => 'Get trashed notes for this account successfully'
+//        ]);
+    }
+    public function homeLabel_POST($labelName) {
+        $accountId = $_SESSION['accountId'] ?? null;
+
+        // Basic validation
+        if (!$accountId) {
+            http_response_code(400);
+            echo json_encode(['status' => false, 'message' => 'Missing accountId']);
+            return;
+        }
+
+        $result = $this->noteService->getLabelNoteByLabelName($labelName);
+
+        // Pass data to the view
+        $this->Views('home-user-label', [
+            'status' => true,
+            'labelName' => $labelName,
+            'data' => $result,
+            'message' => 'Get label view for this account successfully'
+        ]);
+    }
     public function homeArchive() {
         $content = 'home-user-archive';
         $footer = 'home';
         include "./views/layout/index.php";
     }
     public function homeTrash() {
-        $content = 'home-user-trash';
-        $footer = 'home';
-        include "./views/layout/index.php";
+
+        $accountId = $_SESSION['accountId'] ?? null;
+
+        // Basic validation
+        if (!$accountId) {
+            http_response_code(400);
+            echo json_encode(['status' => false, 'message' => 'Missing accountId']);
+            return;
+        }
+
+        // Fetch trash notes
+        $trashNotes = $this->noteService->getTrashedNotesByAccountId($accountId);
+
+        // Pass data to the view
+        $this->Views('home-user-trash', [
+            'status' => true,
+            'trashNotes' => $trashNotes,
+            'message' => 'Get trashed notes for this account successfully'
+        ]);
+
+//        $content = 'home-user-trash';
+//        $footer = 'home';
+//        include "./views/layout/index.php";
     }
 
     public function checkVerification() {

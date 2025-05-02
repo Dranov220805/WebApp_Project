@@ -198,6 +198,20 @@ class NoteController {
         }
     }
 
+    public function getLabelNoteByLabelName($labelName) {
+        $result = $this->noteService->getLabelNoteByLabelName($labelName);
+
+        if ($result) {
+            return [
+                'data' => $result
+            ];
+        } else {
+            return [
+                'data' => 'failed to fetch label note data'
+            ];
+        }
+    }
+
     public function updateNote_POST() {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
@@ -343,6 +357,64 @@ class NoteController {
             ]);
         } else {
             $result = $this->noteService->unpinNoteByNoteId($noteId);
+
+            if ($result['status'] === true) {
+                http_response_code(201);
+                echo json_encode ([
+                    'status' => true,
+                    'message' => $result['message']
+                ]);
+            } else {
+                http_response_code(400);
+                echo json_encode ([
+                    'status' => false,
+                    'message' => $result['message']
+                ]);
+            }
+        }
+    }
+
+    public function restoreNote_POST() {
+        $content = trim(file_get_contents("php://input"));
+        $data = json_decode($content, true);
+        $accountId = $_SESSION['accountId'] ?? null;
+        $noteId = $data['noteId'] ?? null;
+        if (empty($accountId) || empty($noteId)) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'Pinned note not found'
+            ]);
+        } else {
+            $result = $this->noteService->restoreNoteByAccountIdAndNoteId($accountId, $noteId);
+
+            if ($result['status'] === true) {
+                http_response_code(201);
+                echo json_encode ([
+                    'status' => true,
+                    'message' => $result['message']
+                ]);
+            } else {
+                http_response_code(400);
+                echo json_encode ([
+                    'status' => false,
+                    'message' => $result['message']
+                ]);
+            }
+        }
+    }
+
+    public function hardDeleteNote_POST() {
+        $content = trim(file_get_contents("php://input"));
+        $data = json_decode($content, true);
+        $accountId = $_SESSION['accountId'] ?? null;
+        $noteId = $data['noteId'] ?? null;
+        if (empty($accountId) || empty($noteId)) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'Pinned note not found'
+            ]);
+        } else {
+            $result = $this->noteService->hardDeleteNoteByAccountIdAndNoteId($accountId, $noteId);
 
             if ($result['status'] === true) {
                 http_response_code(201);

@@ -61,6 +61,8 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $noteMiddleWare->pinNote_POST();
                 } else if ($_GET['param_2'] == 'unpin') {
                     $noteMiddleWare->unpinNote_POST();
+                } else if ($_GET['param_2'] == 'hard-delete') {
+                    $noteMiddleWare->hardDeleteNote_POST();
                 }
                 break;
             default:
@@ -69,6 +71,17 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     } else if (isset($_GET['param_1'])) {
 //        echo json_encode(['error' => 'Missing parameters']);
+    }
+} else if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
+    if (isset($_GET['param_1']) && isset($_GET['param_2']) && isset($_GET['param3'])) {
+
+    } else if (isset($_GET['param_1']) && isset($_GET['param_2'])) {
+        switch ($_GET['param_1']) {
+            case 'note':
+                if ($_GET['param_2'] == 'restore') {
+                    $noteMiddleWare->restoreNote_POST();
+                }
+        }
     }
 }
 

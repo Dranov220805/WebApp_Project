@@ -15,7 +15,11 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
                         case 'upload':
                             $homeUserMiddleWare->uploadAvatar();
                     }
+                } else if ($_GET['param_2'] == 'label') {
+                    $labelName = $_GET['param_3'];
+                    $homeUserMiddleWare->homeLabel_POST($labelName);
                 }
+                break;
         }
     } else if (isset($_GET['param_1']) && isset($_GET['param_2'])){
         switch ($_GET['param_1']){

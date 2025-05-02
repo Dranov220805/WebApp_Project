@@ -127,11 +127,11 @@
         <div class="modal-dialog modal-lg modal-dialog-scrollable note-modal-display position-fixed top-50 start-50 translate-middle fade show note-detail__modal--dialog" style="height: 60%">
             <div class="modal-content note-detail__modal">
                 <div class="modal-header">
-                    <input type="text" class="modal-title note-title-input form-control border-0" id="noteModalLabel" style="margin-right: 15px"/>
+                    <input type="text" class="modal-title note-title-input-autosave form-control border-0" id="noteModalLabel"/>
                     <i type="button" class="fa-solid fa-xmark note-modal-close" data-bs-dismiss="modal" aria-label="Close" style="font-size: 25px;"></i>
                 </div>
                 <div class="modal-body">
-                    <textarea class="note-content-input form-control" style="height: 300px; resize: none;"></textarea>
+                    <textarea class="note-content-input-autosave form-control"></textarea>
                 </div>
                 <div class="modal-footer d-flex justify-content-between align-items-center">
                     <div class="save-status-icon d-flex flex-row">

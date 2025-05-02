@@ -14,7 +14,6 @@ if ($_SESSION['isDarkTheme'] == 1) {
 } else {
     echo '';
 } ?>">
-<?= print_r('Is Dark Theme: ', $_SESSION['isDarkTheme']);?>
     <?php
         include "./views/layout/partials/toast.php";
     ?>

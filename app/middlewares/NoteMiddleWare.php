@@ -86,6 +86,22 @@ class NoteMiddleWare {
         }
     }
 
+    public function restoreNote_POST() {
+        if (!isset($_SESSION['roleId'])) {
+            throw new Exception("Unauthenticated");
+        } else {
+            $this->noteController->restoreNote_POST();
+        }
+    }
+
+    public function hardDeleteNote_POST() {
+        if (!isset($_SESSION['roleId'])) {
+            throw new Exception("Unauthenticated");
+        } else {
+            $this->noteController->hardDeleteNote_POST();
+        }
+    }
+
 }
 
 ?>

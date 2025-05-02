@@ -36,6 +36,13 @@ class HomeUserMiddleWare {
             $this->homeUserController->homeLabel();
         }
     }
+    public function homeLabel_POST($labelName) {
+        if (!isset($_SESSION['roleId'])) {
+            header('location:/log/login');
+        } else {
+            $this->homeUserController->homeLabel_POST($labelName);
+        }
+    }
     public function homeArchive() {
         if (!isset($_SESSION['roleId'])) {
             header('location:/log/login');
