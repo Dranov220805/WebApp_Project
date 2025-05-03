@@ -23,7 +23,7 @@
                                      data-note-content="<?= htmlspecialchars($note['content'])?>"
                                      data-note-image="<?= htmlspecialchars($note['imageLink'])?>">
                                     <div class="note-sheet__image" style="width: 100%; height: auto; overflow: hidden">
-                                        <img src="<?= htmlspecialchars($note['imageLink'])?>>" style="width: 100%; height: auto; display: block">
+                                        <img src="<?= htmlspecialchars($note['imageLink'])?>" style="width: 100%; height: auto; display: block">
                                     </div>
                                     <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
                                         <h3 class="note-sheet__title"><?= htmlspecialchars($note['title']) ?></h3>

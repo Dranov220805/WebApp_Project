@@ -30,8 +30,8 @@ class NoteService {
         return $this->noteRepository->getTrashedNotesByAccountId($accountId);
     }
 
-    public function getLabelNoteByLabelName(string $labelName) {
-        return $this->noteRepository->getLabelNoteByLabelName($labelName);
+    public function getLabelNoteByLabelName(string $labelName, string $accountId) {
+        return $this->noteRepository->getLabelNoteByLabelName($labelName, $accountId);
     }
 
     public function createNoteByAccountIdAndTitleAndContent($accountId, $title, $content)
@@ -169,6 +169,22 @@ class NoteService {
             'status' => true,
             'message' => 'Note deleted successfully'
         ];
+    }
+
+    public function updateLabelByLabelName($oldLabelName, $newLabelName) {
+        return $this->noteRepository->updateLabelByLabelName($oldLabelName, $newLabelName);
+    }
+
+    public function createLabelByLabelName($labelName, $accountId) {
+        return $this->noteRepository->createLabelByLabelName($labelName, $accountId);
+    }
+
+    public function deleteLabelByLabelNameAndAccountId($labelName, $accountId) {
+        return $this->noteRepository->deleteLabelByLabelNameAndAccountId($labelName, $accountId);
+    }
+
+    public function addNoteToLabelByLabelNameAndNoteId($labelName, $noteId) {
+        return $this->noteRepository->addNoteToLabelByLabelNameAndNoteId($labelName, $noteId);
     }
 
 }

@@ -55,18 +55,36 @@ $labelList = $homeUserController->getUserLabel();
                 <?php foreach ($labelList as $label): ?>
                 <div class="note-sheet__menu" style="width: 100%">
                     <div style="width: 100%; display: flex; flex-direction: row; flex-grow: 1">
-                        <input class="sidebar__item--title" style="flex-grow: 1; border: none; background-color: inherit" value="<?= htmlspecialchars($label) ?>">
-                        <button class="note-restore-btn" title="Rename label" data-note-id="<?= htmlspecialchars($label) ?>"><i class="fa-regular fa-pen-to-square"></i></button>
-                        <button class="note-trash-delete-btn" title="Delete label" data-note-id="<?= htmlspecialchars($label) ?>"><i class="fa-solid fa-eraser"></i></button>
+                        <input class="sidebar__item--input" style="flex-grow: 1; border: none; background-color: inherit" value="<?= htmlspecialchars($label) ?>">
+                        <button class="label-rename-btn" title="Rename label" data-label-id="<?= htmlspecialchars($label) ?>"><i class="fa-regular fa-pen-to-square"></i></button>
+                        <button class="label-delete-btn" title="Delete label" data-label-id="<?= htmlspecialchars($label) ?>"><i class="fa-solid fa-eraser"></i></button>
                     </div>
                 </div>
                 <?php endforeach; ?>
-<!-- JavaScript will dynamically inject label management UI here -->
             </div>
             <div class="modal-footer d-flex" style="justify-content: start">
                 <input class="label-post__input" placeholder="New label here" style="flex-grow: 1; font-size: 18px">
                 <button type="button" class="btn btn-primary label-post__submit"> Add new label</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteLabelModal" tabindex="-1" aria-labelledby="deleteLabelModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteLabelModalLabel">Confirm Delete Permanently</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to permanently delete this note?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="confirmDeleteLabelBtn" type="button" class="btn btn-danger">Delete</button>
             </div>
         </div>
     </div>

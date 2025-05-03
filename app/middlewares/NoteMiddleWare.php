@@ -102,6 +102,38 @@ class NoteMiddleWare {
         }
     }
 
+    public function createLabel_POST() {
+        if (!isset($_SESSION['roleId'])) {
+            throw new Exception("Unauthenticated");
+        } else {
+            $this->noteController->createLabel_POST();
+        }
+    }
+
+    public function updateLabel_POST() {
+        if (!isset($_SESSION['roleId'])) {
+            throw new Exception("Unauthenticated");
+        } else {
+            $this->noteController->updateLabel_POST();
+        }
+    }
+
+    public function deleteLabel_POST() {
+        if (!isset($_SESSION['roleId'])) {
+            throw new Exception("Unauthenticated");
+        } else {
+            $this->noteController->deleteLabel_POST();
+        }
+    }
+
+    public function getLabelNote($labelName) {
+        if (!isset($_SESSION['roleId'])) {
+            throw new Exception("Unauthenticated");
+        } else {
+            $this->noteController->getLabelNote($labelName);
+        }
+    }
+
 }
 
 ?>

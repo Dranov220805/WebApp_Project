@@ -74,12 +74,20 @@ CREATE TABLE `NoteSharing` (
   `canEdit` BOOLEAN NOT NULL DEFAULT FALSE
 );
 
+-- Table structure for table `Label`
+CREATE TABLE `Label` (
+    `labelId` CHAR(36) NOT NULL PRIMARY KEY,
+    `accountId` CHAR(36) NOT NULL,
+    `labelName` VARCHAR(200) NOT NULL,
+    `isDeleted` BOOLEAN NOT NULL DEFAULT FALSE,
+    UNIQUE (`accountId`, `labelName`) -- Prevent duplicate labels per user
+);
+
 -- Table structure for table `NoteLabel`
 CREATE TABLE `NoteLabel` (
-  `noteLabelId` CHAR(36) NOT NULL PRIMARY KEY,
-  `noteId` CHAR(36) NOT NULL,
-  `labelName` VARCHAR(200) NOT NULL,
-  `isDeleted` BOOLEAN NOT NULL DEFAULT FALSE
+    `noteLabelId` CHAR(36) NOT NULL PRIMARY KEY,
+    `noteId` CHAR(36) NOT NULL,
+    `labelId` CHAR(36) NOT NULL
 );
 
 -- Table structure for table `NoteProtect`
@@ -232,14 +240,6 @@ VALUES
   (UUID(), @uuid5, NOW(), TRUE);
 
 -- Insert data into `NoteLabel`
-
-INSERT INTO `NoteLabel` (`noteLabelId`, `noteId`, `labelName`, `isDeleted`)
-VALUES
-  (UUID(), @uuid1, 'Personal', FALSE),
-  (UUID(), @uuid2, 'Work', FALSE),
-  (UUID(), @uuid3, 'Meetings', FALSE),
-  (UUID(), @uuid4, 'Fitness', FALSE),
-  (UUID(), @uuid5, 'Travel', FALSE);
 
 -- Insert data into `NoteProtect`
 

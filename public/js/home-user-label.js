@@ -22,7 +22,7 @@ class LabelNote {
         document.removeEventListener('click', this.handleDeleteClick);
 
         this.handleNoteClick = (event) => {
-            const deleteBtn = event.target.closest(".note-delete-btn, .pinned-note-delete-btn");
+            const deleteBtn = event.target.closest(".note-label-delete-btn");
             const pinBtn = event.target.closest(".note-pin-btn");
             const unpinBtn = event.target.closest(".pinned-note-pin-btn");
             const noteEl = event.target.closest('.note-sheet');
@@ -33,23 +33,12 @@ class LabelNote {
                 noteId: noteEl.dataset.noteId || noteEl.dataset.id,
                 title: noteEl.dataset.noteTitle || noteEl.dataset.title,
                 content: noteEl.dataset.noteContent || noteEl.dataset.content,
+                imageLink: noteEl.dataset.imageLink || noteEl.dataset.imageLink,
             };
 
             if (deleteBtn) {
                 console.log('Clicked delete button:', note);
-                this.expandDeleteNote(note); // Show modal
-                return;
-            }
-
-            if (pinBtn) {
-                console.log('Clicked pin button:', note);
-                this.pinNote_POST(note.noteId, note.title, note.content);
-                return;
-            }
-
-            if (unpinBtn) {
-                console.log('Clicked unpin button:', note);
-                this.unpinNote_POST(note.noteId, note.title, note.content);
+                this.expandDeleteLabelNote(note); // Show modal
                 return;
             }
 
@@ -67,6 +56,40 @@ class LabelNote {
         // Attach scroll event listener
         window.addEventListener('scroll', this.handleScroll.bind(this));
         console.log('Attached scroll listener');
+
+        // Rename label
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.label-rename-btn')) {
+                const container = e.target.closest('.note-sheet__menu');
+                const input = container.querySelector('input');
+                const oldLabel = e.target.closest('.label-rename-btn').dataset.labelId;
+                const newLabel = input.value.trim();
+                if (oldLabel !== newLabel && newLabel) {
+                    console.log('Renaming:', oldLabel, 'to', newLabel);
+                    this.renameLabel_POST(oldLabel, newLabel);
+                }
+            }
+        });
+
+        // Delete label
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.label-delete-btn')) {
+                const targetedLabel = e.target.closest('.label-delete-btn').dataset.labelId;
+                if (confirm(`Delete label "${targetedLabel}"?`)) {
+                    this.deleteLabel_POST(targetedLabel);
+                }
+            }
+        });
+
+        // Create label
+        document.querySelector('.label-post__submit')?.addEventListener('click', () => {
+            const input = document.querySelector('.label-post__input');
+            const newLabel = input.value.trim();
+            if (newLabel) {
+                this.createLabel_POST(newLabel);
+                input.value = '';
+            }
+        });
     }
 
     handleScroll() {
@@ -94,20 +117,23 @@ class LabelNote {
         const hideTimeout = setTimeout(() => toast.classList.add("d-none"), duration);
     }
 
-    loadNewNotes() {
+    loadLabelNotes() {
         if (this.isLoadingNotes) return;
         this.isLoadingNotes = true;
         this.currentPage = 1;
 
-        fetch(`/note/list?page=${this.currentPage}&limit=${this.limit}`, {
+        this.labelName = document.getElementById("note-layout__title")?.textContent?.trim() || '';
+
+        fetch(`/note/label?label-name=${encodeURIComponent(this.labelName)}`, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
             }
         })
-            .then(res => res.json())
+            // .then(res => res.json())
             .then(data => {
+                console.log(data);
                 if (data.data?.length > 0) {
-                    this.appendNotesToDOM(data.data);
+                    this.appendLabelNotesToDOM(data.data);
                     this.currentPage++;
                 }
             })
@@ -118,8 +144,8 @@ class LabelNote {
             .finally(() => this.isLoadingNotes = false);
     }
 
-    appendNotesToDOM(notes) {
-        const container = document.querySelector(".other-note__load");
+    appendLabelNotesToDOM(notes) {
+        const container = document.querySelector(".label-note__load");
         if (!container) return;
 
         notes.forEach(note => {
@@ -135,7 +161,7 @@ class LabelNote {
             div.dataset.noteContent = note.content;
 
             if (note.imageLink && note.imageLink.trim() !== '') {
-                div.dataset.noteImage = note.imageLink;
+                div.dataset.imageLink = note.imageLink;
             }
 
             const imageHTML = note.imageLink && note.imageLink.trim() !== ''
@@ -154,9 +180,8 @@ class LabelNote {
             </div>
             <div class="note-sheet__menu">
                 <div>
-                    <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
                     <button title="Add Label"><i class="fa-solid fa-tags"></i></button>
-                    <button class="note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
+                    <button class="note-label-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
                     <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
                     <button title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
                 </div>
@@ -166,6 +191,67 @@ class LabelNote {
             container.appendChild(div);
             console.log(`Appended note: ${note.noteId}`);
         });
+    }
+
+    renameLabel_POST(oldLabel, newLabel) {
+        fetch('/label/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                oldLabel,
+                newLabel
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status) {
+                    this.showToast("Label renamed successfully", "success");
+                } else {
+                    this.showToast("Failed to rename label", "danger");
+                }
+            })
+            .catch(() => this.showToast("An error occurred while renaming label", "danger"));
+    }
+
+    deleteLabel_POST(labelName) {
+        fetch('/label/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                labelName
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status) {
+                    this.showToast("Label deleted successfully", "success");
+                    document.querySelector(`[data-note-id="${labelName}"]`)?.closest('.note-sheet__menu')?.remove();
+                } else {
+                    this.showToast("Failed to delete label", "danger");
+                }
+            })
+            .catch(() => this.showToast("An error occurred while deleting label", "danger"));
+    }
+
+    createLabel_POST(labelName) {
+        fetch('/label/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                labelName
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                // if (data.status) {
+                //     this.showToast("Label created successfully", "success");
+                //     // Optionally reload label list or append to DOM
+                // } else {
+                //     this.showToast("Failed to create label", "danger");
+                // }
+            })
+            .catch(() => this.showToast("An error occurred while creating label", "danger"));
     }
 
     expandNote(note) {
@@ -282,7 +368,7 @@ class LabelNote {
         contentInput.addEventListener('input', handleTyping);
     }
 
-    expandDeleteNote(note) {
+    expandDeleteLabelNote(note) {
         const modalEl = document.getElementById('deleteNoteModal');
         const modal = new bootstrap.Modal(modalEl);
         const confirmBtn = modalEl.querySelector('#confirmDeleteNoteBtn');
@@ -291,7 +377,7 @@ class LabelNote {
 
         // Cleanup any old event listeners to prevent duplicates
         const newConfirmHandler = () => {
-            this.deleteNote_POST(note.noteId, note.title, note.content);
+            this.deleteLabelNote_POST(note.noteId, note.title, note.content);
             confirmBtn.removeEventListener('click', newConfirmHandler); // prevent multiple bindings
             modal.hide();
         };
@@ -299,7 +385,7 @@ class LabelNote {
         confirmBtn.addEventListener('click', newConfirmHandler);
     }
 
-    deleteNote_POST(noteId, title, content) {
+    deleteLabelNote_POST(noteId, title, content) {
         fetch(`/note/delete`, {
             method: 'POST',
             headers: { "Content-Type": "application/json" },
@@ -315,10 +401,10 @@ class LabelNote {
                     console.log(noteId, title, content);
                     labelNoteGrid.innerHTML = '';
                     try {
-                        console.log("Calling loadNewNotes()");
-                        this.loadNewNotes();
+                        console.log("Calling loadLabelNotes()");
+                        this.loadLabelNotes();
                     } catch (e) {
-                        console.error("loadNewNotes() failed:", e);
+                        console.error("loadLabelNotes() failed:", e);
                     }
                 } else {
                     this.showToast(data.message || "Failed to delete note", "danger");

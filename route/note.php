@@ -13,6 +13,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                     if (isset($_GET['param_3']) == 'list') {
                         $noteMiddleWare->getPinnedNotes();
                     }
+                } else if ($_GET['param_2'] == 'label') {
+                    $labelName = urldecode($_GET['label-name']);
+                    $noteMiddleWare->getLabelNote($labelName);
                 }
         }
     } else if (isset($_GET['param_1']) && isset($_GET['param_2'])) {
@@ -55,7 +58,7 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $noteMiddleWare->createNote_POST();
                 } else if ($_GET['param_2'] == 'update') {
                     $noteMiddleWare->updateNote_POST();
-                }else if ($_GET['param_2'] == 'delete') {
+                } else if ($_GET['param_2'] == 'delete') {
                     $noteMiddleWare->deleteNote_POST();
                 } else if ($_GET['param_2'] == 'pin') {
                     $noteMiddleWare->pinNote_POST();
@@ -65,8 +68,20 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $noteMiddleWare->hardDeleteNote_POST();
                 }
                 break;
+
+            case 'label':
+                if ($_GET['param_2'] == 'create') {
+                    $noteMiddleWare->createLabel_POST();
+                } else if ($_GET['param_2'] == 'update') {
+                    $noteMiddleWare->updateLabel_POST();
+                } else if ($_GET['param_2'] == 'delete') {
+                    $noteMiddleWare->deleteLabel_POST();
+                }
+                break;
+
             default:
-//                echo json_encode(['error' => 'Invalid action']);
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid action']);
                 break;
         }
     } else if (isset($_GET['param_1'])) {

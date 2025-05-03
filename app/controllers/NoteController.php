@@ -198,20 +198,6 @@ class NoteController {
         }
     }
 
-    public function getLabelNoteByLabelName($labelName) {
-        $result = $this->noteService->getLabelNoteByLabelName($labelName);
-
-        if ($result) {
-            return [
-                'data' => $result
-            ];
-        } else {
-            return [
-                'data' => 'failed to fetch label note data'
-            ];
-        }
-    }
-
     public function updateNote_POST() {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
@@ -427,6 +413,120 @@ class NoteController {
                 echo json_encode ([
                     'status' => false,
                     'message' => $result['message']
+                ]);
+            }
+        }
+    }
+
+    public function getLabelNote($labelName) {
+        $accountId = $_SESSION['accountId'] ?? null;
+        $noteId = $_GET['noteId'] ?? null;
+        if (empty($accountId) || empty($noteId)) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'Label note not found'
+            ]);
+        } else {
+            $result = $this->noteService->getLabelNoteByLabelName($labelName, $accountId);
+            if ($result) {
+                echo json_encode([
+                    'status' => true,
+                    'data' => $result,
+                    'message' => 'Get label note successfully'
+                ]);
+            } else {
+                http_response_code(400);
+                echo json_encode([
+                    'status' => false,
+                    'message' => 'Get label note failed'
+                ]);
+            }
+        }
+    }
+
+    public function createLabel_POST() {
+        $content = trim(file_get_contents("php://input"));
+        $data = json_decode($content, true);
+        $accountId = $_SESSION['accountId'] ?? null;
+        $labelName = $data['labelName'] ?? null;
+        if (empty($accountId) || empty($labelName)) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'Label name is empty'
+            ]);
+        } else {
+            $result = $this->noteService->createLabelByLabelName($labelName, $accountId);
+            if ($result) {
+                http_response_code(201);
+                echo json_encode ([
+                    'status' => true,
+                    'data' => $result,
+                    'message' => 'Label created successfully'
+                ]);
+            } else {
+                http_response_code(400);
+                echo json_encode ([
+                    'status' => false,
+                    'message' => 'Failed to create label'
+                ]);
+            }
+        }
+    }
+
+    public function updateLabel_POST() {
+        $content = trim(file_get_contents("php://input"));
+        $data = json_decode($content, true);
+        $accountId = $_SESSION['accountId'] ?? null;
+        $oldLabelName = $data['oldLabel'] ?? null;
+        $newLabelName = $data['newLabel'] ?? null;
+        if (empty($accountId) || empty($newLabelName || empty($oldLabelName))) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'Label name is empty'
+            ]);
+        } else {
+            $result = $this->noteService->updateLabelByLabelName($oldLabelName, $newLabelName);
+            if ($result) {
+                http_response_code(201);
+                echo json_encode ([
+                    'status' => true,
+                    'data' => $result,
+                    'message' => 'Label updated successfully'
+                ]);
+            } else {
+                http_response_code(400);
+                echo json_encode ([
+                    'status' => false,
+                    'message' => 'Failed to update label'
+                ]);
+            }
+        }
+    }
+
+    public function deleteLabel_POST() {
+        $content = trim(file_get_contents("php://input"));
+        $data = json_decode($content, true);
+        $accountId = $_SESSION['accountId'] ?? null;
+        $labelName = $data['labelName'] ?? null;
+        if (empty($accountId) || empty($labelName)) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'Label name is empty'
+            ]);
+        } else {
+            $result = $this->noteService->deleteLabelByLabelNameAndAccountId($labelName, $accountId);
+            if ($result) {
+                http_response_code(201);
+                echo json_encode ([
+                    'status' => true,
+                    'data' => $result,
+                    'message' => 'Label deleted successfully'
+                ]);
+            } else {
+                http_response_code(400);
+                echo json_encode ([
+                    'status' => false,
+                    'message' => 'Failed to delete label'
                 ]);
             }
         }

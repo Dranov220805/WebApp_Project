@@ -128,8 +128,12 @@ class TrashNotes {
             div.dataset.noteId = note.noteId;
             div.dataset.noteTitle = note.title;
             div.dataset.noteContent = note.content;
+            div.dataset.imageLink = note.imageLink;
 
             div.innerHTML = `
+                <div class="note-sheet__image" style="width: 100%; height: auto; overflow: hidden">
+                    <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
+                </div>
                 <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
                     <h3 class="note-sheet__title">${note.title}</h3>
                     <div class="note-sheet__content">

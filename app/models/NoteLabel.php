@@ -1,7 +1,9 @@
 <?php
-class NoteLabel {
+class NoteLabel
+{
     public string $noteLabelId;
     public string $noteId;
+    public string $labelId;
 
     public function getNoteLabelId(): string
     {
@@ -23,32 +25,20 @@ class NoteLabel {
         $this->noteId = $noteId;
     }
 
-    public function getLabelName(): string
+    public function getLabelId(): string
     {
-        return $this->labelName;
+        return $this->labelId;
     }
 
-    public function setLabelName(string $labelName): void
+    public function setLabelId(string $labelId): void
     {
-        $this->labelName = $labelName;
+        $this->labelId = $labelId;
     }
 
-    public function isDeleted(): bool
+    public function __construct(string $noteLabelId, string $noteId, string $labelId)
     {
-        return $this->isDeleted;
-    }
-
-    public function setIsDeleted(bool $isDeleted): void
-    {
-        $this->isDeleted = $isDeleted;
-    }
-    public string $labelName;
-    public bool $isDeleted;
-
-    public function __construct($noteLabelId, $noteId, $labelName, $isDeleted) {
         $this->noteLabelId = $noteLabelId;
         $this->noteId = $noteId;
-        $this->labelName = $labelName;
-        $this->isDeleted = $isDeleted;
+        $this->labelId = $labelId;
     }
 }

@@ -8,10 +8,9 @@ class HomeUserRepository{
     }
 
     public function getLabelByAccountId($accountId) {
-        $sql = "SELECT DISTINCT NoteLabel.labelName 
-            FROM `NoteLabel`
-            INNER JOIN `Note` ON Note.noteId = NoteLabel.noteId
-            WHERE Note.accountId = ?";
+        $sql = "SELECT DISTINCT Label.* 
+            FROM `Label`
+            WHERE Label.accountId = ?";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param('s', $accountId);

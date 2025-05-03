@@ -188,26 +188,26 @@ class NoteRepository
         return $notes;
     }
 
-    public function getLabelNoteByLabelName(string $labelName) {
-        $sql = "SELECT NoteLabel.*, Note.title, Note.content
-            FROM `NoteLabel`
-            INNER JOIN `Note` ON Note.noteId = NoteLabel.noteId
-            WHERE NoteLabel.labelName = ?";
+    public function getLabelNoteByLabelName(string $labelName, string $accountId) {
+        $sql = "SELECT Label.labelName, Note.noteId, Note.title, Note.content
+            FROM Label
+            INNER JOIN NoteLabel ON Label.labelId = NoteLabel.labelId
+            INNER JOIN Note ON Note.noteId = NoteLabel.noteId
+            WHERE Label.labelName = ? AND Label.accountId = ? AND Note.isDeleted = FALSE";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param('s', $labelName);
+        $stmt->bind_param('ss', $labelName, $accountId);
         $stmt->execute();
 
         $result = $stmt->get_result();
-        $labels = [];
+        $notes = [];
 
         while ($row = $result->fetch_assoc()) {
-            $labels[] = $row;
+            $notes[] = $row;
         }
 
         $stmt->close();
-
-        return $labels;
+        return $notes;
     }
 
     public function createNoteByAccountIdAndTitleAndContent($accountId, $title, $content): ?Note
@@ -451,6 +451,80 @@ class NoteRepository
         $noteStmt->close();
 
         return $noteResult;
+    }
+
+    public function updateLabelByLabelName(string $oldLabelName, string $newLabelName) {
+        $sql = "UPDATE `Label` 
+            SET `labelName` = ? 
+            WHERE `labelName` = ?";
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) return false;
+
+        $stmt->bind_param('ss', $newLabelName, $oldLabelName);
+        $success = $stmt->execute();
+        $stmt->close();
+
+        return $success;
+    }
+
+    public function createLabelByLabelName(string $labelName, string $accountId) {
+        $sql = "INSERT INTO `Label` (`labelId`, `accountId`, `labelName`) VALUES (?, ?, ?)";
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) return false;
+
+        $labelId = Uuid::uuid4()->toString();
+        $stmt->bind_param('sss', $labelId, $accountId, $labelName);
+        $success = $stmt->execute();
+        $stmt->close();
+
+        return $success;
+    }
+
+    public function deleteNoteLabelByLabelName(string $labelName, string $accountId) {
+        $sql = "DELETE NoteLabel FROM NoteLabel
+                INNER JOIN `Label` l ON l.labelId = NoteLabel.labelId
+                WHERE l.labelName = ? AND l.accountId = ?";
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) return false;
+
+        $stmt->bind_param('s', $labelName, $accountId);
+        $success = $stmt->execute();
+        $stmt->close();
+
+        return $success;
+    }
+
+    public function deleteLabelByLabelNameAndAccountId(string $labelName, string $accountId) {
+        $sql = "DELETE FROM `Label` WHERE `labelName` = ? AND `accountId` = ?";
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) return false;
+
+        $stmt->bind_param('ss', $labelName, $accountId);
+        $success = $stmt->execute();
+        $stmt->close();
+
+        $this->deleteNoteLabelByLabelName($labelName, $accountId);
+
+        return $success;
+    }
+
+    public function addNoteToLabelByLabelNameAndNoteId(string $labelName, string $noteId) {
+        $noteLabelId = Uuid::uuid4()->toString();
+
+        $sql = "INSERT INTO `NoteLabel` (`noteLabelId`, `labelId`, `noteId`) VALUES (?, ?, ?)";
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) return false;
+
+        $stmt->bind_param('sss', $noteLabelId, $labelName, $noteId);
+        $success = $stmt->execute();
+        $stmt->close();
+
+        return $success;
     }
 
 }

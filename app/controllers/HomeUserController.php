@@ -66,13 +66,6 @@ class HomeUserController extends BaseController{
         $labelNotes = $this->homeUserService->getLabelByAccountId($_SESSION['accountId']);
 
         return $labelNotes;
-//        var_dump($labelNotes);
-
-//        $this->Views('home-user-label', [
-//            'status' => true,
-//            'labelNotes' => $labelNotes,
-//            'message' => 'Get trashed notes for this account successfully'
-//        ]);
     }
     public function homeLabel_POST($labelName) {
         $accountId = $_SESSION['accountId'] ?? null;
@@ -84,7 +77,7 @@ class HomeUserController extends BaseController{
             return;
         }
 
-        $result = $this->noteService->getLabelNoteByLabelName($labelName);
+        $result = $this->noteService->getLabelNoteByLabelName($labelName, $accountId);
 
         // Pass data to the view
         $this->Views('home-user-label', [

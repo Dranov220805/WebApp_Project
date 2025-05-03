@@ -40,6 +40,7 @@ class Notes {
                 noteId: noteEl.dataset.noteId || noteEl.dataset.id,
                 title: noteEl.dataset.noteTitle || noteEl.dataset.title,
                 content: noteEl.dataset.noteContent || noteEl.dataset.content,
+                imageLink: noteEl.dataset.imageLink || noteEl.dataset.imageLink,
             };
 
             if (deleteBtn) {
@@ -50,13 +51,13 @@ class Notes {
 
             if (pinBtn) {
                 console.log('Clicked pin button:', note);
-                this.pinNote_POST(note.noteId, note.title, note.content);
+                this.pinNote_POST(note.noteId, note.title, note.content, note.imageLink);
                 return;
             }
 
             if (unpinBtn) {
                 console.log('Clicked unpin button:', note);
-                this.unpinNote_POST(note.noteId, note.title, note.content);
+                this.unpinNote_POST(note.noteId, note.title, note.content, note.imageLink);
                 return;
             }
 
@@ -171,7 +172,7 @@ class Notes {
             div.dataset.noteContent = note.content;
 
             if (note.imageLink && note.imageLink.trim() !== '') {
-                div.dataset.noteImage = note.imageLink;
+                div.dataset.imageLink = note.imageLink;
             }
 
             const imageHTML = note.imageLink && note.imageLink.trim() !== ''
@@ -244,7 +245,7 @@ class Notes {
             div.dataset.noteId = note.noteId;
             div.dataset.noteTitle = note.title;
             div.dataset.noteContent = note.content;
-            div.dataset.noteImage = note.imageLink;
+            div.dataset.imageLink = note.imageLink;
 
             div.innerHTML = `
                 <div class="note-sheet__image" style="width: 100%; height: auto; overflow: hidden">
@@ -513,7 +514,7 @@ class Notes {
                     return res.json();
                 })
                 .then(data => {
-                    const { status, noteId, title, content } = data;
+                    const { status, noteId, title, content, imageLink } = data;
                     if (status === true) {
                         showSavedIcon();
                         console.log(data);
@@ -523,9 +524,10 @@ class Notes {
                             noteElement.querySelector('.note-sheet__content').innerHTML = content.replace(/\n/g, '<br>');
                             noteElement.dataset.noteTitle = title;
                             noteElement.dataset.noteContent = content;
+                            noteElement.dataset.imageLink = imageLink;
                         } else {
                             if (!document.querySelector(`.note-sheet[data-note-id="${noteId}"]`)) {
-                                const newNote = this.noteSheetModel(noteId, title, content);
+                                const newNote = this.noteSheetModel(noteId, title, content, imageLink);
                                 // document.querySelector('.other-note__load')?.prepend(newNote);
                                 console.log(`Prepended note: ${noteId}`);
                             }
@@ -609,40 +611,45 @@ class Notes {
             });
     }
 
-    noteSheetModel(noteId, title, content) {
+    noteSheetModel(noteId, title, content, imageLink) {
         const otherNoteGrid = document.querySelector('.other-note__load');
+        if (!otherNoteGrid) return;
 
         const div = document.createElement("div");
         div.className = "note-sheet d-flex flex-column";
         div.dataset.noteId = noteId;
-        div.dataset.noteTitle = title;
-        div.dataset.noteContent = content;
-        div.dataset.noteImage = note.imageLink;
+        div.dataset.title = title ?? "";
+        div.dataset.content = content ?? "";
+        div.dataset.imageLink = imageLink ?? "";
+
+        const safeTitle = title?.trim() || "(No Title)";
+        const safeContent = (content ?? "").replace(/\n/g, "<br>");
 
         div.innerHTML = `
-            <div class="note-sheet__image" style="width: 100%; height: auto; overflow: hidden">
-                    <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
-                </div>
-            <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
-                <h3 class="note-sheet__title" data-note-title="${title}">${title}</h3>
-                <div class="note-sheet__content" data-note-content="${content}">
-                    ${content.replace(/\n/g, '<br>')}
-                </div>
+        <div class="note-sheet__image" style="width: 100%; height: auto; overflow: hidden;">
+            <img src="${imageLink}" alt="Note Image" style="width: 100%; height: auto; display: block;" />
+        </div>
+        <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
+            <h3 class="note-sheet__title">${safeTitle}</h3>
+            <div class="note-sheet__content">
+                ${safeContent}
             </div>
-            <div class="note-sheet__menu">
-                <div>
-                    <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
-                    <button title="Label"><i class="fa-solid fa-tags"></i></button>
-                    <button class="note-delete-btn" title="Delete" data-note-id="${noteId}"><i class="fa-solid fa-trash"></i></button>
-                    <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
-                    <button title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
-                </div>
+        </div>
+        <div class="note-sheet__menu">
+            <div>
+                <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
+                <button title="Add Label"><i class="fa-solid fa-tags"></i></button>
+                <button class="note-delete-btn" title="Delete This Note" data-note-id="${noteId}"><i class="fa-solid fa-trash"></i></button>
+                <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
+                <button title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
             </div>
-        `;
+        </div>
+    `;
+
         otherNoteGrid.prepend(div);
     }
 
-    pinNoteSheetModel(noteId, title, content) {
+    pinNoteSheetModel(noteId, title, content, imageLink) {
         const pinnedNoteGrid = document.querySelector('.pinned-note__load');
 
         const div = document.createElement("div");
@@ -650,14 +657,14 @@ class Notes {
         div.dataset.id = noteId;
         div.dataset.title = title;
         div.dataset.content = content;
-        div.dataset.noteImage = note.imageLink;
+        div.dataset.imageLink = imageLink;
 
         const safeTitle = title ?? "(No Title)";
         const safeContent = (content ?? "").replace(/\n/g, '<br>');
 
         div.innerHTML = `
             <div class="note-sheet__image" style="width: 100%; height: auto; overflow: hidden">
-                    <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
+                    <img src="${imageLink}" style="width: 100%; height: auto; display: block">
                 </div>
             <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
                 <h3 class="note-sheet__title" data-note-title="${title}">${title}</h3>
@@ -695,7 +702,7 @@ class Notes {
         confirmBtn.addEventListener('click', newConfirmHandler);
     }
 
-    pinNote_POST(noteId, title, content) {
+    pinNote_POST(noteId, title, content, imageLink) {
         fetch('/note/pin', {
             method: 'POST',
             headers: { "Content-Type": "application/json" },
@@ -719,8 +726,8 @@ class Notes {
                 // Create and prepend the pinned note
                 const pinNoteGrid = document.querySelector('.pinned-note__load');
                 const otherNoteGrid = document.querySelector('.other-note__load');
-                console.log(noteId, title, content);
-                const newPinnedNote = this.pinNoteSheetModel(noteId, title, content);
+                console.log(noteId, title, content, imageLink);
+                const newPinnedNote = this.pinNoteSheetModel(noteId, title, content, imageLink);
                 pinNoteGrid.innerHTML = '';
                 otherNoteGrid.innerHTML = '';
                 this.loadNewNotes();
@@ -733,7 +740,7 @@ class Notes {
             });
     }
 
-    unpinNote_POST(noteId, title, content) {
+    unpinNote_POST(noteId, title, content, imageLink) {
         fetch('/note/unpin', {
             method: 'POST',
             headers: { "Content-Type": "application/json" },
@@ -757,9 +764,9 @@ class Notes {
                 // Create and prepend the unpinned note to the 'other notes' section
                 const otherNoteGrid = document.querySelector('.other-note__load');
                 const pinNoteGrid = document.querySelector('.pinned-note__load');
-                console.log(noteId, title, content);
+                console.log(noteId, title, content, imageLink);
 
-                const newOtherNote = this.noteSheetModel(noteId, title, content);
+                const newOtherNote = this.noteSheetModel(noteId, title, content, imageLink);
                 pinNoteGrid.innerHTML = '';
                 this.loadNewPinnedNotes();
             })
