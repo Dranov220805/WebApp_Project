@@ -16,7 +16,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
                             $homeUserMiddleWare->uploadAvatar();
                     }
                 } else if ($_GET['param_2'] == 'label') {
-                    $labelName = $_GET['param_3'];
+                    $labelName = urldecode($_GET['param_3']);
                     $homeUserMiddleWare->homeLabel_POST($labelName);
                 }
                 break;

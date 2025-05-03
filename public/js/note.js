@@ -30,6 +30,7 @@ class Notes {
 
         this.handleNoteClick = (event) => {
             const deleteBtn = event.target.closest(".note-delete-btn, .pinned-note-delete-btn");
+            const labelNote = event.target.closest(".note-label-add-btn");
             const pinBtn = event.target.closest(".note-pin-btn");
             const unpinBtn = event.target.closest(".pinned-note-pin-btn");
             const noteEl = event.target.closest('.note-sheet');
@@ -43,9 +44,15 @@ class Notes {
                 imageLink: noteEl.dataset.imageLink || noteEl.dataset.imageLink,
             };
 
+            if (labelNote) {
+                console.log('Clicked add label for note:', note);
+                this.expandAddLabelNote(note);
+                return;
+            }
+
             if (deleteBtn) {
                 console.log('Clicked delete button:', note);
-                this.expandDeleteNote(note); // Show modal
+                this.expandDeleteNote(note);
                 return;
             }
 
@@ -98,6 +105,27 @@ class Notes {
                 document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
             });
         }
+
+        const labelBtn = document.querySelector(".addLabelNoteModal");
+        if (labelBtn) {
+            const noteEl = event.target.closest('.note-sheet');
+            if (!noteEl) return;
+            const noteId = noteEl.dataset.noteId || noteEl.dataset.id;
+            this.openLabelModal(noteId);
+            return;
+        }
+
+        const autoResizeTextarea = (textarea) => {
+            textarea.style.height = 'auto'; // Reset height
+            // textarea.style.minHeight = '200';
+            textarea.style.height = textarea.scrollHeight + 'px'; // Set to scroll height
+        };
+
+        const myTextarea = document.querySelector('.note-content-input-autosave');
+        myTextarea.addEventListener('input', () => autoResizeTextarea(myTextarea));
+
+        autoResizeTextarea(myTextarea);
+
     }
 
     handleScroll() {
@@ -176,7 +204,7 @@ class Notes {
             }
 
             const imageHTML = note.imageLink && note.imageLink.trim() !== ''
-                ? `<div class="note-sheet__image" style="width: 100%; height: auto; overflow: hidden">
+                ? `<div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
                    <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
                </div>`
                 : '';
@@ -192,7 +220,7 @@ class Notes {
             <div class="note-sheet__menu">
                 <div>
                     <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
-                    <button title="Add Label"><i class="fa-solid fa-tags"></i></button>
+                    <button title="Add Label" data-bs-target="addLabelNoteModal" id="addLabelNoteModal" class="note-label-add-btn"><i class="fa-solid fa-tags"></i></button>
                     <button class="note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
                     <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
                     <button title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
@@ -248,7 +276,7 @@ class Notes {
             div.dataset.imageLink = note.imageLink;
 
             div.innerHTML = `
-                <div class="note-sheet__image" style="width: 100%; height: auto; overflow: hidden">
+                <div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
                     <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
                 </div>
                 <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
@@ -260,7 +288,7 @@ class Notes {
                 <div class="note-sheet__menu">
                     <div>
                         <button class="pinned-note-pin-btn" title="Unpin Note"><i class="fa-solid fa-thumbtack"></i></button>
-                        <button title="Add Label"><i class="fa-solid fa-tags"></i></button>
+                        <button title="Add Label" data-bs-target="addLabelNoteModal" id="note-label-add-btn" class="addLabelNoteModal"><i class="fa-solid fa-tags"></i></button>
                         <button class="pinned-note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
                         <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
                         <button title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
@@ -320,71 +348,6 @@ class Notes {
             .finally(() => this.isLoadingPinnedNotes = false);
     }
 
-    loadTrashedNotes() {
-        if (this.isLoading) return;
-        this.isLoading = true;
-        this.currentPage = 1;
-
-        fetch(`/note/trash-list?page=${this.currentPage}&limit=${this.limit}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(res => res.json())
-            .then(data => {
-                console.log(data);
-                if (data.data?.length > 0) {
-                    this.appendNotesToDOM(data.data);
-                    this.currentPage++;
-                }
-            })
-            .catch(err => {
-                console.error('Fetch failed:', err);
-                this.showToast('Failed to load notes. Please try again.');
-            })
-            .finally(() => this.isLoading = false);
-    }
-
-    appendTrashedNotesToDOM(notes) {
-        const container = document.querySelector(".trash-note__load");
-        if (!container) return;
-
-        notes.forEach(note => {
-            if (document.querySelector(`.note-sheet[data-note-id="${note.noteId}"]`)) {
-                console.log(`Skipping duplicate note: ${note.noteId}`);
-                return;
-            }
-
-            const div = document.createElement("div");
-            div.className = "note-sheet d-flex flex-column";
-            div.dataset.noteId = note.noteId;
-            div.dataset.noteTitle = note.title;
-            div.dataset.noteContent = note.content;
-            div.dataset.noteImage = note.imageLink;
-
-            div.innerHTML = `
-                <div class="note-sheet__image" style="width: 100%; height: auto; overflow: hidden">
-                    <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
-                </div>
-                <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
-                    <h3 class="note-sheet__title">${note.title}</h3>
-                    <div class="note-sheet__content">
-                        ${note.content.replace(/\n/g, '<br>')}
-                    </div>
-                </div>
-                <div class="note-sheet__menu">
-                    <div>
-                        <button class="note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
-                        <button class="note-delete-btn" title="Delete Permanently" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash-can-arrow-up"></i></button>
-                    </div>
-                </div>
-            `;
-            container.appendChild(div);
-            console.log(`Appended note: ${note.noteId}`);
-        });
-    }
-
     autoResizeInput(event) {
         event.target.style.height = 'auto';
         event.target.style.height = `${event.target.scrollHeight}px`;
@@ -440,12 +403,19 @@ class Notes {
         const modal = new bootstrap.Modal(modalEl);
         const noteId = note.noteId;
 
+        const imageLink = modalEl.querySelector('.note-sheet__image');
         const titleInput = modalEl.querySelector('.note-title-input-autosave');
         const contentInput = modalEl.querySelector('.note-content-input-autosave');
         const icon = modalEl.querySelector('.save-status-icon i');
         const iconText = modalEl.querySelector('.save-status-icon p');
 
         // Set modal inputs
+        if (imageLink && note.imageLink) {
+            imageLink.innerHTML = `<img src="${note.imageLink}" style="width: 100%; height: auto; display: block">`;
+        } else if (imageLink) {
+            imageLink.innerHTML = ''; // Clear it if there's no image
+        }
+
         titleInput.value = note.title || '';
         contentInput.value = note.content || '';
         icon.className = 'fa-solid fa-check-circle text-success';
@@ -461,6 +431,9 @@ class Notes {
         const triggerUploadBtn = modalEl.querySelector('#triggerImageUpload');
         const imageInput = modalEl.querySelector('#imageInput');
         const noteIdInput = modalEl.querySelector('#noteIdInput');
+        const inputTextarea = document.querySelector('.note-content-input-autosave');
+
+        inputTextarea.style.height = '100%';
 
         // Open file chooser
         triggerUploadBtn.addEventListener('click', () => {
@@ -469,7 +442,8 @@ class Notes {
 
         // Submit form when file is selected
         imageInput.addEventListener('change', () => {
-            modalEl.querySelector('#imageUploadForm').submit();
+            const test = modalEl.querySelector('#imageUploadForm');
+            console.log(test);
         });
     }
 
@@ -538,9 +512,6 @@ class Notes {
                         otherNoteGrid.innerHTML = '';
                         this.loadNewPinnedNotes();
                         this.loadNewNotes();
-                        // const otherNoteGrid = document.querySelector('.other-note__load');
-                        // otherNoteGrid.innerHTML = '';
-                        // otherNoteGrid.loadNotes();
                     } else {
                         showErrorIcon();
                         this.showToast('Failed to save note.', 'warning');
@@ -626,7 +597,7 @@ class Notes {
         const safeContent = (content ?? "").replace(/\n/g, "<br>");
 
         div.innerHTML = `
-        <div class="note-sheet__image" style="width: 100%; height: auto; overflow: hidden;">
+        <div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
             <img src="${imageLink}" alt="Note Image" style="width: 100%; height: auto; display: block;" />
         </div>
         <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
@@ -638,7 +609,7 @@ class Notes {
         <div class="note-sheet__menu">
             <div>
                 <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
-                <button title="Add Label"><i class="fa-solid fa-tags"></i></button>
+                <button title="Add Label" data-bs-target="addLabelNoteModal" id="note-label-add-btn" class="addLabelNoteModal"><i class="fa-solid fa-tags"></i></button>
                 <button class="note-delete-btn" title="Delete This Note" data-note-id="${noteId}"><i class="fa-solid fa-trash"></i></button>
                 <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
                 <button title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
@@ -663,7 +634,7 @@ class Notes {
         const safeContent = (content ?? "").replace(/\n/g, '<br>');
 
         div.innerHTML = `
-            <div class="note-sheet__image" style="width: 100%; height: auto; overflow: hidden">
+            <div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
                     <img src="${imageLink}" style="width: 100%; height: auto; display: block">
                 </div>
             <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
@@ -675,7 +646,7 @@ class Notes {
             <div class="note-sheet__menu">
                 <div>
                     <button class="pinned-note-pin-btn" title="Unpin Note"><i class="fa-solid fa-thumbtack"></i></button>
-                    <button title="Add Label"><i class="fa-solid fa-tags"></i></button>
+                    <button title="Add Label" data-bs-target="addLabelNoteModal" id="note-label-add-btn" class="addLabelNoteModal"><i class="fa-solid fa-tags"></i></button>
                     <button class="pinned-note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${noteId}"><i class="fa-solid fa-trash"></i></button>
                     <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
                     <button title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
@@ -683,6 +654,13 @@ class Notes {
             </div>
         `;
         pinnedNoteGrid.prepend(div);
+    }
+
+    expandAddLabelNote(note) {
+        const modalEl = document.getElementById('addLabelNoteModal');
+        const modal = new bootstrap.Modal(modalEl);
+
+        modal.show();
     }
 
     expandDeleteNote(note) {
@@ -813,6 +791,80 @@ class Notes {
             .catch(err => {
                 console.error("Delete error:", err);
                 this.showToast("An error occurred while deleting the note", "danger");
+            });
+    }
+
+    openLabelModal(noteId) {
+        this.currentLabelNoteId = noteId;
+        fetch(`/label/list`, { method: 'GET' }) // Assumes this endpoint returns labels
+            .then(res => res.json())
+            .then(data => {
+                const labelList = document.getElementById("label-checkbox-list");
+                labelList.innerHTML = ''; // Clear existing content
+
+                data.labels.forEach(label => {
+                    const wrapper = document.createElement("div");
+                    wrapper.className = "form-check";
+
+                    wrapper.innerHTML = `
+                    <input class="form-check-input" type="checkbox" value="${label.labelId}" id="label-${label.labelId}">
+                    <label class="form-check-label" for="label-${label.labelId}">
+                        ${label.labelName}
+                    </label>
+                `;
+
+                    // Add event listener to POST when toggled
+                    wrapper.querySelector("input").addEventListener("change", (e) => {
+                        const labelId = e.target.value;
+                        if (e.target.checked) {
+                            this.addNoteToLabel_POST(noteId, labelId);
+                        } else {
+                            this.removeNoteFromLabel_POST(noteId, labelId);
+                        }
+                    });
+
+                    labelList.appendChild(wrapper);
+                });
+
+                // Show modal
+                const modal = new bootstrap.Modal(document.getElementById('addLabelNoteModal'));
+                modal.show();
+            })
+            .catch(err => {
+                console.error("Error loading labels:", err);
+                this.showToast("Failed to load labels");
+            });
+    }
+
+    addNoteToLabel_POST(noteId, labelId) {
+        fetch(`/label/note`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ noteId, labelId })
+        })
+            .then(res => res.json())
+            .then(data => {
+                this.showToast("Label added to note", 'success');
+            })
+            .catch(err => {
+                console.error("Error adding label to note:", err);
+                this.showToast("Error adding label");
+            });
+    }
+
+    removeNoteFromLabel_POST(noteId, labelId) {
+        fetch(`/label/note`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ noteId, labelId })
+        })
+            .then(res => res.json())
+            .then(data => {
+                this.showToast("Label removed from note", 'success');
+            })
+            .catch(err => {
+                console.error("Error removing label from note:", err);
+                this.showToast("Error removing label");
             });
     }
 

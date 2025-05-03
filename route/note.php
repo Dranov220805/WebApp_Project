@@ -80,8 +80,6 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
 
             default:
-                http_response_code(400);
-                echo json_encode(['error' => 'Invalid action']);
                 break;
         }
     } else if (isset($_GET['param_1'])) {

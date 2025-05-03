@@ -20,7 +20,7 @@
                     <div class="label-note__load load-grid" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center">
                         <?php if (!empty($data['data'])): ?>
                             <?php foreach ($data['data'] as $note): ?>
-                                <div class="note-sheet d-flex flex-column"
+                                <div class="note-sheet-label d-flex flex-column"
                                      data-note-id="<?= htmlspecialchars($note['noteId']) ?>"
                                      data-note-title="<?= htmlspecialchars($note['title']) ?>"
                                      data-note-content="<?= htmlspecialchars($note['content']) ?>">
@@ -60,10 +60,10 @@
                     <img src="https://placehold.co/600x400" style="width: 100%; height: auto; display: block">
                 </div>
                 <div class="modal-header">
-                    <input type="text" class="modal-title note-title-input-autosave form-control border-0" id="noteModalLabel"/>
+                    <input type="text" class="modal-title note-label-title-input-autosave form-control border-0" id="noteModalLabel"/>
                 </div>
                 <div class="modal-body">
-                    <textarea class="note-content-input-autosave form-control"></textarea>
+                    <textarea class="note-label-content-input-autosave form-control"></textarea>
                 </div>
                 <div class="modal-footer d-flex justify-content-start align-items-center">
                     <div class="save-status-icon d-flex flex-row flex-grow-1">

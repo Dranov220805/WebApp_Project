@@ -490,7 +490,7 @@ class NoteRepository
         $stmt = $this->conn->prepare($sql);
         if (!$stmt) return false;
 
-        $stmt->bind_param('s', $labelName, $accountId);
+        $stmt->bind_param('ss', $labelName, $accountId);
         $success = $stmt->execute();
         $stmt->close();
 

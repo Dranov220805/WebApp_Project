@@ -1,4 +1,9 @@
 /* Content area adjustment */
+body {
+    overflow: auto;
+    scrollbar-gutter: stable overlay;
+}
+
 .content {
     transition: margin-left 0.3s ease-in-out;
 }
@@ -25,12 +30,17 @@
     transform: translateY(-2px); /* subtle lift effect */
 }
 
+.note-sheet__image {
+    overflow-y: visible;
+}
+
 .note-sheet__title-content {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
     max-height: 262px;
     padding: 16px;
+    overflow-y: hidden;
 }
 
 .note-sheet__title {
@@ -335,8 +345,15 @@
 }
 
 .note-content-input-autosave {
-    height: 300px; resize: none;
+    /*height: 500px;*/
+    height: 100%;
+    overflow: visible;
+    resize: none;
     border: none;
+}
+
+.modal-content-body::-webkit-scrollbar {
+    display: none;           /* Chrome, Safari */
 }
 
 .note-content-input-autosave:focus {

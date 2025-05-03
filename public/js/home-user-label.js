@@ -23,9 +23,7 @@ class LabelNote {
 
         this.handleNoteClick = (event) => {
             const deleteBtn = event.target.closest(".note-label-delete-btn");
-            const pinBtn = event.target.closest(".note-pin-btn");
-            const unpinBtn = event.target.closest(".pinned-note-pin-btn");
-            const noteEl = event.target.closest('.note-sheet');
+            const noteEl = event.target.closest('.note-sheet-label');
 
             if (!noteEl) return;
 
@@ -46,7 +44,7 @@ class LabelNote {
             if (event.target.closest('.note-sheet__menu button')) return;
 
             console.log('Clicked note:', note);
-            this.expandNote(note);
+            // this.expandLabelNote(note);
         };
 
         document.addEventListener('click', this.handleNoteClick);
@@ -225,12 +223,33 @@ class LabelNote {
             .then(data => {
                 if (data.status) {
                     this.showToast("Label deleted successfully", "success");
-                    document.querySelector(`[data-note-id="${labelName}"]`)?.closest('.note-sheet__menu')?.remove();
+                    this.removeLabel(labelName);
                 } else {
                     this.showToast("Failed to delete label", "danger");
                 }
             })
             .catch(() => this.showToast("An error occurred while deleting label", "danger"));
+    }
+
+    removeLabel(labelName) {
+        const safeLabel = labelName.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+        // === Remove from Sidebar ===
+        const sidebarLinks = document.querySelectorAll('.sidebar .sidebar-item');
+        sidebarLinks.forEach(link => {
+            if (link.textContent.trim() === labelName.trim()) {
+                link.remove();
+            }
+        });
+
+        // === Remove from Modal ===
+        const modalItems = document.querySelectorAll('#label-management-body .note-sheet__menu');
+        modalItems.forEach(item => {
+            const input = item.querySelector('input.sidebar__item--input');
+            if (input && input.value.trim() === labelName.trim()) {
+                item.remove();
+            }
+        });
     }
 
     createLabel_POST(labelName) {
@@ -244,129 +263,172 @@ class LabelNote {
             .then(res => res.json())
             .then(data => {
                 console.log(data);
-                // if (data.status) {
-                //     this.showToast("Label created successfully", "success");
-                //     // Optionally reload label list or append to DOM
-                // } else {
-                //     this.showToast("Failed to create label", "danger");
-                // }
+                if (data) {
+                    this.showToast("Label created successfully", "success");
+                    this.appendLabel(labelName);
+                    // Optionally reload label list or append to DOM
+                } else {
+                    this.showToast("Failed to create label", "danger");
+                }
             })
             .catch(() => this.showToast("An error occurred while creating label", "danger"));
     }
 
-    expandNote(note) {
-        const modalEl = document.getElementById('noteModal');
-        const modal = new bootstrap.Modal(modalEl);
-        const noteId = note.noteId;
+    appendLabel(labelName) {
+        const encodedLabel = encodeURIComponent(labelName);
+        const safeLabel = labelName.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-        const titleInput = modalEl.querySelector('.note-title-input-autosave');
-        const contentInput = modalEl.querySelector('.note-content-input-autosave');
-        const icon = modalEl.querySelector('.save-status-icon i');
-        const iconText = modalEl.querySelector('.save-status-icon p');
+        // === Append to Sidebar ===
+        const sidebar = document.querySelector('.sidebar-content');
+        if (sidebar) {
+            const a = document.createElement('a');
+            const encodedLabel = encodeURIComponent(labelName).replace(/%20/g, '+');
+            a.href = `/home/label/${encodedLabel}`;
+            a.className = 'sidebar-item';
+            a.title = safeLabel;
+            a.innerHTML = `
+            <i class="sidebar__item--icon fa-solid fa-tag"></i>
+            <span class="sidebar__item--title">${safeLabel}</span>
+        `;
+            // Insert before "Edit Labels" and other fixed items
+            const editLabelsItem = sidebar.querySelector('[data-bs-target="#editLabelsModal"]');
+            sidebar.insertBefore(a, editLabelsItem);
+        }
 
-        titleInput.value = note.title || '';
-        contentInput.value = note.content || '';
-        icon.className = 'fa-solid fa-check-circle text-success';
-        iconText.innerHTML = 'Saved';
-
-        modal.show();
-        // Setup auto-save functionality
-        this.setupAutoSaveModal(noteId, titleInput, contentInput, icon, iconText);
+        // === Append to Modal ===
+        const modalBody = document.getElementById('label-management-body');
+        if (modalBody) {
+            const div = document.createElement('div');
+            div.className = 'note-sheet__menu';
+            div.style.width = '100%';
+            div.innerHTML = `
+            <div style="width: 100%; display: flex; flex-direction: row; flex-grow: 1">
+                <input class="sidebar__item--input" style="flex-grow: 1; border: none; background-color: inherit" value="${safeLabel}">
+                <button class="label-rename-btn" title="Rename label" data-label-id="${safeLabel}">
+                    <i class="fa-regular fa-pen-to-square"></i>
+                </button>
+                <button class="label-delete-btn" title="Delete label" data-label-id="${safeLabel}">
+                    <i class="fa-solid fa-eraser"></i>
+                </button>
+            </div>
+        `;
+            modalBody.appendChild(div);
+        }
     }
 
-    setupAutoSaveModal(noteId, titleInput, contentInput, icon, iconText) {
-        let timeout = null;
-        let isSaving = false;
+    // expandLabelNote(note) {
+    //     const modalEl = document.getElementById('noteModal');
+    //     const modal = new bootstrap.Modal(modalEl);
+    //     const noteId = note.noteId;
+    //
+    //     const titleInput = modalEl.querySelector('.note-label-title-input-autosave');
+    //     const contentInput = modalEl.querySelector('.note-label-content-input-autosave');
+    //     const icon = modalEl.querySelector('.save-status-icon i');
+    //     const iconText = modalEl.querySelector('.save-status-icon p');
+    //
+    //     titleInput.value = note.title || '';
+    //     contentInput.value = note.content || '';
+    //     icon.className = 'fa-solid fa-check-circle text-success';
+    //     iconText.innerHTML = 'Saved';
+    //
+    //     modal.show();
+    //     // Setup auto-save functionality
+    //     this.setupLabelAutoSaveModal(noteId, titleInput, contentInput, icon, iconText);
+    // }
 
-        const showSavingIcon = () => {
-            icon.className = 'fa-solid fa-spinner fa-spin text-warning';
-            iconText.innerHTML = 'Saving...';
-            iconText.className = 'text-warning';
-        };
-
-        const showSavedIcon = () => {
-            icon.className = 'fa-solid fa-check-circle text-success';
-            iconText.innerHTML = 'Saved';
-            iconText.className = 'text-success';
-        };
-
-        const showErrorIcon = () => {
-            icon.className = 'fa-solid fa-exclamation-circle text-danger';
-            iconText.innerHTML = 'Error';
-            iconText.className = 'text-danger';
-        };
-
-        const autoSave = () => {
-            if (isSaving) return;
-            isSaving = true;
-            showSavingIcon();
-
-            fetch('/note/update', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    noteId,
-                    title: titleInput.value,
-                    content: contentInput.value
-                })
-            })
-                .then(res => {
-                    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
-                    return res.json();
-                })
-                .then(data => {
-                    const { status, noteId, title, content } = data;
-                    if (status === true) {
-                        showSavedIcon();
-                        console.log(data);
-                        const noteElement = document.querySelector(`.note-sheet[data-note-id="${noteId}"]`);
-                        if (noteElement) {
-                            noteElement.querySelector('.note-sheet__title').textContent = title;
-                            noteElement.querySelector('.note-sheet__content').innerHTML = content.replace(/\n/g, '<br>');
-                            noteElement.dataset.noteTitle = title;
-                            noteElement.dataset.noteContent = content;
-                        } else {
-                            if (!document.querySelector(`.note-sheet[data-note-id="${noteId}"]`)) {
-                                const newNote = this.noteSheetModel(noteId, title, content);
-                                // document.querySelector('.other-note__load')?.prepend(newNote);
-                                console.log(`Prepended note: ${noteId}`);
-                            }
-                        }
-                        const pinNoteGrid = document.querySelector('.pinned-note__load');
-                        const otherNoteGrid = document.querySelector('.other-note__load');
-                        pinNoteGrid.innerHTML = '';
-                        otherNoteGrid.innerHTML = '';
-                        this.loadNewPinnedNotes();
-                        this.loadNewNotes();
-                        // const otherNoteGrid = document.querySelector('.other-note__load');
-                        // otherNoteGrid.innerHTML = '';
-                        // otherNoteGrid.loadNotes();
-                    } else {
-                        showErrorIcon();
-                        this.showToast('Failed to save note.', 'warning');
-                    }
-                })
-                .catch(() => {
-                    showErrorIcon();
-                    this.showToast('Failed to save note.', 'warning');
-                })
-                .finally(() => {
-                    isSaving = false;
-                });
-        };
-
-        const handleTyping = () => {
-            clearTimeout(timeout);
-            showSavingIcon();
-            timeout = setTimeout(autoSave, 300); // Delay 300ms
-        };
-
-        titleInput.removeEventListener('input', this.handleTyping);
-        contentInput.removeEventListener('input', this.handleTyping);
-        this.handleTyping = handleTyping;
-        titleInput.addEventListener('input', handleTyping);
-        contentInput.addEventListener('input', handleTyping);
-    }
+    // setupLabelAutoSaveModal(noteId, titleInput, contentInput, icon, iconText) {
+    //     let timeout = null;
+    //     let isSaving = false;
+    //
+    //     const showSavingIcon = () => {
+    //         icon.className = 'fa-solid fa-spinner fa-spin text-warning';
+    //         iconText.innerHTML = 'Saving...';
+    //         iconText.className = 'text-warning';
+    //     };
+    //
+    //     const showSavedIcon = () => {
+    //         icon.className = 'fa-solid fa-check-circle text-success';
+    //         iconText.innerHTML = 'Saved';
+    //         iconText.className = 'text-success';
+    //     };
+    //
+    //     const showErrorIcon = () => {
+    //         icon.className = 'fa-solid fa-exclamation-circle text-danger';
+    //         iconText.innerHTML = 'Error';
+    //         iconText.className = 'text-danger';
+    //     };
+    //
+    //     const autoSave = () => {
+    //         if (isSaving) return;
+    //         isSaving = true;
+    //         showSavingIcon();
+    //
+    //         fetch('/note/update', {
+    //             method: 'POST',
+    //             headers: { 'Content-Type': 'application/json' },
+    //             body: JSON.stringify({
+    //                 noteId,
+    //                 title: titleInput.value,
+    //                 content: contentInput.value
+    //             })
+    //         })
+    //             .then(res => {
+    //                 if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+    //                 return res.json();
+    //             })
+    //             .then(data => {
+    //                 const { status, noteId, title, content } = data;
+    //                 if (status === true) {
+    //                     showSavedIcon();
+    //                     console.log(data);
+    //                     const noteElement = document.querySelector(`.note-sheet[data-note-id="${noteId}"]`);
+    //                     if (noteElement) {
+    //                         noteElement.querySelector('.note-sheet__title').textContent = title;
+    //                         noteElement.querySelector('.note-sheet__content').innerHTML = content.replace(/\n/g, '<br>');
+    //                         noteElement.dataset.noteTitle = title;
+    //                         noteElement.dataset.noteContent = content;
+    //                     } else {
+    //                         if (!document.querySelector(`.note-sheet[data-note-id="${noteId}"]`)) {
+    //                             const newNote = this.noteSheetModel(noteId, title, content);
+    //                             // document.querySelector('.other-note__load')?.prepend(newNote);
+    //                             console.log(`Prepended note: ${noteId}`);
+    //                         }
+    //                     }
+    //                     const pinNoteGrid = document.querySelector('.pinned-note__load');
+    //                     const otherNoteGrid = document.querySelector('.other-note__load');
+    //                     pinNoteGrid.innerHTML = '';
+    //                     otherNoteGrid.innerHTML = '';
+    //                     this.loadNewPinnedNotes();
+    //                     this.loadNewNotes();
+    //                     // const otherNoteGrid = document.querySelector('.other-note__load');
+    //                     // otherNoteGrid.innerHTML = '';
+    //                     // otherNoteGrid.loadNotes();
+    //                 } else {
+    //                     showErrorIcon();
+    //                     this.showToast('Failed to save note.', 'warning');
+    //                 }
+    //             })
+    //             .catch(() => {
+    //                 showErrorIcon();
+    //                 this.showToast('Failed to save note.', 'warning');
+    //             })
+    //             .finally(() => {
+    //                 isSaving = false;
+    //             });
+    //     };
+    //
+    //     const handleTyping = () => {
+    //         clearTimeout(timeout);
+    //         showSavingIcon();
+    //         timeout = setTimeout(autoSave, 300); // Delay 300ms
+    //     };
+    //
+    //     titleInput.removeEventListener('input', this.handleTyping);
+    //     contentInput.removeEventListener('input', this.handleTyping);
+    //     this.handleTyping = handleTyping;
+    //     titleInput.addEventListener('input', handleTyping);
+    //     contentInput.addEventListener('input', handleTyping);
+    // }
 
     expandDeleteLabelNote(note) {
         const modalEl = document.getElementById('deleteNoteModal');
