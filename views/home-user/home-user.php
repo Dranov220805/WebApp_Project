@@ -19,8 +19,8 @@
                 <form class="note-post__content" style="display: flex; flex-direction: column;" action="#" onsubmit="return false">
                     <input class="note-text__content d-none" placeholder="Title">
                     <textarea class="note-post__input" placeholder="Take a note..." rows="1"></textarea>
-                    <div style="display: flex; justify-content: space-between; margin-top: 12px;">
-                        <div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 12px; height: 40px">
+                        <div class="note-post__menu">
                             <button style="background: none; border: none; cursor: pointer; padding: 8px;">
                                 <i class="fa-solid fa-images"></i>
                             </button>
@@ -126,20 +126,29 @@
     <div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" data-bs-backdrop="true" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-scrollable note-modal-display position-fixed top-50 start-50 translate-middle fade show note-detail__modal--dialog" style="height: 60%">
             <div class="modal-content note-detail__modal">
+                <div class="note-sheet__image" style="width: 100%; height: auto; overflow: hidden">
+                    <img src="https://placehold.co/600x400" style="width: 100%; height: auto; display: block">
+                </div>
                 <div class="modal-header">
                     <input type="text" class="modal-title note-title-input-autosave form-control border-0" id="noteModalLabel"/>
-                    <i type="button" class="fa-solid fa-xmark note-modal-close" data-bs-dismiss="modal" aria-label="Close" style="font-size: 25px;"></i>
                 </div>
                 <div class="modal-body">
                     <textarea class="note-content-input-autosave form-control"></textarea>
                 </div>
-                <div class="modal-footer d-flex justify-content-between align-items-center">
-                    <div class="save-status-icon d-flex flex-row">
+                <div class="modal-footer d-flex justify-content-start align-items-center">
+                    <div class="save-status-icon d-flex flex-row flex-grow-1">
                         <p class="text-success" style="padding-right: 5px; margin-bottom: 0px; align-items: center;">Saved</p>
                         <span>
                             <i class="fa-solid fa-check-circle text-success"></i>
                         </span>
                     </div>
+                    <form id="imageUploadForm" action="#" onsubmit="return false" enctype="multipart/form-data">
+                        <input type="file" name="image" id="imageInput" style="display: none;">
+                        <a type="button" class="btn btn-primary note-image__post" id="triggerImageUpload">
+                            <i class="fa-regular fa-images"></i> Add Image
+                        </a>
+                        <input type="hidden" name="noteId" id="noteIdInput">
+                    </form>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -149,7 +158,7 @@
     <!-- Delete Confirmation Modal -->
     <div class="modal fade" id="deleteNoteModal" tabindex="-1" aria-labelledby="deleteNoteModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered ">
-            <div class="modal-content">
+            <div class="modal-content" style="width: 100%; height: 100%">
                 <div class="modal-header">
                     <h5 class="modal-title" id="deleteNoteModalLabel">Confirm Delete</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

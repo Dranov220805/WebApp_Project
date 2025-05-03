@@ -73,7 +73,7 @@
 
                 <div class="setting-row">
                     <div class="setting-label">Change Password</div>
-                    <button id="change-password-btn" class="btn btn-reset text-white d-button" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Change Password</button>
+                    <button id="change-password-btn" class="btn btn-change d-button" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Change Password</button>
                 </div>
 
                 <div class="section-divider"></div>
@@ -81,7 +81,7 @@
                 <!-- Action Buttons -->
                 <div class="action-buttons">
                     <a href="/home" class="btn btn-cancel d-button">Cancel</a>
-                    <a class="btn btn-save btn-save-preference text-white d-button">Save Changes</a>
+                    <a class="btn btn-save btn-save-preference d-button">Save Changes</a>
                 </div>
             </div>
 

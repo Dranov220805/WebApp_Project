@@ -40,3 +40,39 @@ body {
 #login-section-2__form--forgot_password:hover {
     text-decoration: underline;
 }
+
+#login-button {
+    background-color: #5771ff;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+#login-button:hover {
+    background-color: #3d56d6; /* darker blue on hover */
+    color: #fff;
+    cursor: pointer;
+}
+
+#reset-password-button {
+    background-color: #5771ff;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+#reset-password-button:hover {
+    background-color: #3d56d6; /* darker blue on hover */
+    color: #fff;
+    cursor: pointer;
+}
+
+#back-button {
+    background-color: #5771ff;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+#back-button:hover {
+    background-color: #3d56d6; /* darker blue on hover */
+    color: #fff;
+    cursor: pointer;
+}

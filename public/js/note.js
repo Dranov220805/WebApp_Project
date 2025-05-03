@@ -89,6 +89,14 @@ class Notes {
         }
 
         this.initNotePostTrigger();
+
+        const modalEl = document.getElementById('noteModal');
+        if (modalEl) {
+            modalEl.addEventListener('hidden.bs.modal', () => {
+                document.body.style.overflow = '';
+                document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+            });
+        }
     }
 
     handleScroll() {
@@ -162,23 +170,35 @@ class Notes {
             div.dataset.noteTitle = note.title;
             div.dataset.noteContent = note.content;
 
+            if (note.imageLink && note.imageLink.trim() !== '') {
+                div.dataset.noteImage = note.imageLink;
+            }
+
+            const imageHTML = note.imageLink && note.imageLink.trim() !== ''
+                ? `<div class="note-sheet__image" style="width: 100%; height: auto; overflow: hidden">
+                   <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
+               </div>`
+                : '';
+
             div.innerHTML = `
-                <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
-                    <h3 class="note-sheet__title">${note.title}</h3>
-                    <div class="note-sheet__content">
-                        ${note.content.replace(/\n/g, '<br>')}
-                    </div>
+            ${imageHTML}
+            <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
+                <h3 class="note-sheet__title">${note.title}</h3>
+                <div class="note-sheet__content">
+                    ${note.content.replace(/\n/g, '<br>')}
                 </div>
-                <div class="note-sheet__menu">
-                    <div>
-                        <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
-                        <button title="Add Label"><i class="fa-solid fa-tags"></i></button>
-                        <button title="Add Image"><i class="fa-solid fa-images"></i></button>
-                        <button class="note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
-                        <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
-                    </div>
+            </div>
+            <div class="note-sheet__menu">
+                <div>
+                    <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
+                    <button title="Add Label"><i class="fa-solid fa-tags"></i></button>
+                    <button class="note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
+                    <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
+                    <button title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
                 </div>
-            `;
+            </div>
+        `;
+
             container.appendChild(div);
             console.log(`Appended note: ${note.noteId}`);
         });
@@ -224,8 +244,12 @@ class Notes {
             div.dataset.noteId = note.noteId;
             div.dataset.noteTitle = note.title;
             div.dataset.noteContent = note.content;
+            div.dataset.noteImage = note.imageLink;
 
             div.innerHTML = `
+                <div class="note-sheet__image" style="width: 100%; height: auto; overflow: hidden">
+                    <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
+                </div>
                 <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
                     <h3 class="note-sheet__title">${note.title}</h3>
                     <div class="note-sheet__content">
@@ -236,9 +260,9 @@ class Notes {
                     <div>
                         <button class="pinned-note-pin-btn" title="Unpin Note"><i class="fa-solid fa-thumbtack"></i></button>
                         <button title="Add Label"><i class="fa-solid fa-tags"></i></button>
-                        <button title="Add Image"><i class="fa-solid fa-images"></i></button>
                         <button class="pinned-note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
                         <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
+                        <button title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
                     </div>
                 </div>
             `;
@@ -336,8 +360,12 @@ class Notes {
             div.dataset.noteId = note.noteId;
             div.dataset.noteTitle = note.title;
             div.dataset.noteContent = note.content;
+            div.dataset.noteImage = note.imageLink;
 
             div.innerHTML = `
+                <div class="note-sheet__image" style="width: 100%; height: auto; overflow: hidden">
+                    <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
+                </div>
                 <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
                     <h3 class="note-sheet__title">${note.title}</h3>
                     <div class="note-sheet__content">
@@ -416,14 +444,32 @@ class Notes {
         const icon = modalEl.querySelector('.save-status-icon i');
         const iconText = modalEl.querySelector('.save-status-icon p');
 
+        // Set modal inputs
         titleInput.value = note.title || '';
         contentInput.value = note.content || '';
         icon.className = 'fa-solid fa-check-circle text-success';
         iconText.innerHTML = 'Saved';
 
+        // Show modal
         modal.show();
-        // Setup auto-save functionality
+
+        // Setup auto-save
         this.setupAutoSaveModal(noteId, titleInput, contentInput, icon, iconText);
+
+        // Setup image upload
+        const triggerUploadBtn = modalEl.querySelector('#triggerImageUpload');
+        const imageInput = modalEl.querySelector('#imageInput');
+        const noteIdInput = modalEl.querySelector('#noteIdInput');
+
+        // Open file chooser
+        triggerUploadBtn.addEventListener('click', () => {
+            imageInput.click();
+        });
+
+        // Submit form when file is selected
+        imageInput.addEventListener('change', () => {
+            modalEl.querySelector('#imageUploadForm').submit();
+        });
     }
 
     setupAutoSaveModal(noteId, titleInput, contentInput, icon, iconText) {
@@ -571,8 +617,12 @@ class Notes {
         div.dataset.noteId = noteId;
         div.dataset.noteTitle = title;
         div.dataset.noteContent = content;
+        div.dataset.noteImage = note.imageLink;
 
         div.innerHTML = `
+            <div class="note-sheet__image" style="width: 100%; height: auto; overflow: hidden">
+                    <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
+                </div>
             <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
                 <h3 class="note-sheet__title" data-note-title="${title}">${title}</h3>
                 <div class="note-sheet__content" data-note-content="${content}">
@@ -583,9 +633,9 @@ class Notes {
                 <div>
                     <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
                     <button title="Label"><i class="fa-solid fa-tags"></i></button>
-                    <button title="Image"><i class="fa-solid fa-images"></i></button>
                     <button class="note-delete-btn" title="Delete" data-note-id="${noteId}"><i class="fa-solid fa-trash"></i></button>
                     <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
+                    <button title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
                 </div>
             </div>
         `;
@@ -600,11 +650,15 @@ class Notes {
         div.dataset.id = noteId;
         div.dataset.title = title;
         div.dataset.content = content;
+        div.dataset.noteImage = note.imageLink;
 
         const safeTitle = title ?? "(No Title)";
         const safeContent = (content ?? "").replace(/\n/g, '<br>');
 
         div.innerHTML = `
+            <div class="note-sheet__image" style="width: 100%; height: auto; overflow: hidden">
+                    <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
+                </div>
             <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
                 <h3 class="note-sheet__title" data-note-title="${title}">${title}</h3>
                 <div class="note-sheet__content">
@@ -615,9 +669,9 @@ class Notes {
                 <div>
                     <button class="pinned-note-pin-btn" title="Unpin Note"><i class="fa-solid fa-thumbtack"></i></button>
                     <button title="Add Label"><i class="fa-solid fa-tags"></i></button>
-                    <button title="Add Image"><i class="fa-solid fa-images"></i></button>
                     <button class="pinned-note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${noteId}"><i class="fa-solid fa-trash"></i></button>
                     <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
+                    <button title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
                 </div>
             </div>
         `;

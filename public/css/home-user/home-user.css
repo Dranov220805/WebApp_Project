@@ -232,6 +232,40 @@
     max-height: 400px; /* Limit the maximum height to prevent it from growing too much */
 }
 
+.note-post__menu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+}
+
+.note-post__menu button {
+    background: none;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    color: #555;
+    font-size: 16px;
+}
+
+/* Hover effect for buttons */
+.note-post__menu button:hover {
+    background-color: #e0e0e0;
+    transform: scale(1.05);
+}
+
+/* Icon spacing for left group */
+.note-post__menu > div button:not(:last-child) {
+    margin-right: 6px;
+}
+
+/* Optional: Slight spacing if needed on the rightmost button */
+.note-post__menu > button {
+    margin-left: 8px;
+}
+
 .note-text__content {
     resize: none; /* Prevent manual resizing */
     border: none;
@@ -317,6 +351,7 @@
     display: inline-block; /* Important for column layout */
     width: 100%;
     max-width: 600px;
+    height: fit-content;
     margin-bottom: 16px;
     background-color: white;
     border-radius: 8px;
@@ -359,11 +394,25 @@
 }
 
 .note-title-input-autosave {
-    margin-right: 15px;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.note-title-input-autosave:focus {
+    outline: none;
+    border: none;
+    box-shadow: none;
 }
 
 .note-content-input-autosave {
     height: 300px; resize: none;
+    border: none;
+}
+
+.note-content-input-autosave:focus {
+    outline: none;
+    box-shadow: none;
+    border-color: inherit;
 }
 
 .create-note-btn {
@@ -373,6 +422,7 @@
 
 .create-note-btn:hover {
     background-color: #5771ff;
+    color: white;
 }
 
 .setting-row-avatar {
@@ -380,6 +430,47 @@
     flex-grow: 1;
     width: 100%;
     height: 80px;
+}
+
+.btn-change {
+    color: white;
+    background-color: #1a2e44;
+}
+
+.label-post__submit {
+    color: white;
+    background-color: #1a2e44;
+    border: none;
+}
+
+.label-post__submit:hover {
+    background-color: #5771ff;
+    color: white;
+}
+
+.btn-change:hover {
+    background-color: #5771ff;
+    color: white;
+}
+
+.label-post__input {
+    border: none;
+    outline: none;
+    resize: none;
+    overflow-y: hidden;
+}
+
+.btn-save-preference {
+    color: white;
+}
+
+.btn-save-preference:hover {
+    color: white;
+}
+
+.sidebar__item--title:focus {
+    outline: none;
+    border: none;
 }
 
 /* ─────── DARK MODE SUPPORT ─────── */
@@ -437,6 +528,24 @@ body.dark-mode .note-sheet__menu button {
 
 body.dark-mode .note-sheet__menu button:hover {
     background-color: #444;
+}
+
+body.dark-mode .note-post__menu {
+    /*background-color: #2a2a2a;*/
+    /*border-top: 1px solid #444;*/
+}
+
+body.dark-mode .note-post__menu button {
+    color: #dddddd;
+}
+
+body.dark-mode .note-post__menu button:hover {
+    background-color: #444;
+}
+
+body.dark-mode .create-note-btn {
+    background-color: #5771ff;
+    color: white;
 }
 
 body.dark-mode .note-post {
@@ -525,11 +634,35 @@ body.dark-mode .btn-close {
 .body.dark-mode .note-title-input-autosave {
     background-color: #2a2a2a;
     color: white;
+    font-size: 18px;
 }
 
 .body.dark-mode .note-content-input-autosave {
     background-color: #2a2a2a;
     color: white;
+}
+
+.body.dark-mode .btn-save-preference {
+    color: black;
+}
+
+.body.dark-mode .btn-change {
+    color: white;
+}
+
+.body.dark-mode .btn-change:hover {
+    color: white;
+    background-color: #5771ff;
+}
+
+.body.dark-mode .label-post__submit {
+    color: white;
+    background-color: #5771ff;
+}
+
+.body.dark-mode .label-post__submit:hover {
+    color: white;
+    background-color: #5771ff;
 }
 
 /* Toggle dark mode by toggling the `dark-mode` class on the <body> tag */

@@ -12,10 +12,11 @@ class NoteRepository
 
     public function getNotesByAccountId(string $accountId)
     {
-        $sql = "SELECT n.* 
+        $sql = "SELECT n.*, i.imageLink
             FROM `Account` a
             LEFT JOIN `Note` n ON a.accountId = n.accountId
             LEFT JOIN `Modification` m ON m.noteId = n.noteId
+            LEFT JOIN `Image` i on i.noteId = n.noteId
             WHERE a.accountId = ? 
               AND n.isDeleted = FALSE
               AND (m.isPinned IS NULL OR m.isPinned = FALSE)
@@ -43,10 +44,11 @@ class NoteRepository
 
     public function getNotesByAccountIdPaginated(string $accountId, int $limit, int $offset): array
     {
-        $sql = "SELECT n.* 
+        $sql = "SELECT n.*, i.imageLink
             FROM `Account` a
             LEFT JOIN `Note` n ON a.accountId = n.accountId
             LEFT JOIN `Modification` m ON m.noteId = n.noteId
+            LEFT JOIN `Image` i on i.noteId = n.noteId
             WHERE a.accountId = ? 
             AND n.isDeleted = FALSE
             AND (m.isPinned IS NULL OR m.isPinned = FALSE)
@@ -74,9 +76,10 @@ class NoteRepository
 
     public function getPinnedNotesByAccountId($accountId): array
     {
-        $sql = "SELECT n.* FROM `Account` a
+        $sql = "SELECT n.*, i.imageLink FROM `Account` a
         LEFT JOIN `Note` n ON a.accountId = n.accountId
         LEFT JOIN `Modification` m ON m.noteId = n.noteId
+        LEFT JOIN `Image` i on i.noteId = n.noteId
         WHERE a.accountId = ? 
         AND n.isDeleted = FALSE
         AND m.isPinned = TRUE
@@ -99,9 +102,10 @@ class NoteRepository
 
     public function getPinnedNotesByAccountIdPaginated(string $accountId, int $limit, int $offset): array
     {
-        $sql = "SELECT n.* FROM `Account` a
+        $sql = "SELECT n.*, i.imageLink FROM `Account` a
         LEFT JOIN `Note` n ON a.accountId = n.accountId
         LEFT JOIN `Modification` m ON m.noteId = n.noteId
+        LEFT JOIN `Image` i on i.noteId = n.noteId
         WHERE a.accountId = ? 
         AND n.isDeleted = FALSE
         AND m.isPinned = TRUE
@@ -127,9 +131,10 @@ class NoteRepository
     }
 
     public function getTrashedNotesByAccountIdPaginated(string $accountId, int $limit, int $offset): array {
-        $sql = "SELECT n.* 
+        $sql = "SELECT n.*, i.imageLink
             FROM `Account` a
             LEFT JOIN `Note` n ON a.accountId = n.accountId
+            LEFT JOIN `Image` i on i.noteId = n.noteId
             WHERE a.accountId = ? 
             AND n.isDeleted = TRUE
             ORDER BY n.createDate DESC
@@ -155,10 +160,11 @@ class NoteRepository
     }
 
     public function getTrashedNotesByAccountId($accountId): array {
-        $sql = "SELECT n.* 
+        $sql = "SELECT n.*, i.imageLink
             FROM `Account` a
             LEFT JOIN `Note` n ON a.accountId = n.accountId
             LEFT JOIN `Modification` m ON m.noteId = n.noteId
+            LEFT JOIN `Image` i on i.noteId = n.noteId
             WHERE a.accountId = ? 
             AND n.isDeleted = TRUE
             ORDER BY n.createDate DESC";

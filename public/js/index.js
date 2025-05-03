@@ -5,6 +5,7 @@ import reg from './reg.js';
 import homeUser from './home-user.js';
 import homeUserTrash from './home-user-trash.js';
 import TrashNotes from "./home-user-trash.js";
+import LabelNotes from "./home-user-label.js";
 
 // Site functionality
 homeUser.closeToast();

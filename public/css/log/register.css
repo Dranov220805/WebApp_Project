@@ -39,3 +39,15 @@ body {
 #login-section-2__form--forgot_password:hover {
     text-decoration: underline;
 }
+
+#register-button {
+    background-color: #5771ff;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+#register-button:hover {
+    background-color: #3d56d6; /* darker blue on hover */
+    color: #fff;
+    cursor: pointer;
+}

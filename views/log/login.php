@@ -47,7 +47,7 @@ include "./views/layout/partials/header.php";
                     </div>
 
                     <p class="text-center">Don't have an account?
-                        <a href="/reg/register" id="register-button" class="login-section-2__form--link-signup">Sign up</a>
+                        <a href="/reg/register" id="register-link" class="login-section-2__form--link-signup">Sign up</a>
                     </p>
                 </form>
             </div>

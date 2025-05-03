@@ -20,7 +20,11 @@
                                 <div class="note-sheet d-flex flex-column"
                                      data-note-id="<?= htmlspecialchars($note['noteId']) ?>"
                                      data-note-title="<?= htmlspecialchars($note['title']) ?>"
-                                     data-note-content="<?= htmlspecialchars($note['content']) ?>">
+                                     data-note-content="<?= htmlspecialchars($note['content'])?>"
+                                     data-note-image="<?= htmlspecialchars($note['imageLink'])?>">
+                                    <div class="note-sheet__image" style="width: 100%; height: auto; overflow: hidden">
+                                        <img src="<?= htmlspecialchars($note['imageLink'])?>>" style="width: 100%; height: auto; display: block">
+                                    </div>
                                     <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
                                         <h3 class="note-sheet__title"><?= htmlspecialchars($note['title']) ?></h3>
                                         <div class="note-sheet__content">
@@ -47,7 +51,7 @@
     <!-- Restore Confirmation Modal -->
     <div class="modal fade" id="restoreTrashNoteModal" tabindex="-1" aria-labelledby="restoreTrashNoteModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered ">
-            <div class="modal-content">
+            <div class="modal-content" style="width: 100%; height: 100%">
                 <div class="modal-header">
                     <h5 class="modal-title" id="restoreTrashNoteModalLabel">Confirm Restore Note</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
