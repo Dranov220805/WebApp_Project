@@ -39,7 +39,7 @@
             <button data-bs-toggle="modal" class="info-modal" data-bs-target="#infoModal" data-bs-backdrop="false" data-bs-scroll="true" style="display: flex; justify-content: center; align-items: center; height: 40px">
 <!--                <i class="navbar__item--icon fa-regular fa-circle-user"></i>-->
                 <?php if (!empty($_SESSION['profilePicture'])): ?>
-                    <img src="<?= $_SESSION['profilePicture'] ?>" style="width: 30px; border-radius: 50px">
+                    <img id="navbar--image__icon" src="<?= $_SESSION['profilePicture'] ?>" style="width: 30px; border-radius: 50px">
                 <?php else: ?>
                     <i class="fa-regular fa-circle-user" style="font-size: 25px"></i>
                 <?php endif; ?>
@@ -57,7 +57,7 @@
                 <h4 class="modal-title" style="flex-grow: 1">Hello, <?=$_SESSION['userName']?></h4>
                 <span style="display: flex; justify-content: center; align-items: center; width: 40px; height: 40px">
                     <?php if (!empty($_SESSION['profilePicture'])): ?>
-                        <img src="<?= $_SESSION['profilePicture'] ?>" style="width: 30px; border-radius: 50px">
+                        <img id="modal--image__icon" src="<?= $_SESSION['profilePicture'] ?>" style="width: 30px; border-radius: 50px">
                     <?php else: ?>
                         <i class="fa-regular fa-circle-user" style="font-size: 25px"></i>
                     <?php endif; ?>
@@ -70,8 +70,6 @@
                 <strong>Username: </strong> <?=$_SESSION['userName']?>
                 <br>
                 <strong>Email: </strong> <?=$_SESSION['email']?>
-                <br>
-                <strong>Is Dark Theme: </strong> <?=$_SESSION['isDarkTheme']?>
                 <br>
                 <strong>Verify status: </strong>
                 <?php if ($_SESSION['isVerified'] == 1) {

@@ -16,15 +16,15 @@
                     <div class="setting-label setting-avatar" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center">
 <!--                        --><?php //if ($_SESSION['isVerified'] == 1) {echo '<i style="width: 80px; height: 80px" class="user__item--icon fa-regular fa-circle-user"></i>';} else {echo 'no avatar';} ?>
                         <?php if (!empty($_SESSION['profilePicture'])): ?>
-                            <img src="<?= $_SESSION['profilePicture'] ?>" style="width: 70px; height: 70px;">
+                            <img id="preference--image__icon" src="<?= $_SESSION['profilePicture'] ?>" style="width: 70px; height: 70px;">
                         <?php else: ?>
                             <i class="fa-regular fa-circle-user"></i>
                         <?php endif; ?>
 
                     </div>
                     <form id="avatar-upload-form" enctype="multipart/form-data">
-                        <input type="file" id="avatar-input" name="avatar" accept="image/*" required>
-                        <a class="btn btn-primary btn-upload">Upload Avatar</a>
+                        <input type="file" id="avatar-input" name="avatar" accept="image/*" hidden required>
+                        <button type="button" class="btn btn-primary btn-upload">Upload Avatar</button>
                     </form>
                 </div>
 

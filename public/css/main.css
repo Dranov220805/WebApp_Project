@@ -11,3 +11,20 @@
 html {
     scroll-behavior: smooth
 }
+
+#overlay-loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(255, 255, 255, 0.8); /* Optional: dim background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Make sure it's above everything */
+}
+
+body.dark-mode #overlay-loading {
+    background-color: rgba(76, 76, 76, 0.8);
+}

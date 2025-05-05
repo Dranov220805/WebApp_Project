@@ -231,6 +231,34 @@ class LabelNote {
             .then(data => {
                 if (data.status) {
                     this.showToast("Label renamed successfully", "success");
+
+                    // === Update Sidebar Label ===
+                    document.querySelectorAll('#sidebar .sidebar-item').forEach(el => {
+                        const span = el.querySelector('.sidebar__item--title');
+                        if (span && span.textContent.trim() === oldLabel) {
+                            span.textContent = newLabel;
+                            el.setAttribute('href', `/home/label/${encodeURIComponent(newLabel)}`);
+                        }
+                    });
+
+                    // === Update Rename Input Field ===
+                    document.querySelectorAll(`.label-rename-btn[data-label-id="${oldLabel}"]`).forEach(btn => {
+                        const input = btn.closest('.note-sheet__menu').querySelector('input');
+                        if (input) input.value = newLabel;
+                        btn.setAttribute('data-label-id', newLabel);
+                    });
+
+                    // === Update Delete Button Reference ===
+                    document.querySelectorAll(`.label-delete-btn[data-label-id="${oldLabel}"]`).forEach(btn => {
+                        btn.setAttribute('data-label-id', newLabel);
+                    });
+
+                    // === Update Checkbox in Assign Labels Modal ===
+                    document.querySelectorAll(`.label-checkbox[value="${oldLabel}"]`).forEach(checkbox => {
+                        checkbox.value = newLabel;
+                        const span = checkbox.closest('label').querySelector('span');
+                        if (span) span.textContent = newLabel;
+                    });
                 } else {
                     this.showToast("Failed to rename label", "danger");
                 }
@@ -274,6 +302,15 @@ class LabelNote {
         modalItems.forEach(item => {
             const input = item.querySelector('input.sidebar__item--input');
             if (input && input.value.trim() === labelName.trim()) {
+                item.remove();
+            }
+        });
+
+        // === Remove from Assign Labels Modal ===
+        const assignLabelItems = document.querySelectorAll('#label-checkbox-list .note-sheet__menu');
+        assignLabelItems.forEach(item => {
+            const span = item.querySelector('label span');
+            if (span && span.textContent.trim() === labelName.trim()) {
                 item.remove();
             }
         });
@@ -340,6 +377,21 @@ class LabelNote {
             </div>
         `;
             modalBody.appendChild(div);
+        }
+
+        // === Append to Assign Labels Modal ===
+        const assignModalBody = document.getElementById('label-checkbox-list');
+        if (assignModalBody) {
+            const div = document.createElement('div');
+            div.className = 'note-sheet__menu';
+            div.style.width = '100%';
+            div.innerHTML = `
+            <label style="width: 100%; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" class="label-checkbox" value="${safeLabel}" style="transform: scale(1.5);"/>
+                <span>${safeLabel}</span>
+            </label>
+        `;
+            assignModalBody.appendChild(div);
         }
     }
 

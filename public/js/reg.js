@@ -49,19 +49,25 @@ class Reg {
             const hasLowercase = /[a-z]/.test(password);
             const hasNumber = /\d/.test(password);
 
+            const overlay = document.getElementById('overlay-loading');
+            if (overlay) overlay.classList.remove('d-none');
+
             if (!username || !password || !email || !confirmPassword) {
                 this.showRegisterToast('Please fill in all fields.', 'warning');
+                if (overlay) overlay.classList.add('d-none');
                 return;
             }
 
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 this.showRegisterToast('Please enter a valid email address.', 'warning');
+                if (overlay) overlay.classList.add('d-none');
                 return;
             }
 
             if (password !== confirmPassword) {
                 this.showRegisterToast('Passwords do not match!', 'warning');
+                if (overlay) overlay.classList.add('d-none');
                 return;
             }
 
@@ -69,6 +75,7 @@ class Reg {
                 this.showRegisterToast(
                     'Password must contain at least one uppercase letter, lowercase letters, and numbers.',
                     'warning');
+                if (overlay) overlay.classList.add('d-none');
                 return;
             }
 
@@ -76,20 +83,16 @@ class Reg {
                 this.showRegisterToast(
                     'Password length must be more than 8 characters',
                     'warning');
+                if (overlay) overlay.classList.add('d-none');
                 return;
             }
 
-            // Register POST
             fetch('/reg/register', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({
-                    username,
-                    password,
-                    email
-                })
+                body: JSON.stringify({ username, password, email })
             })
                 .then(response => response.json())
                 .then(data => {
@@ -98,36 +101,26 @@ class Reg {
                     if (status === true) {
                         if (message === "Email already exists") {
                             this.showRegisterToast('Email already exists!', 'warning');
-                            const email = $('#email-input').val('');
-                            const username = $('#username-input').val('');
+                            $('#email-input').val('');
+                            $('#username-input').val('');
                         } else {
                             this.showRegisterToast('Registration successful! Logging you in...', 'success');
 
-                            // Proceed to login if registration is successful
+                            // Auto-login
                             return fetch('/log/login', {
                                 method: 'POST',
                                 headers: {
                                     "Content-Type": "application/json"
                                 },
-                                body: JSON.stringify({
-                                    email,
-                                    password
-                                })
+                                body: JSON.stringify({ email, password })
                             })
                                 .then(response => response.json())
                                 .then(data => {
-                                    console.log(data);
-                                    const { accessToken, roleId, userName, email, message, status } = data;
+                                    const { accessToken, roleId, userName, message, status } = data;
 
                                     if (status === true) {
-                                        // Store the access token in session storage for later use
                                         sessionStorage.setItem('accessToken', accessToken);
-
-                                        // Show success toast message
-                                        // this.showLoginToast(message, 'success');
-
                                         setTimeout(() => {
-                                            // Redirect user based on role
                                             if (String(roleId) === '1') {
                                                 window.location.href = '/home';
                                             } else if (String(roleId) === '2') {
@@ -135,15 +128,9 @@ class Reg {
                                             }
                                         }, 200);
                                     } else {
-                                        // Show error toast message
-                                        // this.showLoginToast(message, 'danger');
+                                        this.showLoginToast(message, 'danger');
                                     }
-                                })
-                                .catch(error => {
-                                    console.error('Login error:', error);
-                                    // Show error toast for network issues
-                                    this.showLoginToast('Something went wrong. Please try again later.', 'danger');
-                                });;
+                                });
                         }
                     } else {
                         throw new Error(message || 'Registration failed');
@@ -152,6 +139,9 @@ class Reg {
                 .catch(error => {
                     console.error('Register/Login error:', error);
                     this.showRegisterToast(error.message || 'Something went wrong. Please try again.', 'danger');
+                })
+                .finally(() => {
+                    if (overlay) overlay.classList.add('d-none');
                 });
         });
     };

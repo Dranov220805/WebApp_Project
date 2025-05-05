@@ -45,27 +45,25 @@ class Auth {
             const email = $('#email-input').val();
             const password = $('#password-input').val();
 
+            const overlay = document.getElementById('overlay-loading');
+            if (overlay) overlay.classList.remove('d-none');
+
             fetch('/log/login', {
                 method: 'POST',
-                body: JSON.stringify({
-                    email,
-                    password
-                })
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
             })
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);
                     const { roleId, userName, email, message, status } = data;
 
-                    // $('#email-input').val('');
                     $('#password-input').val('');
                     if (status === true) {
-
-                        // Show success toast message
                         this.showLoginToast(message, 'success');
-
                         setTimeout(() => {
-                            // Redirect user based on role
                             if (String(roleId) === '1') {
                                 window.location.href = '/home';
                             } else if (String(roleId) === '2') {
@@ -73,14 +71,15 @@ class Auth {
                             }
                         }, 100);
                     } else {
-                        // Show error toast message
                         this.showLoginToast(message, 'danger');
                     }
                 })
                 .catch(error => {
                     console.error('Login error:', error);
-                    // Show error toast for network issues
                     this.showLoginToast('Something went wrong. Please try again later.', 'danger');
+                })
+                .finally(() => {
+                    if (overlay) overlay.classList.add('d-none');
                 });
         });
     }

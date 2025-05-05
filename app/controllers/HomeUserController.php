@@ -143,6 +143,10 @@ class HomeUserController extends BaseController{
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['avatar'])) {
             $fileTmpPath = $_FILES['avatar']['tmp_name'];
 
+            $oldImage = $_SESSION['profilePicture'];
+
+            deleteImageByImageUrl($oldImage);
+
             $uploadResponse = uploadAvatarToCloudinary($fileTmpPath);
 
             if ($uploadResponse['status'] === true) {
@@ -151,7 +155,7 @@ class HomeUserController extends BaseController{
                     $_SESSION['profilePicture'] = $uploadResponse['url'];
                     echo json_encode([
                         'status' => true,
-                        'Picture' => $uploadResponse['url'],
+                        'picture' => $uploadResponse['url'],
                         'message' => $result['message']]);
                 } else {
                     echo json_encode([
@@ -195,11 +199,6 @@ class HomeUserController extends BaseController{
     }
 
     public function updatePreference() {
-//        echo json_encode([
-//            'status' => true,
-//            'message' => 'OK'
-//        ]);
-
         header('Content-Type: application/json');
         $accountId = $_SESSION['accountId'] ?? null;
         $content = trim(file_get_contents("php://input"));

@@ -663,7 +663,6 @@ class NoteController {
         }
 
         try {
-//            $publicId = extractPublicIdFromUrl($imageUrl);
 
             $uploadResult = deleteImageByImageUrl($imageUrl);
 

@@ -465,12 +465,17 @@ class Notes {
         formData.append('image', selectedFile);
         formData.append('noteId', this.currentNoteId);
 
+        // === Show full-screen loading overlay ===
+        const overlay = document.getElementById('overlay-loading');
+        if (overlay) overlay.classList.remove('d-none');
+
         try {
             const response = await fetch('/note/upload-image', {
                 method: 'POST',
                 body: formData
             });
             const result = await response.json();
+
             if (result.status === true) {
                 this.showToast('Image uploaded successfully!', 'success');
 
@@ -489,6 +494,9 @@ class Notes {
         } catch (err) {
             console.error('Upload error:', err);
             this.showToast('Something went wrong while uploading image', 'danger');
+        } finally {
+            // === Always hide overlay after upload attempt ===
+            if (overlay) overlay.classList.add('d-none');
         }
     }
 
@@ -505,14 +513,20 @@ class Notes {
         formData.append('imageUrl', imageUrl);
         formData.append('noteId', this.currentNoteId);
 
+        // === Show full-screen loading overlay ===
+        const overlay = document.getElementById('overlay-loading');
+        if (overlay) overlay.classList.remove('d-none');
+
         try {
             const response = await fetch('/note/delete-image', {
                 method: 'POST',
                 body: formData
             });
             const result = await response.json();
+
             if (result.status === true) {
                 this.showToast('Image deleted successfully!', 'success');
+
                 if (this.imageLinkRef) {
                     this.imageLinkRef.innerHTML = '';
                 }
@@ -528,6 +542,9 @@ class Notes {
         } catch (err) {
             console.error('Delete error:', err);
             this.showToast('Something went wrong while deleting image', 'danger');
+        } finally {
+            // === Always hide overlay after delete attempt ===
+            if (overlay) overlay.classList.add('d-none');
         }
     }
 
@@ -729,6 +746,9 @@ class Notes {
             return;
         }
 
+        const overlay = document.getElementById('overlay-loading');
+        if (overlay) overlay.classList.remove('d-none');
+
         fetch('note/create', {
             method: 'POST',
             headers: {
@@ -757,7 +777,10 @@ class Notes {
             .catch(err => {
                 console.error('Create note error:', err);
                 this.showToast('An error occurred while creating the note.', 'danger');
-            });
+            })
+            .finally(() => {
+            if (overlay) overlay.classList.add('d-none');
+        });;
     }
 
     noteSheetModel(noteId, title, content, imageLink) {

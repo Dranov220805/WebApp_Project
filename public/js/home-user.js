@@ -96,55 +96,27 @@ class HomeUser {
         });
     }
 
-    // applyPreferences(prefs) {
-    //     // Theme
-    //     const themeSelector = document.getElementById('theme-selector');
-    //     if (prefs.isDarkTheme === 1) {
-    //         document.body.classList.add('dark-mode');
-    //         if (themeSelector) themeSelector.value = 'dark';
-    //     } else {
-    //         document.body.classList.remove('dark-mode');
-    //         if (themeSelector) themeSelector.value = 'light';
-    //     }
-    //
-    //     // Font size
-    //     const fontSizeSelector = document.querySelector('select.form-select:not(#theme-selector)');
-    //     if (prefs.noteFont) {
-    //         document.body.style.fontSize = prefs.noteFont;
-    //
-    //         if (fontSizeSelector) {
-    //             fontSizeSelector.value =
-    //                 prefs.noteFont === '14px' ? 'Small' :
-    //                     prefs.noteFont === '16px' ? 'Medium' :
-    //                         prefs.noteFont === '18px' ? 'Large' : '';
-    //         }
-    //     }
-    //
-    //     // Font family
-    //     document.body.style.fontFamily = prefs.font || 'Arial';
-    //
-    //     // Note color
-    //     document.documentElement.style.setProperty('--note-color', prefs.noteColor || '#000000');
-    //
-    //     // Layout (used for note layout maybe?)
-    //     document.body.setAttribute('data-layout', prefs.layout || 'list');
-    // }
-
     handleAvatarUpload() {
-        const form = document.getElementById('avatar-upload-form');
         const fileInput = document.getElementById('avatar-input');
-        const uploadButton = document.querySelector('.btn-upload'); // Button for triggering file upload
+        const uploadButton = document.querySelector('.btn-upload');
 
-        if (!form || !fileInput || !uploadButton) return;
+        if (!fileInput || !uploadButton) return;
 
-        // Trigger file input when the upload button is clicked
-        uploadButton.addEventListener('click', async(e) => {
-            e.preventDefault();
+        // Step 1: Trigger file selection
+        uploadButton.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // Step 2: Auto-upload once a file is selected
+        fileInput.addEventListener('change', async () => {
             const selectedFile = fileInput.files[0];
             if (!selectedFile) return;
 
             const formData = new FormData();
             formData.append('avatar', selectedFile);
+
+            const overlay = document.getElementById('overlay-loading');
+            if (overlay) overlay.classList.remove('d-none');
 
             try {
                 const response = await fetch('/home/upload/avatar', {
@@ -154,20 +126,29 @@ class HomeUser {
 
                 const result = await response.json();
                 console.log(result);
-                if (result['status'] = true) {
+
+                if (result.status === true) {
+                    const picture = result.picture;
                     this.showToast('Avatar uploaded successfully!', 'success');
-                    // Optionally update avatar preview
-                    const avatarIcon = document.querySelector('.user__item--icon');
-                    if (avatarIcon) {
-                        avatarIcon.style.backgroundImage = `url(${result.url})`;
-                        avatarIcon.style.backgroundSize = 'cover';
-                    }
+
+                    // Update avatar previews
+                    const avatarIcon = document.querySelector('#preference--image__icon');
+                    const navbarAvatar = document.querySelector('#navbar--image__icon');
+                    const modalAvatar = document.querySelector('#modal--image__icon');
+
+                    if (avatarIcon) avatarIcon.src = picture;
+                    if (navbarAvatar) navbarAvatar.src = picture;
+                    if (modalAvatar) modalAvatar.src = picture;
+
+                    fileInput.value = ''; // Reset for future uploads
                 } else {
                     this.showToast('Upload failed: ' + result.error, 'danger');
                 }
             } catch (err) {
                 console.error('Upload error:', err);
                 this.showToast('Something went wrong while uploading avatar', 'danger');
+            } finally {
+                if (overlay) overlay.classList.add('d-none');
             }
         });
     }
