@@ -1,5 +1,7 @@
 <?php
 
+include_once "./app/core/uploadImage/cloudinary_upload.php";
+
 class NoteService {
     private NoteRepository $noteRepository;
 
@@ -183,8 +185,20 @@ class NoteService {
         return $this->noteRepository->deleteLabelByLabelNameAndAccountId($labelName, $accountId);
     }
 
-    public function addNoteToLabelByLabelNameAndNoteId($labelName, $noteId) {
-        return $this->noteRepository->addNoteToLabelByLabelNameAndNoteId($labelName, $noteId);
+    public function createNoteLabelByLabelNameAndNoteIdAndAccountId($labelName, $noteId, $accountId) {
+        return $this->noteRepository->createNoteLabelByLabelNameAndNoteIdAndAccountId($labelName, $noteId, $accountId);
+    }
+
+    public function deleteNoteLabelByLabelNameAndNoteIdAndAccountId($labelName, $noteId, $accountId) {
+        return $this->noteRepository->deleteNoteLabelByLabelNameAndNoteIdAndAccountId($labelName, $noteId, $accountId);
+    }
+
+    public function createImageForNoteByImageUrlAndNoteId($imageUrl, $noteId) {
+        return $this->noteRepository->createImageForNoteByImageUrlAndNoteId($imageUrl, $noteId);
+    }
+
+    public function deleteImageForNoteByImageUrlAndNoteId($imageUrl, $noteId) {
+        return $this->noteRepository->deleteImageForNoteByImageUrlAndNoteId($imageUrl, $noteId);
     }
 
 }

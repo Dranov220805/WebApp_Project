@@ -18,9 +18,16 @@ class Notes {
         this.isLoadingNotes = false;
         this.isLoadingPinnedNotes = false;
 
+        this.currentNoteId = null;
+        this.imageLinkRef = null;
+
         this.setupEvents();
         this.loadPinnedNotes();
         this.loadNotes();
+
+        this.boundHandleUpload = this.handleFileUpload.bind(this);
+        this.boundHandleDelete = this.handleDeleteImage.bind(this);
+        this.boundTriggerInput = this.triggerImageInputClick.bind(this);
     }
 
     setupEvents() {
@@ -31,6 +38,7 @@ class Notes {
         this.handleNoteClick = (event) => {
             const deleteBtn = event.target.closest(".note-delete-btn, .pinned-note-delete-btn");
             const labelNote = event.target.closest(".note-label-add-btn");
+            const listLabelNote = event.target.closest(".note-label-list-btn");
             const pinBtn = event.target.closest(".note-pin-btn");
             const unpinBtn = event.target.closest(".pinned-note-pin-btn");
             const noteEl = event.target.closest('.note-sheet');
@@ -42,11 +50,18 @@ class Notes {
                 title: noteEl.dataset.noteTitle || noteEl.dataset.title,
                 content: noteEl.dataset.noteContent || noteEl.dataset.content,
                 imageLink: noteEl.dataset.imageLink || noteEl.dataset.imageLink,
+                labels: noteEl.dataset.labels || noteEl.dataset.labels,
             };
 
             if (labelNote) {
                 console.log('Clicked add label for note:', note);
                 this.expandAddLabelNote(note);
+                return;
+            }
+
+            if (listLabelNote) {
+                console.log('Clicked list label for note:', note);
+                this.expandListLabelNote(note);
                 return;
             }
 
@@ -106,15 +121,6 @@ class Notes {
             });
         }
 
-        const labelBtn = document.querySelector(".addLabelNoteModal");
-        if (labelBtn) {
-            const noteEl = event.target.closest('.note-sheet');
-            if (!noteEl) return;
-            const noteId = noteEl.dataset.noteId || noteEl.dataset.id;
-            this.openLabelModal(noteId);
-            return;
-        }
-
         const autoResizeTextarea = (textarea) => {
             textarea.style.height = 'auto'; // Reset height
             // textarea.style.minHeight = '200';
@@ -168,6 +174,7 @@ class Notes {
             .then(res => res.json())
             .then(data => {
                 if (data.data?.length > 0) {
+                    console.log(data);
                     this.appendNotesToDOM(data.data);
                     this.currentPage++; // Only increment page after successful append
                 } else {
@@ -203,6 +210,21 @@ class Notes {
                 div.dataset.imageLink = note.imageLink;
             }
 
+            if (note.labels && note.labels.length > 0) {
+                div.dataset.labels = JSON.stringify(note.labels);
+            }
+
+            let labels = [];
+            if (div.dataset.labels) {
+                try {
+                    labels = JSON.parse(div.dataset.labels);
+                } catch (e) {
+                    console.error("Failed to parse labels:", e);
+                }
+            }
+
+            console.log('All labels: ', labels);
+
             const imageHTML = note.imageLink && note.imageLink.trim() !== ''
                 ? `<div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
                    <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
@@ -220,7 +242,7 @@ class Notes {
             <div class="note-sheet__menu">
                 <div>
                     <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
-                    <button title="Add Label" data-bs-target="addLabelNoteModal" id="addLabelNoteModal" class="note-label-add-btn"><i class="fa-solid fa-tags"></i></button>
+                    <button title="Add Label" data-bs-target="listLabelNoteModal" id="note-label-list-btn" class="note-label-list-btn"><i class="fa-solid fa-tags"></i></button>
                     <button class="note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
                     <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
                     <button title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
@@ -273,12 +295,34 @@ class Notes {
             div.dataset.noteId = note.noteId;
             div.dataset.noteTitle = note.title;
             div.dataset.noteContent = note.content;
-            div.dataset.imageLink = note.imageLink;
+
+            if (note.imageLink && note.imageLink.trim() !== '') {
+                div.dataset.imageLink = note.imageLink;
+            }
+
+            if (note.labels && note.labels.length > 0) {
+                div.dataset.labels = JSON.stringify(note.labels);
+            }
+
+            let labels = [];
+            if (div.dataset.labels) {
+                try {
+                    labels = JSON.parse(div.dataset.labels);
+                } catch (e) {
+                    console.error("Failed to parse labels:", e);
+                }
+            }
+
+            console.log('All labels: ', labels);
+
+            const imageHTML = note.imageLink && note.imageLink.trim() !== ''
+                ? `<div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
+                   <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
+               </div>`
+                : '';
 
             div.innerHTML = `
-                <div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
-                    <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
-                </div>
+                ${imageHTML}
                 <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
                     <h3 class="note-sheet__title">${note.title}</h3>
                     <div class="note-sheet__content">
@@ -288,7 +332,7 @@ class Notes {
                 <div class="note-sheet__menu">
                     <div>
                         <button class="pinned-note-pin-btn" title="Unpin Note"><i class="fa-solid fa-thumbtack"></i></button>
-                        <button title="Add Label" data-bs-target="addLabelNoteModal" id="note-label-add-btn" class="addLabelNoteModal"><i class="fa-solid fa-tags"></i></button>
+                        <button title="Add Label" data-bs-target="listLabelNoteModal" id="note-label-list-btn" class="note-label-list-btn"><i class="fa-solid fa-tags"></i></button>
                         <button class="pinned-note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
                         <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
                         <button title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
@@ -398,6 +442,96 @@ class Notes {
         });
     }
 
+    // Utility method
+    clearAndBindListener(element, event, handler) {
+        element.removeEventListener(event, handler);
+        element.addEventListener(event, handler);
+    }
+
+    // Triggers file input
+    triggerImageInputClick(e) {
+        e.preventDefault();
+        const imageInput = document.querySelector('#imageInput');
+        imageInput?.click();
+    }
+
+    // Handles image upload
+    async handleFileUpload() {
+        const imageInput = document.querySelector('#imageInput');
+        const selectedFile = imageInput.files[0];
+        if (!selectedFile || !this.currentNoteId) return;
+
+        const formData = new FormData();
+        formData.append('image', selectedFile);
+        formData.append('noteId', this.currentNoteId);
+
+        try {
+            const response = await fetch('/note/upload-image', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            if (result.status === true) {
+                this.showToast('Image uploaded successfully!', 'success');
+
+                if (this.imageLinkRef) {
+                    this.imageLinkRef.innerHTML = `<img src="${result.url}" style="width: 100%; height: auto; display: block">`;
+                }
+
+                imageInput.value = '';
+                document.querySelector('.pinned-note__load').innerHTML = '';
+                document.querySelector('.other-note__load').innerHTML = '';
+                this.loadNewNotes();
+                this.loadNewPinnedNotes();
+            } else {
+                this.showToast('Upload failed: ' + result.error, 'danger');
+            }
+        } catch (err) {
+            console.error('Upload error:', err);
+            this.showToast('Something went wrong while uploading image', 'danger');
+        }
+    }
+
+    // Handles image delete
+    async handleDeleteImage() {
+        if (!this.currentNoteId) return;
+
+        const imageInput = document.querySelector('#imageInput');
+        const noteIdInput = document.querySelector('#noteIdInput');
+        const imageUrl = noteIdInput?.dataset?.imageUrl;
+        if (!imageUrl) return;
+
+        const formData = new FormData();
+        formData.append('imageUrl', imageUrl);
+        formData.append('noteId', this.currentNoteId);
+
+        try {
+            const response = await fetch('/note/delete-image', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            if (result.status === true) {
+                this.showToast('Image deleted successfully!', 'success');
+                if (this.imageLinkRef) {
+                    this.imageLinkRef.innerHTML = '';
+                }
+
+                imageInput.value = '';
+                document.querySelector('.pinned-note__load').innerHTML = '';
+                document.querySelector('.other-note__load').innerHTML = '';
+                this.loadNewNotes();
+                this.loadNewPinnedNotes();
+            } else {
+                this.showToast('Delete failed: ' + result.error, 'danger');
+            }
+        } catch (err) {
+            console.error('Delete error:', err);
+            this.showToast('Something went wrong while deleting image', 'danger');
+        }
+    }
+
+    // Main function to open note modal
     expandNote(note) {
         const modalEl = document.getElementById('noteModal');
         const modal = new bootstrap.Modal(modalEl);
@@ -409,42 +543,34 @@ class Notes {
         const icon = modalEl.querySelector('.save-status-icon i');
         const iconText = modalEl.querySelector('.save-status-icon p');
 
-        // Set modal inputs
-        if (imageLink && note.imageLink) {
-            imageLink.innerHTML = `<img src="${note.imageLink}" style="width: 100%; height: auto; display: block">`;
-        } else if (imageLink) {
-            imageLink.innerHTML = ''; // Clear it if there's no image
-        }
-
+        imageLink.innerHTML = note.imageLink ? `<img src="${note.imageLink}" style="width: 100%; height: auto; display: block">` : '';
         titleInput.value = note.title || '';
         contentInput.value = note.content || '';
         icon.className = 'fa-solid fa-check-circle text-success';
         iconText.innerHTML = 'Saved';
 
-        // Show modal
         modal.show();
 
-        // Setup auto-save
+        // Store noteId and image DOM ref on class instance
+        this.currentNoteId = noteId;
+        this.imageLinkRef = imageLink;
+
         this.setupAutoSaveModal(noteId, titleInput, contentInput, icon, iconText);
 
-        // Setup image upload
         const triggerUploadBtn = modalEl.querySelector('#triggerImageUpload');
+        const triggerDeleteBtn = modalEl.querySelector('#triggerImageDelete');
         const imageInput = modalEl.querySelector('#imageInput');
         const noteIdInput = modalEl.querySelector('#noteIdInput');
-        const inputTextarea = document.querySelector('.note-content-input-autosave');
+        const inputTextarea = modalEl.querySelector('.note-content-input-autosave');
 
         inputTextarea.style.height = '100%';
+        imageInput.dataset.noteId = noteId;
+        noteIdInput.value = noteId;
+        noteIdInput.dataset.imageUrl = note.imageLink || '';
 
-        // Open file chooser
-        triggerUploadBtn.addEventListener('click', () => {
-            imageInput.click();
-        });
-
-        // Submit form when file is selected
-        imageInput.addEventListener('change', () => {
-            const test = modalEl.querySelector('#imageUploadForm');
-            console.log(test);
-        });
+        this.clearAndBindListener(triggerUploadBtn, 'click', this.boundTriggerInput);
+        this.clearAndBindListener(imageInput, 'change', this.boundHandleUpload);
+        this.clearAndBindListener(triggerDeleteBtn, 'click', this.boundHandleDelete);
     }
 
     setupAutoSaveModal(noteId, titleInput, contentInput, icon, iconText) {
@@ -539,6 +665,58 @@ class Notes {
         contentInput.addEventListener('input', handleTyping);
     }
 
+    createImageNote(notes, imageInput) {
+        if (!imageInput) return;
+
+        // Listen for file selection
+        imageInput.addEventListener('change', async () => {
+            const selectedFile = imageInput.files[0];
+            if (!selectedFile) return;
+
+            const noteId = imageInput.dataset.noteId; // Assumes the input has a data-note-id attribute
+            if (!noteId) {
+                this.showToast('Missing note ID for image upload.', 'danger');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('noteImage', selectedFile);
+            formData.append('noteId', noteId);
+
+            try {
+                const response = await fetch('/note/upload/image', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                console.log(result);
+
+                if (result.status === true) {
+                    this.showToast('Image uploaded successfully!', 'success');
+
+                    // Update image preview if available
+                    const noteEl = document.querySelector(`[data-note-id="${noteId}"]`);
+                    if (noteEl) {
+                        let imgContainer = noteEl.querySelector('.note-sheet__image');
+                        if (!imgContainer) {
+                            imgContainer = document.createElement('div');
+                            imgContainer.className = 'note-sheet__image';
+                            noteEl.insertBefore(imgContainer, noteEl.firstChild);
+                        }
+
+                        imgContainer.innerHTML = `<img src="${result.imageLink}" style="width: 100%; height: auto; display: block;">`;
+                    }
+                } else {
+                    this.showToast('Image upload failed: ' + result.message, 'danger');
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                this.showToast('An error occurred while uploading the image.', 'danger');
+            }
+        });
+    }
+
     createNote_POST() {
         const titleInput = document.querySelector(".note-text__content");
         const contentInput = document.querySelector(".note-post__input");
@@ -596,10 +774,18 @@ class Notes {
         const safeTitle = title?.trim() || "(No Title)";
         const safeContent = (content ?? "").replace(/\n/g, "<br>");
 
+        if (imageLink && imageLink.trim() !== '') {
+            div.dataset.imageLink = imageLink;
+        }
+
+        const imageHTML = imageLink && imageLink.trim() !== ''
+            ? `<div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
+                   <img src="${imageLink}" style="width: 100%; height: auto; display: block">
+               </div>`
+            : '';
+
         div.innerHTML = `
-        <div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
-            <img src="${imageLink}" alt="Note Image" style="width: 100%; height: auto; display: block;" />
-        </div>
+        ${imageHTML}
         <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
             <h3 class="note-sheet__title">${safeTitle}</h3>
             <div class="note-sheet__content">
@@ -609,7 +795,7 @@ class Notes {
         <div class="note-sheet__menu">
             <div>
                 <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
-                <button title="Add Label" data-bs-target="addLabelNoteModal" id="note-label-add-btn" class="addLabelNoteModal"><i class="fa-solid fa-tags"></i></button>
+                <button title="Add Label" data-bs-target="listLabelNoteModal" id="note-label-list-btn" class="note-label-list-btn"><i class="fa-solid fa-tags"></i></button>
                 <button class="note-delete-btn" title="Delete This Note" data-note-id="${noteId}"><i class="fa-solid fa-trash"></i></button>
                 <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
                 <button title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
@@ -633,10 +819,18 @@ class Notes {
         const safeTitle = title ?? "(No Title)";
         const safeContent = (content ?? "").replace(/\n/g, '<br>');
 
+        if (imageLink && imageLink.trim() !== '') {
+            div.dataset.imageLink = imageLink;
+        }
+
+        const imageHTML = imageLink && imageLink.trim() !== ''
+            ? `<div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
+                   <img src="${imageLink}" style="width: 100%; height: auto; display: block">
+               </div>`
+            : '';
+
         div.innerHTML = `
-            <div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
-                    <img src="${imageLink}" style="width: 100%; height: auto; display: block">
-                </div>
+            ${imageHTML}
             <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
                 <h3 class="note-sheet__title" data-note-title="${title}">${title}</h3>
                 <div class="note-sheet__content">
@@ -646,7 +840,7 @@ class Notes {
             <div class="note-sheet__menu">
                 <div>
                     <button class="pinned-note-pin-btn" title="Unpin Note"><i class="fa-solid fa-thumbtack"></i></button>
-                    <button title="Add Label" data-bs-target="addLabelNoteModal" id="note-label-add-btn" class="addLabelNoteModal"><i class="fa-solid fa-tags"></i></button>
+                    <button title="Add Label" data-bs-target="listLabelNoteModal" id="note-label-list-btn" class="note-label-list-btn"><i class="fa-solid fa-tags"></i></button>
                     <button class="pinned-note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${noteId}"><i class="fa-solid fa-trash"></i></button>
                     <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
                     <button title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
@@ -661,6 +855,93 @@ class Notes {
         const modal = new bootstrap.Modal(modalEl);
 
         modal.show();
+    }
+
+    expandListLabelNote(note) {
+        const modalEl = document.getElementById('listLabelNoteModal');
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
+
+        const labelListContainer = document.getElementById('label-checkbox-list');
+
+        // Parse labels (from data-labels attribute or object)
+        let noteLabels = [];
+        if (typeof note.labels === 'string') {
+            try {
+                noteLabels = JSON.parse(note.labels);
+            } catch (e) {
+                console.error('Failed to parse note.labels:', e);
+            }
+        } else if (Array.isArray(note.labels)) {
+            noteLabels = note.labels;
+        }
+
+        const currentLabelNames = noteLabels.map(l => l.labelName);
+
+        // Pre-check checkboxes
+        const allCheckboxes = labelListContainer.querySelectorAll('.label-checkbox');
+        allCheckboxes.forEach(checkbox => {
+            checkbox.checked = currentLabelNames.includes(checkbox.value);
+        });
+
+        // Remove old listeners
+        if (this.labelCheckboxHandler) {
+            labelListContainer.removeEventListener('change', this.labelCheckboxHandler);
+        }
+
+        // Define and assign new handler
+        this.labelCheckboxHandler = (e) => {
+            if (e.target.classList.contains('label-checkbox')) {
+                const label = e.target.value;
+                const isChecked = e.target.checked;
+
+                if (isChecked) {
+                    this.addNoteToLabel_POST(note.noteId, label);
+                } else {
+                    this.removeNoteFromLabel_POST(note.noteId, label);
+                }
+            }
+        };
+
+        labelListContainer.addEventListener('change', this.labelCheckboxHandler);
+    }
+
+    addNoteToLabel_POST(noteId, labelName) {
+        fetch(`/label/note-create`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                noteId,
+                labelName
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                this.showToast("Label added to note", 'success');
+            })
+            .catch(err => {
+                console.error("Error adding label to note:", err);
+                this.showToast("Error adding label");
+            });
+    }
+
+    removeNoteFromLabel_POST(noteId, labelName) {
+        fetch(`/label/note-delete`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                noteId,
+                labelName
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                this.showToast("Label removed from note", 'success');
+            })
+            .catch(err => {
+                console.error("Error removing label from note:", err);
+                this.showToast("Error removing label");
+            });
     }
 
     expandDeleteNote(note) {
@@ -768,7 +1049,9 @@ class Notes {
                     if (noteEl) noteEl.remove(); // Remove from DOM
                     const otherNoteGrid = document.querySelector('.other-note__load');
                     const pinNoteGrid = document.querySelector('.pinned-note__load');
+                    const searchNoteGrid = document.querySelector('.search-note__load');
                     console.log(noteId, title, content);
+                    searchNoteGrid.innerHTML = '';
                     pinNoteGrid.innerHTML = '';
                     otherNoteGrid.innerHTML = '';
                     try {
@@ -791,80 +1074,6 @@ class Notes {
             .catch(err => {
                 console.error("Delete error:", err);
                 this.showToast("An error occurred while deleting the note", "danger");
-            });
-    }
-
-    openLabelModal(noteId) {
-        this.currentLabelNoteId = noteId;
-        fetch(`/label/list`, { method: 'GET' }) // Assumes this endpoint returns labels
-            .then(res => res.json())
-            .then(data => {
-                const labelList = document.getElementById("label-checkbox-list");
-                labelList.innerHTML = ''; // Clear existing content
-
-                data.labels.forEach(label => {
-                    const wrapper = document.createElement("div");
-                    wrapper.className = "form-check";
-
-                    wrapper.innerHTML = `
-                    <input class="form-check-input" type="checkbox" value="${label.labelId}" id="label-${label.labelId}">
-                    <label class="form-check-label" for="label-${label.labelId}">
-                        ${label.labelName}
-                    </label>
-                `;
-
-                    // Add event listener to POST when toggled
-                    wrapper.querySelector("input").addEventListener("change", (e) => {
-                        const labelId = e.target.value;
-                        if (e.target.checked) {
-                            this.addNoteToLabel_POST(noteId, labelId);
-                        } else {
-                            this.removeNoteFromLabel_POST(noteId, labelId);
-                        }
-                    });
-
-                    labelList.appendChild(wrapper);
-                });
-
-                // Show modal
-                const modal = new bootstrap.Modal(document.getElementById('addLabelNoteModal'));
-                modal.show();
-            })
-            .catch(err => {
-                console.error("Error loading labels:", err);
-                this.showToast("Failed to load labels");
-            });
-    }
-
-    addNoteToLabel_POST(noteId, labelId) {
-        fetch(`/label/note`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ noteId, labelId })
-        })
-            .then(res => res.json())
-            .then(data => {
-                this.showToast("Label added to note", 'success');
-            })
-            .catch(err => {
-                console.error("Error adding label to note:", err);
-                this.showToast("Error adding label");
-            });
-    }
-
-    removeNoteFromLabel_POST(noteId, labelId) {
-        fetch(`/label/note`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ noteId, labelId })
-        })
-            .then(res => res.json())
-            .then(data => {
-                this.showToast("Label removed from note", 'success');
-            })
-            .catch(err => {
-                console.error("Error removing label from note:", err);
-                this.showToast("Error removing label");
             });
     }
 

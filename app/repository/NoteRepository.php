@@ -12,15 +12,26 @@ class NoteRepository
 
     public function getNotesByAccountId(string $accountId)
     {
-        $sql = "SELECT n.*, i.imageLink
-            FROM `Account` a
-            LEFT JOIN `Note` n ON a.accountId = n.accountId
-            LEFT JOIN `Modification` m ON m.noteId = n.noteId
-            LEFT JOIN `Image` i on i.noteId = n.noteId
-            WHERE a.accountId = ? 
-              AND n.isDeleted = FALSE
-              AND (m.isPinned IS NULL OR m.isPinned = FALSE)
-            ORDER BY n.createDate DESC";
+//        $sql = "SELECT n.*, i.imageLink
+//            FROM `Account` a
+//            LEFT JOIN `Note` n ON a.accountId = n.accountId
+//            LEFT JOIN `Modification` m ON m.noteId = n.noteId
+//            LEFT JOIN `Image` i on i.noteId = n.noteId
+//            WHERE a.accountId = ?
+//              AND n.isDeleted = FALSE
+//              AND (m.isPinned IS NULL OR m.isPinned = FALSE)
+//            ORDER BY n.createDate DESC";
+        $sql = "SELECT n.*, i.imageLink, l.labelId, l.labelName
+                FROM `Account` a
+                LEFT JOIN `Note` n ON a.accountId = n.accountId
+                LEFT JOIN `Modification` m ON m.noteId = n.noteId
+                LEFT JOIN `Image` i ON i.noteId = n.noteId
+                LEFT JOIN `NoteLabel` nl ON nl.noteId = n.noteId
+                LEFT JOIN `Label` l ON l.labelId = nl.labelId
+                WHERE a.accountId = ? 
+                  AND n.isDeleted = FALSE
+                  AND (m.isPinned IS NULL OR m.isPinned = FALSE)
+                ORDER BY n.createDate DESC";
 
         $stmt = $this->conn->prepare($sql);
 
@@ -44,11 +55,13 @@ class NoteRepository
 
     public function getNotesByAccountIdPaginated(string $accountId, int $limit, int $offset): array
     {
-        $sql = "SELECT n.*, i.imageLink
+        $sql = "SELECT n.*, i.imageLink, l.labelId, l.labelName
             FROM `Account` a
             LEFT JOIN `Note` n ON a.accountId = n.accountId
             LEFT JOIN `Modification` m ON m.noteId = n.noteId
             LEFT JOIN `Image` i on i.noteId = n.noteId
+            LEFT JOIN `NoteLabel` nl ON nl.noteId = n.noteId
+            LEFT JOIN `Label` l ON l.labelId = nl.labelId
             WHERE a.accountId = ? 
             AND n.isDeleted = FALSE
             AND (m.isPinned IS NULL OR m.isPinned = FALSE)
@@ -68,18 +81,32 @@ class NoteRepository
         $notes = [];
 
         while ($row = $result->fetch_assoc()) {
-            $notes[] = $row; // Optionally map to a Note model
+            $noteId = $row['noteId'];
+
+            if (!isset($notes[$noteId])) {
+                $notes[$noteId] = $row;
+                $notes[$noteId]['labels'] = [];
+            }
+
+            if ($row['labelId']) {
+                $notes[$noteId]['labels'][] = [
+                    'labelId' => $row['labelId'],
+                    'labelName' => $row['labelName']
+                ];
+            }
         }
 
-        return $notes;
+        return array_values($notes);
     }
 
     public function getPinnedNotesByAccountId($accountId): array
     {
-        $sql = "SELECT n.*, i.imageLink FROM `Account` a
+        $sql = "SELECT n.*, i.imageLink, l.labelId, l.labelName FROM `Account` a
         LEFT JOIN `Note` n ON a.accountId = n.accountId
         LEFT JOIN `Modification` m ON m.noteId = n.noteId
         LEFT JOIN `Image` i on i.noteId = n.noteId
+        LEFT JOIN `NoteLabel` nl ON nl.noteId = n.noteId
+        LEFT JOIN `Label` l ON l.labelId = nl.labelId
         WHERE a.accountId = ? 
         AND n.isDeleted = FALSE
         AND m.isPinned = TRUE
@@ -93,19 +120,35 @@ class NoteRepository
         $stmt->execute();
         $result = $stmt->get_result();
 
-        $note = [];
+        $notes = [];
+
         while ($row = $result->fetch_assoc()) {
-            $note[] = $row;
+            $noteId = $row['noteId'];
+
+            if (!isset($notes[$noteId])) {
+                $notes[$noteId] = $row;
+                $notes[$noteId]['labels'] = [];
+            }
+
+            if ($row['labelId']) {
+                $notes[$noteId]['labels'][] = [
+                    'labelId' => $row['labelId'],
+                    'labelName' => $row['labelName']
+                ];
+            }
         }
-        return $note;
+
+        return array_values($notes);
     }
 
     public function getPinnedNotesByAccountIdPaginated(string $accountId, int $limit, int $offset): array
     {
-        $sql = "SELECT n.*, i.imageLink FROM `Account` a
+        $sql = "SELECT n.*, i.imageLink, l.labelId, l.labelName FROM `Account` a
         LEFT JOIN `Note` n ON a.accountId = n.accountId
         LEFT JOIN `Modification` m ON m.noteId = n.noteId
         LEFT JOIN `Image` i on i.noteId = n.noteId
+        LEFT JOIN `NoteLabel` nl ON nl.noteId = n.noteId
+        LEFT JOIN `Label` l ON l.labelId = nl.labelId
         WHERE a.accountId = ? 
         AND n.isDeleted = FALSE
         AND m.isPinned = TRUE
@@ -124,17 +167,31 @@ class NoteRepository
         $notes = [];
 
         while ($row = $result->fetch_assoc()) {
-            $notes[] = $row; // Optionally map to a Note model
+            $noteId = $row['noteId'];
+
+            if (!isset($notes[$noteId])) {
+                $notes[$noteId] = $row;
+                $notes[$noteId]['labels'] = [];
+            }
+
+            if ($row['labelId']) {
+                $notes[$noteId]['labels'][] = [
+                    'labelId' => $row['labelId'],
+                    'labelName' => $row['labelName']
+                ];
+            }
         }
 
-        return $notes;
+        return array_values($notes);
     }
 
     public function getTrashedNotesByAccountIdPaginated(string $accountId, int $limit, int $offset): array {
-        $sql = "SELECT n.*, i.imageLink
+        $sql = "SELECT n.*, i.imageLink, l.labelId, l.labelName
             FROM `Account` a
             LEFT JOIN `Note` n ON a.accountId = n.accountId
             LEFT JOIN `Image` i on i.noteId = n.noteId
+            LEFT JOIN `NoteLabel` nl ON nl.noteId = n.noteId
+            LEFT JOIN `Label` l ON l.labelId = nl.labelId
             WHERE a.accountId = ? 
             AND n.isDeleted = TRUE
             ORDER BY n.createDate DESC
@@ -153,18 +210,32 @@ class NoteRepository
         $notes = [];
 
         while ($row = $result->fetch_assoc()) {
-            $notes[] = $row;
+            $noteId = $row['noteId'];
+
+            if (!isset($notes[$noteId])) {
+                $notes[$noteId] = $row;
+                $notes[$noteId]['labels'] = [];
+            }
+
+            if ($row['labelId']) {
+                $notes[$noteId]['labels'][] = [
+                    'labelId' => $row['labelId'],
+                    'labelName' => $row['labelName']
+                ];
+            }
         }
 
-        return $notes;
+        return array_values($notes);
     }
 
     public function getTrashedNotesByAccountId($accountId): array {
-        $sql = "SELECT n.*, i.imageLink
+        $sql = "SELECT n.*, i.imageLink, l.labelId, l.labelName
             FROM `Account` a
             LEFT JOIN `Note` n ON a.accountId = n.accountId
             LEFT JOIN `Modification` m ON m.noteId = n.noteId
             LEFT JOIN `Image` i on i.noteId = n.noteId
+            LEFT JOIN `NoteLabel` nl ON nl.noteId = n.noteId
+            LEFT JOIN `Label` l ON l.labelId = nl.labelId
             WHERE a.accountId = ? 
             AND n.isDeleted = TRUE
             ORDER BY n.createDate DESC";
@@ -182,32 +253,60 @@ class NoteRepository
         $notes = [];
 
         while ($row = $result->fetch_assoc()) {
-            $notes[] = $row;
+            $noteId = $row['noteId'];
+
+            if (!isset($notes[$noteId])) {
+                $notes[$noteId] = $row;
+                $notes[$noteId]['labels'] = [];
+            }
+
+            if ($row['labelId']) {
+                $notes[$noteId]['labels'][] = [
+                    'labelId' => $row['labelId'],
+                    'labelName' => $row['labelName']
+                ];
+            }
         }
 
-        return $notes;
+        return array_values($notes);
     }
 
     public function getLabelNoteByLabelName(string $labelName, string $accountId) {
-        $sql = "SELECT Label.labelName, Note.noteId, Note.title, Note.content
+        $sql = "SELECT Label.labelName, Note.noteId, Note.title, Note.content, Image.imageLink, Label.labelId
             FROM Label
             INNER JOIN NoteLabel ON Label.labelId = NoteLabel.labelId
             INNER JOIN Note ON Note.noteId = NoteLabel.noteId
-            WHERE Label.labelName = ? AND Label.accountId = ? AND Note.isDeleted = FALSE";
+            LEFT JOIN Image ON Note.noteId = Image.noteId
+            WHERE Label.labelName = ? 
+              AND Label.accountId = ? 
+              AND Note.isDeleted = FALSE";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param('ss', $labelName, $accountId);
         $stmt->execute();
 
         $result = $stmt->get_result();
+        $stmt->close();
+
         $notes = [];
 
         while ($row = $result->fetch_assoc()) {
-            $notes[] = $row;
+            $noteId = $row['noteId'];
+
+            if (!isset($notes[$noteId])) {
+                $notes[$noteId] = $row;
+                $notes[$noteId]['labels'] = [];
+            }
+
+            if ($row['labelId']) {
+                $notes[$noteId]['labels'][] = [
+                    'labelId' => $row['labelId'],
+                    'labelName' => $row['labelName']
+                ];
+            }
         }
 
-        $stmt->close();
-        return $notes;
+        return array_values($notes);
     }
 
     public function createNoteByAccountIdAndTitleAndContent($accountId, $title, $content): ?Note
@@ -306,11 +405,13 @@ class NoteRepository
 
     public function searchNotesByAccountId(string $accountId, string $searchTerm): array
     {
-        $sql = "SELECT * FROM `Note` 
+        $sql = "SELECT n.*, i.imageLink 
+            FROM `Note` n
+            LEFT JOIN `Image` i on i.noteId = n.noteId
             WHERE `accountId` = ? 
-            AND `isDeleted` = FALSE 
-            AND (`title` LIKE ? OR `content` LIKE ?)
-            ORDER BY `createDate` DESC";
+            AND n.isDeleted = FALSE 
+            AND (n.title LIKE ? OR n.content LIKE ?)
+            ORDER BY n.createDate DESC";
 
         $stmt = $this->conn->prepare($sql);
         $likeTerm = '%' . $searchTerm . '%';
@@ -512,19 +613,148 @@ class NoteRepository
         return $success;
     }
 
-    public function addNoteToLabelByLabelNameAndNoteId(string $labelName, string $noteId) {
+    public function createNoteLabelByLabelNameAndNoteIdAndAccountId(string $labelName, string $noteId, string $accountId): bool {
+        // Get labelId from Label table
+        $sqlLabel = "SELECT labelId FROM Label WHERE labelName = ? AND accountId = ? AND isDeleted = FALSE";
+
+        $stmtLabel = $this->conn->prepare($sqlLabel);
+        if (!$stmtLabel) return false;
+
+        $stmtLabel->bind_param('ss', $labelName, $accountId);
+        $stmtLabel->execute();
+
+        $resultLabel = $stmtLabel->get_result();
+        $labelRow = $resultLabel->fetch_assoc();
+        $stmtLabel->close();
+
+        if (!$labelRow) return false;
+        $labelId = $labelRow['labelId'];
+
+        // Insert into NoteLabel
         $noteLabelId = Uuid::uuid4()->toString();
 
-        $sql = "INSERT INTO `NoteLabel` (`noteLabelId`, `labelId`, `noteId`) VALUES (?, ?, ?)";
+        $sqlInsert = "INSERT INTO NoteLabel (noteLabelId, labelId, noteId) VALUES (?, ?, ?)";
 
-        $stmt = $this->conn->prepare($sql);
-        if (!$stmt) return false;
+        $stmtInsert = $this->conn->prepare($sqlInsert);
+        if (!$stmtInsert) return false;
 
-        $stmt->bind_param('sss', $noteLabelId, $labelName, $noteId);
-        $success = $stmt->execute();
-        $stmt->close();
+        $stmtInsert->bind_param('sss', $noteLabelId, $labelId, $noteId);
+        $success = $stmtInsert->execute();
+        $stmtInsert->close();
 
         return $success;
+    }
+
+    public function deleteNoteLabelByLabelNameAndNoteIdAndAccountId(string $labelName, string $noteId, string $accountId) {
+        // Get labelId from Label table
+        $sqlLabel = "SELECT labelId FROM Label WHERE labelName = ? AND accountId = ? AND isDeleted = FALSE";
+
+        $stmtLabel = $this->conn->prepare($sqlLabel);
+        if (!$stmtLabel) return false;
+
+        $stmtLabel->bind_param('ss', $labelName, $accountId);
+        $stmtLabel->execute();
+
+        $resultLabel = $stmtLabel->get_result();
+        $labelRow = $resultLabel->fetch_assoc();
+        $stmtLabel->close();
+
+        if (!$labelRow) return false;
+        $labelId = $labelRow['labelId'];
+
+        $sqlDelete = "DELETE FROM `NoteLabel` WHERE `noteId` = ? AND `labelId` = ?";
+
+        $stmtDelete = $this->conn->prepare($sqlDelete);
+        if (!$stmtDelete) return false;
+
+        $stmtDelete->bind_param('ss', $noteId, $labelId);
+        $success = $stmtDelete->execute();
+        $stmtDelete->close();
+
+        return $success;
+    }
+
+    public function createImageForNoteByImageUrlAndNoteId(string $imageUrl, string $noteId) {
+        // Hard delete existing image(s) for the note
+        $deleteSql = "DELETE FROM Image WHERE noteId = ?";
+        $deleteStmt = $this->conn->prepare($deleteSql);
+        if (!$deleteStmt) {
+            return [
+                'status' => false,
+                'message' => 'Failed to prepare delete statement: ' . $this->conn->error
+            ];
+        }
+        $deleteStmt->bind_param("s", $noteId);
+        $deleteStmt->execute();
+        $deleteStmt->close();
+
+        // Insert new image
+        $insertSql = "INSERT INTO Image (imageId, noteId, title, imageLink, isDeleted) VALUES (?, ?, ?, ?, FALSE)";
+        $insertStmt = $this->conn->prepare($insertSql);
+        if (!$insertStmt) {
+            return [
+                'status' => false,
+                'message' => 'Failed to prepare insert statement: ' . $this->conn->error
+            ];
+        }
+
+        $imageId = Uuid::uuid4()->toString();
+        $title = basename(parse_url($imageUrl, PHP_URL_PATH));
+
+        $insertStmt->bind_param("ssss", $imageId, $noteId, $title, $imageUrl);
+
+        if ($insertStmt->execute()) {
+            $insertStmt->close();
+            return [
+                'status' => true,
+                'imageId' => $imageId,
+                'title' => $title,
+                'imageLink' => $imageUrl
+            ];
+        } else {
+            $insertStmt->close();
+            return [
+                'status' => false,
+                'message' => 'Failed to insert image: ' . $insertStmt->error
+            ];
+        }
+    }
+
+    public function deleteImageForNoteByImageUrlAndNoteId(string $imageUrl, string $noteId): array {
+        $deleteSql = "DELETE FROM Image WHERE noteId = ? AND imageLink = ?";
+        $deleteStmt = $this->conn->prepare($deleteSql);
+
+        if (!$deleteStmt) {
+            return [
+                'status' => false,
+                'message' => 'Failed to prepare delete statement: ' . $this->conn->error
+            ];
+        }
+
+        $deleteStmt->bind_param("ss", $noteId, $imageUrl);
+
+        if ($deleteStmt->execute()) {
+            $affectedRows = $deleteStmt->affected_rows;
+            $deleteStmt->close();
+
+            if ($affectedRows > 0) {
+                return [
+                    'status' => true,
+                    'message' => 'Image deleted successfully.'
+                ];
+            } else {
+                return [
+                    'status' => false,
+                    'message' => 'No matching image found to delete.'
+                ];
+            }
+        } else {
+            $deleteStmt->close();
+            return [
+                'status' => false,
+                'message' => 'Failed to execute delete statement: ' . $deleteStmt->error
+            ];
+        }
     }
 
 }

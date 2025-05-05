@@ -134,6 +134,38 @@ class NoteMiddleWare {
         }
     }
 
+    public function createNoteLabel_POST() {
+        if (!isset($_SESSION['roleId'])) {
+            throw new Exception("Unauthenticated");
+        } else {
+            $this->noteController->createNoteLabel_POST();
+        }
+    }
+
+    public function deleteNoteLabel_POST() {
+        if (!isset($_SESSION['roleId'])) {
+            throw new Exception("Unauthenticated");
+        } else {
+            $this->noteController->deleteNoteLabel_POST();
+        }
+    }
+
+    public function createImageNote_POST() {
+        if (!isset($_SESSION['roleId'])) {
+            throw new Exception("Unauthenticated");
+        } else {
+            $this->noteController->createImageForNoteByImageUploadAndNoteId();
+        }
+    }
+
+    public function deleteImageNote_POST() {
+        if (!isset($_SESSION['roleId'])) {
+            throw new Exception("Unauthenticated");
+        } else {
+            $this->noteController->deleteImageForNoteByImageUrlAndNoteId();
+        }
+    }
+
 }
 
 ?>

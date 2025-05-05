@@ -172,6 +172,7 @@ class HomeUserController extends BaseController{
             ]);
         }
     }
+
     public function getPreferencesByAccountId() {
         header('Content-Type: application/json');
 

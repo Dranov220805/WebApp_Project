@@ -89,3 +89,29 @@ $labelList = $homeUserController->getUserLabel();
         </div>
     </div>
 </div>
+
+<!--    Modal structure for showing list of labels-->
+<div class="modal fade" id="listLabelNoteModal" tabindex="-1" aria-labelledby="listLabelNoteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addLabelNoteModalLabel">Assign Labels</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="label-checkbox-list">
+                <!-- Labels will be loaded dynamically here -->
+                <?php foreach ($labelList as $label): ?>
+                    <div class="note-sheet__menu" style="width: 100%">
+                        <label style="width: 100%; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" class="label-checkbox" value="<?= htmlspecialchars($label) ?>" style="transform: scale(1.5);"/>
+                            <span><?= htmlspecialchars($label) ?></span>
+                        </label>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

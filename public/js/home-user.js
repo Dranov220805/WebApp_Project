@@ -318,24 +318,36 @@ class HomeUser {
         notes.forEach(note => {
             const div = document.createElement("div");
             div.className = "note-sheet d-flex flex-column";
-            div.dataset.id = note.noteId;
+            div.dataset.noteId = note.noteId;
+            div.dataset.noteTitle = note.title;
+            div.dataset.noteContent = note.content;
+
+            if (note.imageLink && note.imageLink.trim() !== '') {
+                div.dataset.imageLink = note.imageLink;
+            }
+
+            const imageHTML = note.imageLink && note.imageLink.trim() !== ''
+                ? `<div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
+                   <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
+               </div>`
+                : '';
 
             div.innerHTML = `
+            ${imageHTML}
             <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
                 <h3 class="note-sheet__title">${note.title}</h3>
                 <div class="note-sheet__content">
                     ${note.content.replace(/\n/g, '<br>')}
                 </div>
             </div>
-            <div class="note-sheet__menu" onclick="event.stopPropagation()">
+            <div class="note-sheet__menu">
                 <div>
-                    <button class="search-note-pin-btn" title="Unpin Note"><i class="fa-solid fa-thumbtack"></i></button>
-                    <button title="Label"><i class="fa-solid fa-tags"></i></button>
-                    <button title="Image"><i class="fa-solid fa-images"></i></button>
-                    <button class="search-note-edit-btn" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
-                    <button class="search-note-delete-btn" title="Delete" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
+                    <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
+                    <button title="Add Label" data-bs-target="listLabelNoteModal" id="note-label-list-btn" class="note-label-list-btn"><i class="fa-solid fa-tags"></i></button>
+                    <button class="note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
+                    <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
+                    <button title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
                 </div>
-                <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
             </div>
         `;
             // Append to container

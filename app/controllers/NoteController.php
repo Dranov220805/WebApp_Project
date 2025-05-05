@@ -279,7 +279,10 @@ class NoteController {
         $searchTerm = $_GET['query'] ?? '';
 
         if (empty($searchTerm)) {
-            echo json_encode(['status' => false, 'message' => 'Search term is empty']);
+            echo json_encode([
+                'status' => false,
+                'message' => 'Search term is empty'
+            ]);
             return;
         }
 
@@ -287,13 +290,19 @@ class NoteController {
 
         if (!$accountId) {
             http_response_code(401);
-            echo json_encode(['status' => false, 'message' => 'Unauthorized']);
+            echo json_encode([
+                'status' => false,
+                'message' => 'Unauthorized'
+            ]);
             return;
         }
 
         $notes = $this->noteService->searchNotesByAccountId($accountId, $searchTerm);
 
-        echo json_encode(['status' => true, 'data' => $notes]);
+        echo json_encode([
+            'status' => true,
+            'data' => $notes
+        ]);
     }
 
     public function getAllNotes() {
@@ -531,6 +540,156 @@ class NoteController {
             }
         }
     }
+
+    public function createNoteLabel_POST() {
+        $content = trim(file_get_contents("php://input"));
+        $data = json_decode($content, true);
+        $accountId = $_SESSION['accountId'] ?? null;
+        $labelName = $data['labelName'] ?? null;
+        $noteId = $data['noteId'] ?? null;
+        if (empty($accountId) || empty($labelName) || empty($noteId)) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'Label name or note id is empty'
+            ]);
+        } else {
+            $result = $this->noteService->createNoteLabelByLabelNameAndNoteIdAndAccountId($labelName, $noteId, $accountId);
+
+            if ($result) {
+                echo json_encode ([
+                    'status' => true,
+                    'data' => $result,
+                    'message' => 'Add note to label created successfully'
+                ]);
+            } else {
+                echo json_encode ([
+                    'status' => false,
+                    'message' => 'Failed to add note to label'
+                ]);
+            }
+        }
+
+    }
+
+    public function deleteNoteLabel_POST() {
+        $content = trim(file_get_contents("php://input"));
+        $data = json_decode($content, true);
+        $accountId = $_SESSION['accountId'] ?? null;
+        $labelName = $data['labelName'] ?? null;
+        $noteId = $data['noteId'] ?? null;
+        if (empty($accountId) || empty($labelName) || empty($noteId)) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'Label name or note id is empty'
+            ]);
+        } else {
+            $result = $this->noteService->deleteNoteLabelByLabelNameAndNoteIdAndAccountId($labelName, $noteId, $accountId);
+
+            if ($result) {
+                echo json_encode ([
+                    'status' => true,
+                    'data' => $result,
+                    'message' => 'Delete note label successfully'
+                ]);
+            } else {
+                echo json_encode ([
+                    'status' => false,
+                    'message' => 'Failed to delete note to label'
+                ]);
+            }
+        }
+    }
+
+    public function createImageForNoteByImageUploadAndNoteId() {
+        $accountId = $_SESSION['accountId'] ?? null;
+        $noteId = $_POST['noteId'] ?? null;
+        $imageUpload = $_FILES['image'] ?? null;
+
+        if (empty($accountId) || empty($noteId)) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'Account ID or Note ID is missing'
+            ]);
+            return;
+        }
+
+        if (empty($imageUpload) || $imageUpload['error'] !== UPLOAD_ERR_OK) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'No valid image uploaded'
+            ]);
+            return;
+        }
+
+        try {
+            $uploadResult = uploadNoteImageToCloudinary($imageUpload['tmp_name']);
+
+            if ($uploadResult['status'] === false) {
+                echo json_encode([
+                    'status' => false,
+                    'message' => $uploadResult['message']
+                ]);
+                return;
+            }
+
+            // Save image to DB via your service
+            $imageUrl = $uploadResult['url'];
+            $this->noteService->createImageForNoteByImageUrlAndNoteId($imageUrl, $noteId);
+
+            echo json_encode([
+                'status' => true,
+                'url' => $imageUrl,
+                'message' => 'Image uploaded successfully!'
+            ]);
+        } catch (Exception $e) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'Error uploading image: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    public function deleteImageForNoteByImageUrlAndNoteId() {
+        $accountId = $_SESSION['accountId'] ?? null;
+        $noteId = $_POST['noteId'] ?? null;
+        $imageUrl = $_POST['imageUrl'] ?? null;
+
+        if (empty($accountId) || empty($noteId) || empty($imageUrl)) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'Account ID or Note ID or ImageUrl is missing'
+            ]);
+            return;
+        }
+
+        try {
+//            $publicId = extractPublicIdFromUrl($imageUrl);
+
+            $uploadResult = deleteImageByImageUrl($imageUrl);
+
+            if ($uploadResult['status'] === false) {
+                echo json_encode([
+                    'status' => false,
+                    'message' => $uploadResult['message']
+                ]);
+                return;
+            }
+
+            $this->noteService->deleteImageForNoteByImageUrlAndNoteId($imageUrl, $noteId);
+
+            echo json_encode([
+                'status' => true,
+                'url' => $imageUrl,
+                'message' => 'Image deleted successfully!'
+            ]);
+        } catch (Exception $e) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'Error deleting image: ' . $e->getMessage()
+            ]);
+        }
+    }
+
 }
 
 ?>

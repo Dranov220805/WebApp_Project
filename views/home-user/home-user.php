@@ -143,25 +143,6 @@
         </div>
     </div>
 
-    <!--    Modal structure for showing list of labels-->
-    <div class="modal fade" id="addLabelNoteModal" tabindex="-1" aria-labelledby="addLabelNoteModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addLabelNoteModalLabel">Assign Labels</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="label-checkbox-list">
-                    <!-- Labels will be loaded dynamically here -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
     <?php
         include "./views/layout/partials/overlay_loading.php";
     ?>

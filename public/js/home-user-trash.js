@@ -25,7 +25,7 @@ class TrashNotes {
         this.handleNoteClick = (event) => {
             const deleteBtn = event.target.closest(".note-trash-delete-btn");
             const restoreBtn = event.target.closest(".note-restore-btn");
-            const noteEl = event.target.closest('.note-sheet');
+            const noteEl = event.target.closest('.note-sheet-trash');
 
             if (!noteEl) return;
 
@@ -51,6 +51,7 @@ class TrashNotes {
             if (event.target.closest('.note-sheet__menu button')) return;
 
             console.log('Clicked note:', note);
+            this.ex
         };
 
         document.addEventListener('click', this.handleNoteClick);
@@ -130,10 +131,18 @@ class TrashNotes {
             div.dataset.noteContent = note.content;
             div.dataset.imageLink = note.imageLink;
 
+            if (note.imageLink && note.imageLink.trim() !== '') {
+                div.dataset.imageLink = note.imageLink;
+            }
+
+            const imageHTML = note.imageLink && note.imageLink.trim() !== ''
+                ? `<div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
+                   <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
+               </div>`
+                : '';
+
             div.innerHTML = `
-                <div class="note-sheet__image" style="width: 100%; height: auto; overflow: hidden">
-                    <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
-                </div>
+                ${imageHTML}
                 <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
                     <h3 class="note-sheet__title">${note.title}</h3>
                     <div class="note-sheet__content">

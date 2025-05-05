@@ -44,7 +44,7 @@ class LabelNote {
             if (event.target.closest('.note-sheet__menu button')) return;
 
             console.log('Clicked note:', note);
-            // this.expandLabelNote(note);
+            this.expandLabelNote(note);
         };
 
         document.addEventListener('click', this.handleNoteClick);
@@ -88,6 +88,18 @@ class LabelNote {
                 input.value = '';
             }
         });
+
+        const autoResizeTextarea = (textarea) => {
+            textarea.style.height = 'auto'; // Reset height
+            textarea.style.minHeight = '300';
+            textarea.style.height = textarea.scrollHeight + 'px'; // Set to scroll height
+        };
+
+        const myTextarea = document.querySelector('.note-label-content-input-autosave');
+        if (myTextarea) {
+            myTextarea.addEventListener('input', () => autoResizeTextarea(myTextarea));
+            autoResizeTextarea(myTextarea);
+        }
     }
 
     handleScroll() {
@@ -161,6 +173,21 @@ class LabelNote {
             if (note.imageLink && note.imageLink.trim() !== '') {
                 div.dataset.imageLink = note.imageLink;
             }
+
+            if (note.labels && note.labels.length > 0) {
+                div.dataset.labels = JSON.stringify(note.labels);
+            }
+
+            let labels = [];
+            if (div.dataset.labels) {
+                try {
+                    labels = JSON.parse(div.dataset.labels);
+                } catch (e) {
+                    console.error("Failed to parse labels:", e);
+                }
+            }
+
+            console.log('All labels: ', labels);
 
             const imageHTML = note.imageLink && note.imageLink.trim() !== ''
                 ? `<div class="note-sheet__image" style="width: 100%; height: auto; overflow: hidden">
@@ -316,119 +343,121 @@ class LabelNote {
         }
     }
 
-    // expandLabelNote(note) {
-    //     const modalEl = document.getElementById('noteModal');
-    //     const modal = new bootstrap.Modal(modalEl);
-    //     const noteId = note.noteId;
-    //
-    //     const titleInput = modalEl.querySelector('.note-label-title-input-autosave');
-    //     const contentInput = modalEl.querySelector('.note-label-content-input-autosave');
-    //     const icon = modalEl.querySelector('.save-status-icon i');
-    //     const iconText = modalEl.querySelector('.save-status-icon p');
-    //
-    //     titleInput.value = note.title || '';
-    //     contentInput.value = note.content || '';
-    //     icon.className = 'fa-solid fa-check-circle text-success';
-    //     iconText.innerHTML = 'Saved';
-    //
-    //     modal.show();
-    //     // Setup auto-save functionality
-    //     this.setupLabelAutoSaveModal(noteId, titleInput, contentInput, icon, iconText);
-    // }
+    expandLabelNote(note) {
+        const modalEl = document.getElementById('noteLabelModal');
+        const modal = new bootstrap.Modal(modalEl);
+        const noteId = note.noteId;
 
-    // setupLabelAutoSaveModal(noteId, titleInput, contentInput, icon, iconText) {
-    //     let timeout = null;
-    //     let isSaving = false;
-    //
-    //     const showSavingIcon = () => {
-    //         icon.className = 'fa-solid fa-spinner fa-spin text-warning';
-    //         iconText.innerHTML = 'Saving...';
-    //         iconText.className = 'text-warning';
-    //     };
-    //
-    //     const showSavedIcon = () => {
-    //         icon.className = 'fa-solid fa-check-circle text-success';
-    //         iconText.innerHTML = 'Saved';
-    //         iconText.className = 'text-success';
-    //     };
-    //
-    //     const showErrorIcon = () => {
-    //         icon.className = 'fa-solid fa-exclamation-circle text-danger';
-    //         iconText.innerHTML = 'Error';
-    //         iconText.className = 'text-danger';
-    //     };
-    //
-    //     const autoSave = () => {
-    //         if (isSaving) return;
-    //         isSaving = true;
-    //         showSavingIcon();
-    //
-    //         fetch('/note/update', {
-    //             method: 'POST',
-    //             headers: { 'Content-Type': 'application/json' },
-    //             body: JSON.stringify({
-    //                 noteId,
-    //                 title: titleInput.value,
-    //                 content: contentInput.value
-    //             })
-    //         })
-    //             .then(res => {
-    //                 if (!res.ok) throw new Error(`HTTP error ${res.status}`);
-    //                 return res.json();
-    //             })
-    //             .then(data => {
-    //                 const { status, noteId, title, content } = data;
-    //                 if (status === true) {
-    //                     showSavedIcon();
-    //                     console.log(data);
-    //                     const noteElement = document.querySelector(`.note-sheet[data-note-id="${noteId}"]`);
-    //                     if (noteElement) {
-    //                         noteElement.querySelector('.note-sheet__title').textContent = title;
-    //                         noteElement.querySelector('.note-sheet__content').innerHTML = content.replace(/\n/g, '<br>');
-    //                         noteElement.dataset.noteTitle = title;
-    //                         noteElement.dataset.noteContent = content;
-    //                     } else {
-    //                         if (!document.querySelector(`.note-sheet[data-note-id="${noteId}"]`)) {
-    //                             const newNote = this.noteSheetModel(noteId, title, content);
-    //                             // document.querySelector('.other-note__load')?.prepend(newNote);
-    //                             console.log(`Prepended note: ${noteId}`);
-    //                         }
-    //                     }
-    //                     const pinNoteGrid = document.querySelector('.pinned-note__load');
-    //                     const otherNoteGrid = document.querySelector('.other-note__load');
-    //                     pinNoteGrid.innerHTML = '';
-    //                     otherNoteGrid.innerHTML = '';
-    //                     this.loadNewPinnedNotes();
-    //                     this.loadNewNotes();
-    //                     // const otherNoteGrid = document.querySelector('.other-note__load');
-    //                     // otherNoteGrid.innerHTML = '';
-    //                     // otherNoteGrid.loadNotes();
-    //                 } else {
-    //                     showErrorIcon();
-    //                     this.showToast('Failed to save note.', 'warning');
-    //                 }
-    //             })
-    //             .catch(() => {
-    //                 showErrorIcon();
-    //                 this.showToast('Failed to save note.', 'warning');
-    //             })
-    //             .finally(() => {
-    //                 isSaving = false;
-    //             });
-    //     };
-    //
-    //     const handleTyping = () => {
-    //         clearTimeout(timeout);
-    //         showSavingIcon();
-    //         timeout = setTimeout(autoSave, 300); // Delay 300ms
-    //     };
-    //
-    //     titleInput.removeEventListener('input', this.handleTyping);
-    //     contentInput.removeEventListener('input', this.handleTyping);
-    //     this.handleTyping = handleTyping;
-    //     titleInput.addEventListener('input', handleTyping);
-    //     contentInput.addEventListener('input', handleTyping);
-    // }
+        const titleInput = modalEl.querySelector('.note-label-title-input-autosave');
+        const contentInput = modalEl.querySelector('.note-label-content-input-autosave');
+        const icon = modalEl.querySelector('.save-status-icon i');
+        const iconText = modalEl.querySelector('.save-status-icon p');
+
+        titleInput.value = note.title || '';
+        contentInput.value = note.content || '';
+        icon.className = 'fa-solid fa-check-circle text-success';
+        iconText.innerHTML = 'Saved';
+
+        modal.show();
+        // Setup auto-save functionality
+        this.setupLabelAutoSaveModal(noteId, titleInput, contentInput, icon, iconText);
+    }
+
+    setupLabelAutoSaveModal(noteId, titleInput, contentInput, icon, iconText) {
+        let timeout = null;
+        let isSaving = false;
+
+        const showSavingIcon = () => {
+            icon.className = 'fa-solid fa-spinner fa-spin text-warning';
+            iconText.innerHTML = 'Saving...';
+            iconText.className = 'text-warning';
+        };
+
+        const showSavedIcon = () => {
+            icon.className = 'fa-solid fa-check-circle text-success';
+            iconText.innerHTML = 'Saved';
+            iconText.className = 'text-success';
+        };
+
+        const showErrorIcon = () => {
+            icon.className = 'fa-solid fa-exclamation-circle text-danger';
+            iconText.innerHTML = 'Error';
+            iconText.className = 'text-danger';
+        };
+
+        const autoSave = () => {
+            if (isSaving) return;
+            isSaving = true;
+            showSavingIcon();
+
+            fetch('/note/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    noteId,
+                    title: titleInput.value,
+                    content: contentInput.value
+                })
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+                    const response = res.json();
+                    console.log(response);
+                    return response;
+                })
+                .then(data => {
+                    const { status, noteId, title, content } = data;
+                    if (status === true) {
+                        showSavedIcon();
+                        console.log(data);
+                        const noteElement = document.querySelector(`.note-sheet-label[data-note-id="${noteId}"]`);
+                        if (noteElement) {
+                            noteElement.querySelector('.note-sheet__title').textContent = title;
+                            noteElement.querySelector('.note-sheet__content').innerHTML = content.replace(/\n/g, '<br>');
+                            noteElement.dataset.noteTitle = title;
+                            noteElement.dataset.noteContent = content;
+                        } else {
+                            if (!document.querySelector(`.note-sheet-label[data-note-id="${noteId}"]`)) {
+                                const newNote = this.noteSheetModel(noteId, title, content);
+                                // document.querySelector('.other-note__load')?.prepend(newNote);
+                                console.log(`Prepended note: ${noteId}`);
+                            }
+                        }
+                        const pinNoteGrid = document.querySelector('.pinned-note__load');
+                        const otherNoteGrid = document.querySelector('.other-note__load');
+                        pinNoteGrid.innerHTML = '';
+                        otherNoteGrid.innerHTML = '';
+                        this.loadNewPinnedNotes();
+                        this.loadNewNotes();
+                        // const otherNoteGrid = document.querySelector('.other-note__load');
+                        // otherNoteGrid.innerHTML = '';
+                        // otherNoteGrid.loadNotes();
+                    } else {
+                        showErrorIcon();
+                        this.showToast('Failed to save note.', 'warning');
+                    }
+                })
+                .catch(() => {
+                    showErrorIcon();
+                    this.showToast('Failed to save note.', 'warning');
+                })
+                .finally(() => {
+                    isSaving = false;
+                });
+        };
+
+        const handleTyping = () => {
+            clearTimeout(timeout);
+            showSavingIcon();
+            timeout = setTimeout(autoSave, 300); // Delay 300ms
+        };
+
+        titleInput.removeEventListener('input', this.handleTyping);
+        contentInput.removeEventListener('input', this.handleTyping);
+        this.handleTyping = handleTyping;
+        titleInput.addEventListener('input', handleTyping);
+        contentInput.addEventListener('input', handleTyping);
+    }
 
     expandDeleteLabelNote(note) {
         const modalEl = document.getElementById('deleteNoteModal');

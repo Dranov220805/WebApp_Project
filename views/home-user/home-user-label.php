@@ -17,22 +17,34 @@
             <div class="label-note">
                 <h6 class="note-layout__title" id="note-layout__title"><?= htmlspecialchars($data['labelName']) ?></h6>
                 <div class="note-grid d-flex justify-content-center">
-                    <div class="label-note__load load-grid" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center">
+                    <div class="pinned-note__load load-grid" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center">
                         <?php if (!empty($data['data'])): ?>
                             <?php foreach ($data['data'] as $note): ?>
-                                <div class="note-sheet-label d-flex flex-column"
+                                <?php
+                                $labelAttr = htmlspecialchars(json_encode($note['labels'] ?? []));
+                                ?>
+                                <div class="note-sheet note-sheet-label d-flex flex-column"
                                      data-note-id="<?= htmlspecialchars($note['noteId']) ?>"
                                      data-note-title="<?= htmlspecialchars($note['title']) ?>"
-                                     data-note-content="<?= htmlspecialchars($note['content']) ?>">
-                                    <div class="note-sheet__image" style="width: 100%; height: auto; overflow: hidden">
-                                        <img src="https://placehold.co/600x400" style="width: 100%; height: auto; display: block">
-                                    </div>
+                                     data-note-content="<?= htmlspecialchars($note['content']) ?>"
+                                    <?php if (!empty($note['imageLink'])): ?>
+                                        data-note-image="<?= htmlspecialchars($note['imageLink']) ?>"
+                                    <?php endif; ?>
+                                     data-note-labels='<?= $labelAttr ?>'>
+
+                                    <?php if (!empty($note['imageLink'])): ?>
+                                        <div class="note-sheet__image" style="width: 100%; height: auto; overflow: visible">
+                                            <img src="<?= htmlspecialchars($note['imageLink']) ?>" style="width: 100%; height: auto; display: block">
+                                        </div>
+                                    <?php endif; ?>
+
                                     <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
                                         <h3 class="note-sheet__title"><?= htmlspecialchars($note['title']) ?></h3>
                                         <div class="note-sheet__content">
                                             <?= nl2br(htmlspecialchars($note['content'])) ?>
                                         </div>
                                     </div>
+
                                     <div class="note-sheet__menu">
                                         <div>
                                             <button title="Add Label"><i class="fa-solid fa-tags"></i></button>
@@ -53,17 +65,19 @@
     </div>
 
     <!-- Modal Structure for show Note Detail-->
-    <div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" data-bs-backdrop="true" aria-hidden="true">
+    <div class="modal fade" id="noteLabelModal" tabindex="-1" aria-labelledby="noteLabelModalLabel" data-bs-backdrop="true" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-scrollable note-modal-display position-fixed top-50 start-50 translate-middle fade show note-detail__modal--dialog" style="height: 60%">
             <div class="modal-content note-detail__modal">
-                <div class="note-sheet__image" style="width: 100%; height: auto; overflow: hidden">
-                    <img src="https://placehold.co/600x400" style="width: 100%; height: auto; display: block">
-                </div>
-                <div class="modal-header">
-                    <input type="text" class="modal-title note-label-title-input-autosave form-control border-0" id="noteModalLabel"/>
-                </div>
-                <div class="modal-body">
-                    <textarea class="note-label-content-input-autosave form-control"></textarea>
+                <div class="modal-content-body" style="height: inherit; overflow-y: auto; display: flex; flex-direction: column">
+                    <div class="note-sheet__image" style="width: 100%; height: auto; overflow: visible">
+                        <!--                        Render Image Link here-->
+                    </div>
+                    <div class="modal-header">
+                        <input type="text" class="modal-title note-label-title-input-autosave form-control border-0" id="noteModalLabel"/>
+                    </div>
+                    <div class="modal-body" style="flex-grow: 1; min-height: 300px; height: fit-content; overflow-y: visible">
+                        <textarea class="note-label-content-input-autosave form-control" style=" overflow-y: visible; height: 100%"></textarea>
+                    </div>
                 </div>
                 <div class="modal-footer d-flex justify-content-start align-items-center">
                     <div class="save-status-icon d-flex flex-row flex-grow-1">

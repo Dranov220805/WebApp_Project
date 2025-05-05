@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                     $labelName = urldecode($_GET['label-name']);
                     $noteMiddleWare->getLabelNote($labelName);
                 }
+                break;
         }
     } else if (isset($_GET['param_1']) && isset($_GET['param_2'])) {
         switch ($_GET['param_1']) {
@@ -50,7 +51,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 // Handle POST requests
 else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_GET['param_1']) && isset($_GET['param_2']) && isset($_GET['param3'])) {
-
+        switch ($_GET['param_1']) {
+//            case 'label':
+//                if ($_GET['param_2'] == 'note') {
+//                    if ($_GET['param_3'] == 'create') {
+//                        $noteMiddleWare->createNoteLabel_POST();
+//                    } else if ($_GET['param_3'] == 'delete') {
+//                        $noteMiddleWare->deleteNoteLabel_POST();
+//                    }
+//                }
+//                break;
+        }
     } else if (isset($_GET['param_1']) && isset($_GET['param_2'])) {
         switch ($_GET['param_1']) {
             case 'note':
@@ -66,6 +77,10 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $noteMiddleWare->unpinNote_POST();
                 } else if ($_GET['param_2'] == 'hard-delete') {
                     $noteMiddleWare->hardDeleteNote_POST();
+                } else if ($_GET['param_2'] == 'upload-image') {
+                    $noteMiddleWare->createImageNote_POST();
+                } else if ($_GET['param_2'] == 'delete-image') {
+                    $noteMiddleWare->deleteImageNote_POST();
                 }
                 break;
 
@@ -76,6 +91,10 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $noteMiddleWare->updateLabel_POST();
                 } else if ($_GET['param_2'] == 'delete') {
                     $noteMiddleWare->deleteLabel_POST();
+                } else if ($_GET['param_2'] == 'note-create') {
+                    $noteMiddleWare->createNoteLabel_POST();
+                } else if ($_GET['param_2'] == 'note-delete') {
+                    $noteMiddleWare->deleteNoteLabel_POST();
                 }
                 break;
 
