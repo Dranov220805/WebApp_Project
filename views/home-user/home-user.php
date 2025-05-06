@@ -21,12 +21,7 @@
                     <textarea class="note-post__input" placeholder="Take a note..." rows="1"></textarea>
                     <div style="display: flex; justify-content: space-between; margin-top: 12px; height: 40px">
                         <div class="note-post__menu">
-                            <button style="background: none; border: none; cursor: pointer; padding: 8px;">
-                                <i class="fa-solid fa-images"></i>
-                            </button>
-                            <button style="background: none; border: none; cursor: pointer; padding: 8px;">
-                                <i class="fa-solid fa-images"></i>
-                            </button>
+
                         </div>
                         <button class="btn create-note-btn">
                             Create

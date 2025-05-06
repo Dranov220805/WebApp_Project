@@ -72,6 +72,9 @@ class HomeUser {
                 noteColor
             };
 
+            const overlay = document.getElementById('overlay-loading');
+            if (overlay) overlay.classList.remove('d-none');
+
             try {
                 const response = await fetch('/home/preferences', {
                     method: 'PUT',
@@ -92,6 +95,8 @@ class HomeUser {
             } catch (err) {
                 console.error('Error saving preferences:', err);
                 this.showToast('Something went wrong while saving preferences', 'danger');
+            } finally {
+                if (overlay) overlay.classList.add('d-none');
             }
         });
     }
@@ -223,10 +228,6 @@ class HomeUser {
         this.sidebarVisible = !this.sidebarVisible;
     }
 
-    handleDeviceLayout() {
-
-    }
-
     toggleLayout(event) {
         const icon = event.currentTarget.querySelector('i');
         if (!icon) return;
@@ -276,7 +277,7 @@ class HomeUser {
 
         this.searchTimeout = setTimeout(() => {
             this.performSearch(query);
-        }, 200); // Delay of 200ms
+        }, 300); // Delay of 300ms
     }
 
     performSearch(query) {
