@@ -21,12 +21,18 @@ class AuthController extends BaseController {
             $result = $authService->login($data['email'], $data['password']);
 
             if ($result['status'] === true) {
+                // Set JWT as HTTP-only cookie
+                setcookie('jwt_token', $result['token'], [
+                    'expires' => time() + 3600, // 1 hour
+                    'path' => '/',
+                    'secure' => true,
+                    'httponly' => true,
+                    'samesite' => 'Lax'
+                ]);
+
                 echo json_encode([
                     'status' => true,
-                    'roleId' => $result['roleId'],
-                    'userName' => $result['userName'],
-                    'email' => $result['email'],
-                    'last_activity' => $result['last_activity'],
+                    'token' => $result['token'],
                     'message' => $result['message']
                 ]);
             } else {
@@ -138,21 +144,24 @@ class AuthController extends BaseController {
         }
     }
 
-    public function logout() {
-        $_SESSION = []; // Clear session variables
-
-        session_destroy(); // Fully destroy the session
+    public function logout()
+    {
+        // Clear the JWT cookie
+        setcookie('jwt_token', '', [
+            'expires' => time() - 3600,
+            'path' => '/',
+            'secure' => false,
+            'httponly' => true,
+            'samesite' => 'Lax'
+        ]);
 
         // Perform the redirect
-        header('Location: /home'); // Make sure no output is sent before this
+        header('Location: /home');
         exit();
     }
 
     public function refreshToken() {
         $this->authService->refreshSession();
-    }
-
-    public function register() {
     }
 }
 

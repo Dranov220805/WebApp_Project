@@ -31,12 +31,6 @@ class Auth {
         const hideTimeout = setTimeout(() => {
             toast.classList.add("d-none");
         }, duration);
-
-        // Allow manual close
-        // closeBtn.onclick = () => {
-        //     toast.classList.add("d-none");
-        //     clearTimeout(hideTimeout);
-        // };
     }
 
     // Handle login logic
@@ -58,17 +52,17 @@ class Auth {
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);
-                    const { roleId, userName, email, message, status } = data;
+                    const { token, message, status } = data;
 
                     $('#password-input').val('');
                     if (status === true) {
+                        // Store the JWT in localStorage
+                        localStorage.setItem('accessToken', token);
+
                         this.showLoginToast(message, 'success');
                         setTimeout(() => {
-                            if (String(roleId) === '1') {
-                                window.location.href = '/home';
-                            } else if (String(roleId) === '2') {
-                                window.location.href = '/admin-dashboard';
-                            }
+                            // Navigate to home page - token will be sent via cookie
+                            window.location.href = '/home';
                         }, 100);
                     } else {
                         this.showLoginToast(message, 'danger');
@@ -82,6 +76,62 @@ class Auth {
                     if (overlay) overlay.classList.add('d-none');
                 });
         });
+    }
+
+    // Add this new method to attach token to fetch requests
+    fetchWithAuth(url, options = {}) {
+        // Default options
+        const defaultOptions = {
+            headers: {
+                'Content-Type': 'application/json',
+                ...this.getAuthHeaders()
+            }
+        };
+
+        // Merge options
+        const mergedOptions = {
+            ...defaultOptions,
+            ...options,
+            headers: {
+                ...defaultOptions.headers,
+                ...(options.headers || {})
+            }
+        };
+
+        return fetch(url, mergedOptions);
+    }
+
+    // Add this method to make AJAX page loads
+    loadPage(url) {
+        this.fetchWithAuth(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(html => {
+                document.querySelector('#content').innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error loading page:', error);
+                if (error.message.includes('401')) {
+                    // If unauthorized, redirect to login
+                    window.location.href = '/log/login';
+                }
+            });
+    }
+
+    // Logout logic
+    logout() {
+        localStorage.removeItem('token'); // Remove the JWT from localStorage
+        window.location.href = '/log/login';
+    }
+
+    // Get Authorization headers with JWT
+    getAuthHeaders() {
+        const token = localStorage.getItem('token');
+        return token ? { 'Authorization': `Bearer ${token}` } : {};
     }
 
     rememberMe() {
@@ -183,11 +233,14 @@ class Auth {
                 return;
             }
 
+            const overlay = document.getElementById('overlay-loading');
+            if (overlay) overlay.classList.remove('d-none');
+
             fetch('/log/change-password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    currentPassword, // optional depending on your backend
+                    currentPassword,
                     newPassword
                 })
             })
@@ -195,8 +248,8 @@ class Auth {
                 .then(data => {
                     if (data.success) {
                         this.showLoginToast('Password changed successfully! Please login again', 'success');
-                        window.location.href="/log/logout";
-                        $('#changePasswordModal').modal('hide'); // if using Bootstrap modal
+                        window.location.href = "/log/logout";
+                        $('#changePasswordModal').modal('hide');
                     } else {
                         this.showLoginToast(data.message || 'Failed to change password.', 'danger');
                     }
@@ -204,6 +257,9 @@ class Auth {
                 .catch(err => {
                     console.error(err);
                     this.showLoginToast('Something went wrong.', 'danger');
+                })
+                .finally(() => {
+                    if (overlay) overlay.classList.add('d-none');
                 });
         });
     }
@@ -212,11 +268,15 @@ class Auth {
         $('#reset-password-button').click(() => {
             const email = $('#reset-email-input').val();
 
+            const overlay = document.getElementById('overlay-loading');
+            if (overlay) overlay.classList.remove('d-none');
+
             fetch('/auth/forgot', {
                 method: 'POST',
-                body: JSON.stringify({
-                    email
-                })
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email })
             })
                 .then(response => response.json())
                 .then(data => {
@@ -224,29 +284,62 @@ class Auth {
                     const { status, message } = data;
 
                     if (status === true) {
-
-                        // Show success toast message
                         this.showLoginToast(message, 'success');
-
-                        // setTimeout(() => {
-                        //     // Redirect user based on role
-                        //     if (String(roleId) === '1') {
-                        //         window.location.href = '/home';
-                        //     } else if (String(roleId) === '2') {
-                        //         window.location.href = '/admin-dashboard';
-                        //     }
-                        // }, 200);
                     } else {
-                        // Show error toast message
                         this.showLoginToast(message, 'danger');
                     }
                 })
                 .catch(error => {
                     console.error('Login error:', error);
-                    // Show error toast for network issues
                     this.showLoginToast('Something went wrong. Please try again later.', 'danger');
+                })
+                .finally(() => {
+                    if (overlay) overlay.classList.add('d-none');
                 });
         });
+    }
+
+    // Refresh token logic (optional)
+    refreshToken() {
+        return fetch('/auth/refresh-token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...this.getAuthHeaders()
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === true) {
+                    localStorage.setItem('token', data.token); // Update the token
+                    return true;
+                } else {
+                    console.error('Failed to refresh token:', data.message);
+                    return false;
+                }
+            })
+            .catch(err => {
+                console.error('Refresh token error:', err);
+                return false;
+            });
+    }
+
+    // Example API call using JWT
+    fetchProtectedData() {
+        fetch('/protected-endpoint', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                ...this.getAuthHeaders()
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log('Protected data:', data);
+            })
+            .catch(err => {
+                console.error('Error fetching protected data:', err);
+            });
     }
 
 }

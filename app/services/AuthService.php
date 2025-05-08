@@ -1,7 +1,11 @@
 <?php
 
+use Firebase\JWT\JWT;
+
 class AuthService
 {
+    private string $jwtSecret = 'your_secret_key';
+    private int $jwtExpiry = 3600; // Token expiry in seconds (e.g., 1 hour)
     private AccountRepository $accountRepository;
     private AccountService $accountService;
 
@@ -18,12 +22,11 @@ class AuthService
         if (!$user || !$this->accountService->checkLogin($email, $password)) {
             return [
                 'status' => false,
-                'message' => 'Login failed'
+                'message' => 'Wrong username or password'
             ];
         }
 
         $accountId = $user->getAccountId();
-
         $userPreference = $this->accountRepository->getPreferencesByAccountId($accountId);
 
         if (!$userPreference) {
@@ -33,26 +36,34 @@ class AuthService
             ];
         }
 
-        // Store all required user data in session
-        $_SESSION['accountId'] = $user->getAccountId();
-        $_SESSION['userName'] = $user->getUsername();
-        $_SESSION['email'] = $user->getEmail();
-        $_SESSION['profilePicture'] = $user->getProfilePicture();
-        $_SESSION['isDarkTheme'] = $userPreference->isDarkTheme();
-        $_SESSION['roleId'] = $user->getRoleId();
-        $_SESSION['last_activity'] = time(); // Track activity for inactivity logout
-        $_SESSION['isVerified'] = $user->getIsVerified();
+        // Generate JWT
+        $payload = [
+            'iss' => 'your_issuer', // Issuer
+            'aud' => 'your_audience', // Audience
+            'iat' => time(), // Issued at
+            'exp' => time() + $this->jwtExpiry, // Expiry
+            'data' => [
+                'accountId' => $user->getAccountId(),
+                'userName' => $user->getUsername(),
+                'email' => $user->getEmail(),
+                'profilePicture' => $user->getProfilePicture(),
+                'refreshToken' => $user->getRefreshToken(),
+                'expiredTime' => $user->getExpiredTime(),
+                'roleId' => $user->getRoleId(),
+                'isDarkTheme' => $userPreference->isDarkTheme(),
+                'isVerified' => $user->getIsVerified()
+            ]
+        ];
+
+        $jwt = JWT::encode($payload, $this->jwtSecret, 'HS256');
 
         return [
             'status' => true,
-            'roleId' => $user->getRoleId(),
-            'userName' => $user->getUsername(),
-            'email' => $user->getEmail(),
-            'last_activity' => $_SESSION['last_activity'],
+            'token' => $jwt,
             'message' => 'Login successfully'
         ];
     }
-
+    
     // Called to renew session if user is active
     public function refreshSession()
     {

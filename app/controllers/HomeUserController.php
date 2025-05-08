@@ -14,35 +14,44 @@ class HomeUserController extends BaseController{
     }
     public function index()
     {
-        $accountId = $_SESSION['accountId'] ?? null;
+        $user = $GLOBALS['user'];
+        $accountId = $user->accountId;
         $intPage = isset($_GET['page']) ? $_GET['page'] : 1;
         $perPage = isset($_GET['limit']) ? $_GET['limit'] : 10;
 
-        // Basic validation
-        if (!$accountId) {
-            http_response_code(400);
-            echo json_encode(['status' => false, 'message' => 'Missing accountId']);
-            return;
+        if (!isset($GLOBALS['user']) || empty($GLOBALS['user']->accountId)) {
+            http_response_code(401);
+            echo json_encode([
+                'status' => false,
+                'message' => 'Unauthorized'
+            ]);
+            exit();
         }
 
         $offset = ($intPage - 1) * $perPage;
 
-        // Fetch pinned notes
-        $pinnedNotes = $this->noteService->getPinnedNotesByAccountId($accountId);
+        try {
+            $pinnedNotes = $this->noteService->getPinnedNotesByAccountId($accountId);
+            $otherNotes = $this->noteService->getNotesByAccountId($accountId);
 
-        // Fetch other notes
-        $otherNotes = $this->noteService->getNotesByAccountId($accountId);
-
-        // Pass data to the view
-        $this->Views('home', [
-            'status' => true,
-            'pinnedNotes' => $pinnedNotes,
-            'otherNotes' => $otherNotes,
-            'pagination' => [
-                'currentPage' => (int)$intPage,
-                'perPage' => (int)$perPage,
-            ]
-        ]);
+            // Pass data to the view
+            $this->Views('home', [
+                'status' => true,
+                'pinnedNotes' => $pinnedNotes,
+                'otherNotes' => $otherNotes,
+                'pagination' => [
+                    'currentPage' => (int)$intPage,
+                    'perPage' => (int)$perPage,
+                ]
+            ]);
+        } catch (Exception $e) {
+            error_log("Error fetching notes: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode([
+                'status' => false,
+                'message' => 'Failed to load notes'
+            ]);
+        }
     }
     public function redirectToIndex() {
         $content = 'home';
@@ -63,12 +72,15 @@ class HomeUserController extends BaseController{
         include "./views/layout/index.php";
     }
     public function getUserLabel() {
-        $labelNotes = $this->homeUserService->getLabelByAccountId($_SESSION['accountId']);
+        $user = $GLOBALS['user'];
+        $accountId = $user->accountId;
+        $labelNotes = $this->homeUserService->getLabelByAccountId($accountId);
 
         return $labelNotes;
     }
     public function homeLabel_POST($labelName) {
-        $accountId = $_SESSION['accountId'] ?? null;
+        $user = $GLOBALS['user'];
+        $accountId = $user->accountId;
 
         // Basic validation
         if (!$accountId) {
@@ -93,8 +105,8 @@ class HomeUserController extends BaseController{
         include "./views/layout/index.php";
     }
     public function homeTrash() {
-
-        $accountId = $_SESSION['accountId'] ?? null;
+        $user = $GLOBALS['user'];
+        $accountId = $user->accountId;
 
         // Basic validation
         if (!$accountId) {
@@ -113,9 +125,6 @@ class HomeUserController extends BaseController{
             'message' => 'Get trashed notes for this account successfully'
         ]);
 
-//        $content = 'home-user-trash';
-//        $footer = 'home';
-//        include "./views/layout/index.php";
     }
 
     public function checkVerification() {
@@ -134,7 +143,6 @@ class HomeUserController extends BaseController{
                 'message' => $result['message']
             ];
         }
-
     }
 
     public function uploadAvatar() {
@@ -142,21 +150,32 @@ class HomeUserController extends BaseController{
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['avatar'])) {
             $fileTmpPath = $_FILES['avatar']['tmp_name'];
+            $accountId = $GLOBALS['user']->accountId ?? null;
+            $oldImage = $GLOBALS['user']->profilePicture ?? null;
 
-            $oldImage = $_SESSION['profilePicture'];
-
-            deleteImageByImageUrl($oldImage);
+            if ($oldImage) {
+                deleteImageByImageUrl($oldImage);
+            }
 
             $uploadResponse = uploadAvatarToCloudinary($fileTmpPath);
 
             if ($uploadResponse['status'] === true) {
-                $result = $this->accountService->updateProfilePictureByAccountId($_SESSION['accountId'], $uploadResponse['url']);
+                $result = $this->accountService->updateProfilePictureByAccountId($accountId, $uploadResponse['url']);
                 if ($result['status'] === true) {
-                    $_SESSION['profilePicture'] = $uploadResponse['url'];
+
+                    setcookie('jwt_token', $result['token'], [
+                        'expires' => time() + 3600, // 1 hour (match your JWT expiry)
+                        'path' => '/',
+                        'secure' => true, // Set to true if using HTTPS
+                        'httponly' => true,
+                        'samesite' => 'Lax'
+                    ]);
+
                     echo json_encode([
                         'status' => true,
                         'picture' => $uploadResponse['url'],
-                        'message' => $result['message']]);
+                        'message' => $result['message']
+                    ]);
                 } else {
                     echo json_encode([
                         'status' => false,
@@ -200,7 +219,8 @@ class HomeUserController extends BaseController{
 
     public function updatePreference() {
         header('Content-Type: application/json');
-        $accountId = $_SESSION['accountId'] ?? null;
+        $user = $GLOBALS['user'];
+        $accountId = $user->accountId;
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
 
@@ -209,9 +229,18 @@ class HomeUserController extends BaseController{
 
             if ($result['status'] === true) {
                 http_response_code(200);
+
+                setcookie('jwt_token', $result['token'], [
+                    'expires' => time() + 3600, // 1 hour (match your JWT expiry)
+                    'path' => '/',
+                    'secure' => true, // Set to true if using HTTPS
+                    'httponly' => true,
+                    'samesite' => 'Lax'
+                ]);
+
                 echo json_encode([
                     'status' => true,
-                    'data' => $result['data'],
+                    'data' => $result['token'],
                     'message' => $result['message']
                 ]);
             } else {
@@ -231,5 +260,3 @@ class HomeUserController extends BaseController{
     }
 
 }
-
-?>

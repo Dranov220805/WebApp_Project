@@ -52,6 +52,7 @@ class Reg {
             const overlay = document.getElementById('overlay-loading');
             if (overlay) overlay.classList.remove('d-none');
 
+            // Validation checks
             if (!username || !password || !email || !confirmPassword) {
                 this.showRegisterToast('Please fill in all fields.', 'warning');
                 if (overlay) overlay.classList.add('d-none');
@@ -87,6 +88,7 @@ class Reg {
                 return;
             }
 
+            // Send registration request
             fetch('/reg/register', {
                 method: 'POST',
                 headers: {
@@ -99,41 +101,40 @@ class Reg {
                     const { status, message } = data;
 
                     if (status === true) {
+                        this.showRegisterToast('Registration successful! Logging you in...', 'success');
+
+                        // Auto-login - will set the JWT cookie on the server side
+                        return fetch('/log/login', {
+                            method: 'POST',
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({ email, password })
+                        })
+                            .then(response => response.json())
+                            .then(loginData => {
+                                if (loginData.status === true) {
+                                    // Store token in localStorage for client-side use if needed
+                                    localStorage.setItem('token', loginData.token);
+
+                                    this.showRegisterToast(loginData.message, 'success');
+
+                                    // Redirect after a short delay - cookie is automatically sent
+                                    setTimeout(() => {
+                                        window.location.href = '/home';
+                                    }, 1000);
+                                } else {
+                                    throw new Error(loginData.message || 'Login after registration failed');
+                                }
+                            });
+                    } else {
                         if (message === "Email already exists") {
                             this.showRegisterToast('Email already exists!', 'warning');
                             $('#email-input').val('');
                             $('#username-input').val('');
                         } else {
-                            this.showRegisterToast('Registration successful! Logging you in...', 'success');
-
-                            // Auto-login
-                            return fetch('/log/login', {
-                                method: 'POST',
-                                headers: {
-                                    "Content-Type": "application/json"
-                                },
-                                body: JSON.stringify({ email, password })
-                            })
-                                .then(response => response.json())
-                                .then(data => {
-                                    const { accessToken, roleId, userName, message, status } = data;
-
-                                    if (status === true) {
-                                        sessionStorage.setItem('accessToken', accessToken);
-                                        setTimeout(() => {
-                                            if (String(roleId) === '1') {
-                                                window.location.href = '/home';
-                                            } else if (String(roleId) === '2') {
-                                                window.location.href = '/admin-dashboard';
-                                            }
-                                        }, 200);
-                                    } else {
-                                        this.showLoginToast(message, 'danger');
-                                    }
-                                });
+                            throw new Error(message || 'Registration failed');
                         }
-                    } else {
-                        throw new Error(message || 'Registration failed');
                     }
                 })
                 .catch(error => {

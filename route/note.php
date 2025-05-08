@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                         $noteMiddleWare->getPinnedNotes();
                     }
                 } else if ($_GET['param_2'] == 'label') {
-                    $labelName = urldecode($_GET['label-name']);
+                    $labelName = urldecode($_GET['param_3']);
                     $noteMiddleWare->getLabelNote($labelName);
                 }
                 break;

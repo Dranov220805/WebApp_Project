@@ -145,7 +145,7 @@ class TrashNotes {
                 ${imageHTML}
                 <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
                     <h3 class="note-sheet__title">${note.title}</h3>
-                    <div class="note-sheet__content">
+                    <div class="note-sheet__content" style="overflow-x: hidden">
                         ${note.content.replace(/\n/g, '<br>')}
                     </div>
                 </div>

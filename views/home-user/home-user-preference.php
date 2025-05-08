@@ -14,9 +14,8 @@
                 <div class="section-title">Avatar</div>
                 <div class="setting-row setting-row-avatar">
                     <div class="setting-label setting-avatar" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center">
-<!--                        --><?php //if ($_SESSION['isVerified'] == 1) {echo '<i style="width: 80px; height: 80px" class="user__item--icon fa-regular fa-circle-user"></i>';} else {echo 'no avatar';} ?>
-                        <?php if (!empty($_SESSION['profilePicture'])): ?>
-                            <img id="preference--image__icon" src="<?= $_SESSION['profilePicture'] ?>" style="width: 70px; height: 70px;">
+                        <?php if (!empty($GLOBALS['user']->profilePicture)): ?>
+                            <img id="preference--image__icon" src="<?= $GLOBALS['user']->profilePicture ?>" style="width: 70px; height: 70px;">
                         <?php else: ?>
                             <i class="fa-regular fa-circle-user"></i>
                         <?php endif; ?>
@@ -104,18 +103,18 @@
                                     <div class="input-group">
                                         <input type="password" class="form-control login-section-2__form--input-box" id="new-password-input" placeholder="Password">
                                         <span class="input-group-text bg-white">
-                                        <i id="toggle-change-password" class="fa-regular fa-eye-slash" onclick="toggleChangePassword()" style="cursor: pointer;"></i>
-                                    </span>
-                                            </div>
-                                        </div>
+                                            <i id="toggle-change-password" class="fa-regular fa-eye-slash" onclick="toggleChangePassword()" style="cursor: pointer;"></i>
+                                        </span>
+                                    </div>
+                                </div>
 
-                                        <div class="mb-3">
-                                            <label for="confirmPassword" class="form-label">Confirm Password:</label>
-                                            <div class="input-group">
-                                                <input type="password" class="form-control login-section-2__form--input-box" id="confirm-new-password-input" placeholder="Confirm Password">
-                                                <span class="input-group-text bg-white">
-                                        <i id="toggle-change-password-confirm" class="fa-regular fa-eye-slash" onclick="toggleConfirmChangePassword()" style="cursor: pointer;"></i>
-                                    </span>
+                                <div class="mb-3">
+                                    <label for="confirmPassword" class="form-label">Confirm Password:</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control login-section-2__form--input-box" id="confirm-new-password-input" placeholder="Confirm Password">
+                                        <span class="input-group-text bg-white">
+                                            <i id="toggle-change-password-confirm" class="fa-regular fa-eye-slash" onclick="toggleConfirmChangePassword()" style="cursor: pointer;"></i>
+                                        </span>
                                     </div>
                                 </div>
                                 <button id="post-change-password-btn" class="btn btn-primary w-100">Change Password</button>
@@ -134,7 +133,7 @@
     <!-- JavaScript and Css for functionality -->
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
 
             if (window.changePassword) {
                 changePassword();
@@ -143,7 +142,7 @@
             // Existing color option logic
             const colorOptions = document.querySelectorAll('.color-option');
             colorOptions.forEach(option => {
-                option.addEventListener('click', function () {
+                option.addEventListener('click', function() {
                     colorOptions.forEach(opt => opt.classList.remove('active'));
                     this.classList.add('active');
                 });
@@ -162,7 +161,7 @@
                 themeSelector.value = 'light';
             }
 
-            themeSelector.addEventListener('change', function () {
+            themeSelector.addEventListener('change', function() {
                 const selectedTheme = themeSelector.value;
 
                 if (selectedTheme === 'dark') {
@@ -192,7 +191,7 @@
             margin: 50px auto;
             background: white;
             border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             padding: 30px;
         }
 

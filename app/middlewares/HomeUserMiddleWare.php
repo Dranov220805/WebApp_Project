@@ -3,17 +3,21 @@
 class HomeUserMiddleWare {
 
     private HomeUserController $homeUserController;
+    private AuthMiddleware $authMiddleware;
 
     public function __construct() {
         $this->homeUserController = new HomeUserController();
+        $this->authMiddleware = new AuthMiddleware();
     }
-    public function index() {
-        if (!isset($_SESSION['roleId'])) {
+    public function index()
+    {
+        $checkToken = $this->authMiddleware->checkSession();
+
+        if ($checkToken['status'] === false) {
             header('location:/log/login');
             exit();
-        } else {
-            $this->homeUserController->index();
         }
+        $this->homeUserController->index();
     }
     public function redirectToIndex() {
         header('location:/home');
@@ -23,39 +27,49 @@ class HomeUserMiddleWare {
         $this->homeUserController->showError();
     }
     public function homeReference() {
-        if (!isset($_SESSION['roleId'])) {
+        $checkToken = $this->authMiddleware->checkSession();
+
+        if ($checkToken['status'] === false) {
             header('location:/log/login');
-        } else {
-            $this->homeUserController->homeReference();
-        }
+            exit();
+        } 
+        $this->homeUserController->homeReference();
     }
     public function homeLabel() {
-        if (!isset($_SESSION['roleId'])) {
+        $checkToken = $this->authMiddleware->checkSession();
+
+        if ($checkToken['status'] === false) {
             header('location:/log/login');
-        } else {
-            $this->homeUserController->homeLabel();
+            exit();
         }
+        $this->homeUserController->homeLabel();
     }
     public function homeLabel_POST($labelName) {
-        if (!isset($_SESSION['roleId'])) {
+        $checkToken = $this->authMiddleware->checkSession();
+
+        if ($checkToken['status'] === false) {
             header('location:/log/login');
-        } else {
-            $this->homeUserController->homeLabel_POST($labelName);
+            exit();
         }
+        $this->homeUserController->homeLabel_POST($labelName);
     }
     public function homeArchive() {
-        if (!isset($_SESSION['roleId'])) {
+        $checkToken = $this->authMiddleware->checkSession();
+
+        if ($checkToken['status'] === false) {
             header('location:/log/login');
-        } else {
-            $this->homeUserController->homeArchive();
+            exit();
         }
+        $this->homeUserController->homeArchive();
     }
     public function homeTrash() {
-        if (!isset($_SESSION['roleId'])) {
+        $checkToken = $this->authMiddleware->checkSession();
+
+        if ($checkToken['status'] === false) {
             header('location:/log/login');
-        } else {
-            $this->homeUserController->homeTrash();
+            exit();
         }
+        $this->homeUserController->homeTrash();
     }
     public function checkVerification() {
         $result = $this->homeUserController->checkVerification();
@@ -66,25 +80,31 @@ class HomeUserMiddleWare {
         }
     }
     public function userPreference() {
-        if (!isset($_SESSION['roleId'])) {
+        $checkToken = $this->authMiddleware->checkSession();
+
+        if ($checkToken['status'] === false) {
             header('location:/log/login');
-        } else {
-            $this->homeUserController->getPreferencesByAccountId();
+            exit();
         }
+        $this->homeUserController->getPreferencesByAccountId();
     }
     public function uploadAvatar() {
-        if (!isset($_SESSION['roleId'])) {
+        $checkToken = $this->authMiddleware->checkSession();
+
+        if ($checkToken['status'] === false) {
             header('location:/log/login');
-        } else {
-            $this->homeUserController->uploadAvatar();
+            exit();
         }
+        $this->homeUserController->uploadAvatar();
     }
 
     public function updatePreference() {
-        if (!isset($_SESSION['roleId'])) {
+        $checkToken = $this->authMiddleware->checkSession();
+
+        if ($checkToken['status'] === false) {
             header('location:/log/login');
-        } else {
-            $this->homeUserController->updatePreference();
+            exit();
         }
+        $this->homeUserController->updatePreference();
     }
 }

@@ -41,12 +41,9 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
         switch ($_GET['param_1']){
             case 'home':
                 $homeUserMiddleWare->index();
-//                $result = $homeUserMiddleWare->checkVerification();
-//                $_SESSION['isVerified'] = $result;
                 break;
             case '':
                 $homeUserMiddleWare->redirectToIndex();
-//                $homeUserMiddleWare->checkVerification();
                 break;
         }
 

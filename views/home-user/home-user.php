@@ -68,7 +68,7 @@
             <div class="modal-content note-detail__modal" style="overflow: auto">
                 <div class="modal-content-body" style="height: inherit; overflow-y: auto; display: flex; flex-direction: column">
                     <div class="note-sheet__image" style="width: 100%; height: auto; overflow: visible">
-<!--                        Render Image Link here-->
+                        <!--                        Render Image Link here-->
                     </div>
                     <div class="modal-header">
                         <input type="text" class="modal-title note-title-input-autosave form-control border-0" id="noteModalLabel"/>

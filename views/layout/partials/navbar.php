@@ -37,12 +37,13 @@
             </a>
 
             <button data-bs-toggle="modal" class="info-modal" data-bs-target="#infoModal" data-bs-backdrop="false" data-bs-scroll="true" style="display: flex; justify-content: center; align-items: center; height: 40px">
-<!--                <i class="navbar__item--icon fa-regular fa-circle-user"></i>-->
-                <?php if (!empty($_SESSION['profilePicture'])): ?>
-                    <img id="navbar--image__icon" src="<?= $_SESSION['profilePicture'] ?>" style="width: 30px; border-radius: 50px">
+                <!--                <i class="navbar__item--icon fa-regular fa-circle-user"></i>-->
+                <?php if (!empty($GLOBALS['user']->profilePicture)): ?>
+                    <img id="navbar--image__icon" src="<?= $GLOBALS['user']->profilePicture ?>" style="width: 30px; border-radius: 50px">
                 <?php else: ?>
                     <i class="fa-regular fa-circle-user" style="font-size: 25px"></i>
                 <?php endif; ?>
+
             </button>
         </div>
     </div>
@@ -54,27 +55,27 @@
         <div class="modal-content" style="width: 100%">
 
             <div class="modal-header">
-                <h4 class="modal-title" style="flex-grow: 1">Hello, <?=$_SESSION['userName']?></h4>
+                <h4 class="modal-title" style="flex-grow: 1">Hello, <?= $GLOBALS['user']->userName ?></h4>
                 <span style="display: flex; justify-content: center; align-items: center; width: 40px; height: 40px">
-                    <?php if (!empty($_SESSION['profilePicture'])): ?>
-                        <img id="modal--image__icon" src="<?= $_SESSION['profilePicture'] ?>" style="width: 30px; border-radius: 50px">
+                    <?php if (!empty($GLOBALS['user']->profilePicture)): ?>
+                        <img id="modal--image__icon" src="<?= $GLOBALS['user']->profilePicture ?>" style="width: 30px; border-radius: 50px">
                     <?php else: ?>
                         <i class="fa-regular fa-circle-user" style="font-size: 25px"></i>
                     <?php endif; ?>
                 </span>
-<!--                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>-->
+                <!--                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>-->
                 <i class="fa-solid fa-xmark close-info-modal" data-bs-dismiss="modal" style="width: 40px; height: 40px; margin-left: 10px"></i>
             </div>
 
             <div class="modal-body">
-                <strong>Username: </strong> <?=$_SESSION['userName']?>
+                <strong>Username: </strong> <?= $GLOBALS['user']->userName ?>
                 <br>
-                <strong>Email: </strong> <?=$_SESSION['email']?>
+                <strong>Email: </strong> <?= $GLOBALS['user']->email ?>
                 <br>
                 <strong>Verify status: </strong>
-                <?php if ($_SESSION['isVerified'] == 1) {
+                <?php if ($GLOBALS['user']->isVerified == true) {
                     echo 'Verified';
-                } else if ($_SESSION['isVerified'] == 0) {
+                } else if ($GLOBALS['user']->isVerified == false) {
                     echo 'Not Verified';
                 } else {
                     echo 'Unknown';

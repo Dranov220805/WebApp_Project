@@ -73,7 +73,7 @@ class HomeUser {
             };
 
             const overlay = document.getElementById('overlay-loading');
-            if (overlay) overlay.classList.remove('d-none');
+            if (overlay) overlay.classList.remove('d-none'); // Show loading overlay
 
             try {
                 const response = await fetch('/home/preferences', {
@@ -86,9 +86,13 @@ class HomeUser {
 
                 const result = await response.json();
                 console.log(result);
+
+                localStorage.removeItem(accessToken);
+                localStorage.setItem('accessToken', token);
+
                 if (result.status === true) {
                     this.showToast('Preferences saved successfully', 'success');
-                    // this.applyPreferences(result.data);
+                    // Optionally apply changes: this.applyPreferences(result.data);
                 } else {
                     this.showToast('Failed to save preferences', 'danger');
                 }
@@ -96,7 +100,7 @@ class HomeUser {
                 console.error('Error saving preferences:', err);
                 this.showToast('Something went wrong while saving preferences', 'danger');
             } finally {
-                if (overlay) overlay.classList.add('d-none');
+                if (overlay) overlay.classList.add('d-none'); // Hide overlay
             }
         });
     }
@@ -133,6 +137,11 @@ class HomeUser {
                 console.log(result);
 
                 if (result.status === true) {
+                    const {token} = result;
+
+                    localStorage.removeItem(accessToken);
+                    localStorage.setItem('accessToken', token);
+
                     const picture = result.picture;
                     this.showToast('Avatar uploaded successfully!', 'success');
 
@@ -168,7 +177,7 @@ class HomeUser {
     }
 
     checkVerification() {
-        fetch('auth/verification', {
+        fetch('/auth/verification', {
             method: 'GET'
         })
             .then(res => res.json())

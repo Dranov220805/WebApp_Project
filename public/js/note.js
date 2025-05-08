@@ -169,7 +169,9 @@ class Notes {
 
         fetch(`/note/list?page=${this.currentPage}&limit=${this.limit}`, {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
         })
             .then(res => res.json())
             .then(data => {
@@ -235,7 +237,7 @@ class Notes {
             ${imageHTML}
             <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
                 <h3 class="note-sheet__title">${note.title}</h3>
-                <div class="note-sheet__content">
+                <div class="note-sheet__content" style="overflow-x: hidden">
                     ${note.content.replace(/\n/g, '<br>')}
                 </div>
             </div>
@@ -262,7 +264,7 @@ class Notes {
         fetch(`/note/pinned/list`, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
             }
         })
             .then(res => res.json())
@@ -325,7 +327,7 @@ class Notes {
                 ${imageHTML}
                 <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
                     <h3 class="note-sheet__title">${note.title}</h3>
-                    <div class="note-sheet__content">
+                    <div class="note-sheet__content" style="overflow-x: hidden">
                         ${note.content.replace(/\n/g, '<br>')}
                     </div>
                 </div>
@@ -472,6 +474,9 @@ class Notes {
         try {
             const response = await fetch('/note/upload-image', {
                 method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                },
                 body: formData
             });
             const result = await response.json();
@@ -520,6 +525,9 @@ class Notes {
         try {
             const response = await fetch('/note/delete-image', {
                 method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                },
                 body: formData
             });
             const result = await response.json();
@@ -811,7 +819,7 @@ class Notes {
         ${imageHTML}
         <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
             <h3 class="note-sheet__title">${safeTitle}</h3>
-            <div class="note-sheet__content">
+            <div class="note-sheet__content" style="overflow-x: hidden">
                 ${safeContent}
             </div>
         </div>
@@ -856,7 +864,7 @@ class Notes {
             ${imageHTML}
             <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
                 <h3 class="note-sheet__title" data-note-title="${title}">${title}</h3>
-                <div class="note-sheet__content">
+                <div class="note-sheet__content" style="overflow-x: hidden">
                     ${content.replace(/\n/g, '<br>')}
                 </div>      
             </div>

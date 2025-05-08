@@ -28,6 +28,8 @@ class AccountRepository{
             $row['email'],
             $row['profilePicture'],
             $row['activation_token'],
+            $row['refresh_token'],
+            $row['expired_time'],
             $row['roleId'],
             $row['isVerified']
         );
@@ -139,19 +141,22 @@ class AccountRepository{
     }
 
     public function createAccountByUsernameAndPasswordAndEmail($account_username, $account_password, $email): ?Account {
+        date_default_timezone_set('Asia/Bangkok');
         $accountId = Uuid::uuid4()->toString();
         $roleId = 1;
         $isVerified = 0;
         $activation_token = bin2hex(random_bytes(16));
         $hashedPassword = password_hash($account_password, PASSWORD_DEFAULT);
         $profilePicture = '';
+        $refresh_token = bin2hex(random_bytes(16));
+        $expired_time = date('Y-m-d H:i:s', time() + (60 * 60 * 24 * 7));
 
         $sql = "INSERT INTO `Account` 
-        (`accountId`, `userName`, `password`, `email`, `profilePicture`, `activation_token`, `roleId`, `isVerified`) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        (`accountId`, `userName`, `password`, `email`, `profilePicture`, `activation_token`, `refresh_token`, `expired_time`, `roleId`, `isVerified`) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param('ssssssii', $accountId, $account_username, $hashedPassword, $email, $profilePicture, $activation_token, $roleId, $isVerified);
+        $stmt->bind_param('ssssssssii', $accountId, $account_username, $hashedPassword, $email, $profilePicture, $activation_token, $refresh_token, $expired_time, $roleId, $isVerified);
 
         $result = $stmt->execute();
         $stmt->close();
@@ -169,6 +174,8 @@ class AccountRepository{
             $email,
             $profilePicture,
             $activation_token,
+            $refresh_token,
+            $expired_time,
             $roleId,
             $isVerified
         );
@@ -258,7 +265,7 @@ class AccountRepository{
 
         if ($stmt->affected_rows > 0) {
             $stmt->close();
-            return $this->getPreferencesByAccountId($accountId); // <- fetch the updated row if needed
+            return $this->getPreferencesByAccountId($accountId);
         }
 
         $stmt->close();
@@ -267,53 +274,6 @@ class AccountRepository{
             'message' => 'No changes made or account not found'
         ];
     }
-//    public function updatePreferenceByAccountId($accountId, $theme, $noteFont, $noteColor): ?Preference {
-//        // Convert theme to boolean
-//        $isDarkTheme = $theme === 'dark' ? 1 : 0;
-//
-//        $sql = "UPDATE `Preference`
-//            SET `isDarkTheme` = ?,
-//                `noteFont` = ?,
-//                `noteColor` = ?
-//            WHERE `accountId` = ?";
-//
-//        $stmt = $this->conn->prepare($sql);
-//        if (!$stmt) {
-//            return null; // Return null if preparation fails
-//        }
-//
-//        $stmt->bind_param("isss", $isDarkTheme, $noteFont, $noteColor, $accountId);
-//        $stmt->execute();
-//
-//        // After update, fetch the updated record
-//        $stmt->close();
-//
-//        $selectSql = "SELECT * FROM `Preference` WHERE `accountId` = ?";
-//        $selectStmt = $this->conn->prepare($selectSql);
-//        if (!$selectStmt) {
-//            return null;
-//        }
-//
-//        $selectStmt->bind_param("s", $accountId);
-//        $selectStmt->execute();
-//        $result = $selectStmt->get_result();
-//        $selectStmt->close();
-//
-//        if ($row = $result->fetch_assoc()) {
-//            return new Preference(
-//                $row['preferenceId'],
-//                $row['accountId'],
-//                $row['layout'] ?? null,
-//                $row['noteFont'],
-//                $row['noteColor'],
-//                $row['font'] ?? null,
-//                $row['isDarkTheme']
-//            );
-//        }
-//
-//        return null;
-//    }
-//
 }
 
 ?>
