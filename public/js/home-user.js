@@ -87,9 +87,6 @@ class HomeUser {
                 const result = await response.json();
                 console.log(result);
 
-                localStorage.removeItem(accessToken);
-                localStorage.setItem('accessToken', token);
-
                 if (result.status === true) {
                     this.showToast('Preferences saved successfully', 'success');
                     // Optionally apply changes: this.applyPreferences(result.data);
@@ -137,12 +134,8 @@ class HomeUser {
                 console.log(result);
 
                 if (result.status === true) {
-                    const {token} = result;
+                    const {token, picture} = result;
 
-                    localStorage.removeItem(accessToken);
-                    localStorage.setItem('accessToken', token);
-
-                    const picture = result.picture;
                     this.showToast('Avatar uploaded successfully!', 'success');
 
                     // Update avatar previews

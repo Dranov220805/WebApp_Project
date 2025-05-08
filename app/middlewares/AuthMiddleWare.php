@@ -5,7 +5,7 @@ use Firebase\JWT\Key;
 
 class AuthMiddleware
 {
-    private string $jwtSecret = 'your_secret_key'; // Replace with the same key used in AuthService
+    private string $jwtSecret = 'your_secret_key';
     private AuthController $authController;
 
     public function __construct()
@@ -60,16 +60,22 @@ class AuthMiddleware
         if (!$jwt) {
             return ['status' => false, 'message' => 'Unauthorized - No authentication token found'];
         }
-
-        try {
             $decoded = JWT::decode($jwt, new Key($this->jwtSecret, 'HS256'));
+
+            // Optional: Check 'exp' manually (should be a UNIX timestamp)
+            $now = time();
+//            var_dump($now, $decoded->exp);
+            if (isset($decoded->exp) && $decoded->exp < $now) {
+                return ['status' => false, 'message' => 'Token has expired'];
+            }
+
+            // If token is valid and not expired
             $GLOBALS['user'] = $decoded->data;
-            return ['status' => true,
+
+            return [
+                'status' => true,
                 'token_data' => $decoded
             ];
-        } catch (Exception $e) {
-            return ['status' => false, 'message' => 'Invalid or expired token'];
-        }
     }
 
     public function getUrlActivationLink()

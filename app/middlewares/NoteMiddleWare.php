@@ -11,7 +11,6 @@ class NoteMiddleWare {
 
     public function getNotes() {
         $checkToken = $this->authMiddleware->checkSession();
-
         if ($checkToken['status'] === false) {
             header('location:/log/login');
             exit();
@@ -21,7 +20,6 @@ class NoteMiddleWare {
 
     public function getPinnedNotes() {
         $checkToken = $this->authMiddleware->checkSession();
-
         if ($checkToken['status'] === false) {
             header('location:/log/login');
             exit();

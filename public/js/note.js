@@ -170,7 +170,7 @@ class Notes {
         fetch(`/note/list?page=${this.currentPage}&limit=${this.limit}`, {
             method: 'GET',
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                'Authorization': 'Bearer '
             }
         })
             .then(res => res.json())
@@ -264,7 +264,7 @@ class Notes {
         fetch(`/note/pinned/list`, {
             method: 'GET',
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                'Authorization': 'Bearer '
             }
         })
             .then(res => res.json())
@@ -353,7 +353,7 @@ class Notes {
 
         fetch(`/note/list?page=${this.currentPage}&limit=${this.limit}`, {
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                'Authorization': 'Bearer '
             }
         })
             .then(res => res.json())
@@ -377,7 +377,7 @@ class Notes {
 
         fetch(`/note/pinned-list?page=${this.currentPage}&limit=${this.limit}`, {
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                'Authorization': 'Bearer '
             }
         })
             .then(res => res.json())
@@ -475,7 +475,7 @@ class Notes {
             const response = await fetch('/note/upload-image', {
                 method: 'POST',
                 headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                    'Authorization': 'Bearer '
                 },
                 body: formData
             });
@@ -526,7 +526,7 @@ class Notes {
             const response = await fetch('/note/delete-image', {
                 method: 'POST',
                 headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                    'Authorization': 'Bearer '
                 },
                 body: formData
             });

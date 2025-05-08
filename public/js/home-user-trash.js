@@ -6,6 +6,7 @@ class TrashNotes {
             console.log('Returning existing TrashNotes instance');
             return TrashNotes.instance;
         }
+
         console.log('Creating new TrashNotes instance');
         TrashNotes.instance = this;
 
@@ -13,19 +14,18 @@ class TrashNotes {
         this.limit = 10;
         this.isLoadingTrash = false;
         this.lastScrollTop = 0;
+        this.scrollThrottle = false;
 
         this.setupEvents();
     }
 
     setupEvents() {
-        // Remove existing listeners to prevent duplicates
         document.removeEventListener('click', this.handleNoteClick);
-        document.removeEventListener('click', this.handleDeleteClick);
 
         this.handleNoteClick = (event) => {
             const deleteBtn = event.target.closest(".note-trash-delete-btn");
             const restoreBtn = event.target.closest(".note-restore-btn");
-            const noteEl = event.target.closest('.note-sheet-trash');
+            const noteEl = event.target.closest('.note-sheet');
 
             if (!noteEl) return;
 
@@ -37,7 +37,7 @@ class TrashNotes {
 
             if (deleteBtn) {
                 console.log('Clicked delete button:', note);
-                this.expandDeleteNote(note); // Show modal
+                this.expandDeleteNote(note);
                 return;
             }
 
@@ -51,24 +51,29 @@ class TrashNotes {
             if (event.target.closest('.note-sheet__menu button')) return;
 
             console.log('Clicked note:', note);
-            this.ex
         };
 
         document.addEventListener('click', this.handleNoteClick);
         console.log('Attached note click listener');
-        document.addEventListener('click', this.handleDeleteClick);
 
-        // Attach scroll event listener
         window.addEventListener('scroll', this.handleScroll.bind(this));
         console.log('Attached scroll listener');
     }
 
     handleScroll() {
         const currentScrollTop = window.scrollY;
-        if (currentScrollTop > this.lastScrollTop &&
-            (window.innerHeight + currentScrollTop >= document.body.offsetHeight - 200)) {
-            // this.loadNotes();
+
+        if (
+            currentScrollTop > this.lastScrollTop &&
+            window.innerHeight + currentScrollTop >= document.body.offsetHeight - 200
+        ) {
+            if (!this.scrollThrottle) {
+                this.scrollThrottle = true;
+                this.loadTrashedNotes();
+                setTimeout(() => this.scrollThrottle = false, 300);
+            }
         }
+
         this.lastScrollTop = Math.max(currentScrollTop, 0);
     }
 
@@ -82,16 +87,16 @@ class TrashNotes {
         messageElement.innerText = message;
         toast.classList.remove("d-none", "bg-success", "bg-danger");
         toast.classList.add(`bg-${type}`);
-
         toast.classList.remove("d-none");
 
-        const hideTimeout = setTimeout(() => toast.classList.add("d-none"), duration);
+        setTimeout(() => toast.classList.add("d-none"), duration);
     }
 
-    loadTrashedNotes() {
+    loadTrashedNotes({ reset = false } = {}) {
         if (this.isLoadingTrash) return;
         this.isLoadingTrash = true;
-        this.currentPage = 1;
+
+        if (reset) this.currentPage = 1;
 
         fetch(`/note/trash-list?page=${this.currentPage}&limit=${this.limit}`, {
             method: 'GET',
@@ -126,19 +131,16 @@ class TrashNotes {
 
             const div = document.createElement("div");
             div.className = "note-sheet d-flex flex-column";
+            div.id = note.noteId;
             div.dataset.noteId = note.noteId;
             div.dataset.noteTitle = note.title;
             div.dataset.noteContent = note.content;
-            div.dataset.imageLink = note.imageLink;
+            div.dataset.imageLink = note.imageLink || '';
 
-            if (note.imageLink && note.imageLink.trim() !== '') {
-                div.dataset.imageLink = note.imageLink;
-            }
-
-            const imageHTML = note.imageLink && note.imageLink.trim() !== ''
-                ? `<div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
-                   <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
-               </div>`
+            const imageHTML = note.imageLink?.trim()
+                ? `<div class="note-sheet__image" style="width: 100%; height: auto;">
+                     <img src="${note.imageLink}" style="width: 100%; height: auto;">
+                   </div>`
                 : '';
 
             div.innerHTML = `
@@ -151,11 +153,16 @@ class TrashNotes {
                 </div>
                 <div class="note-sheet__menu">
                     <div>
-                        <button class="note-restore-btn" title="Restore this note"><i class="fa-solid fa-trash-arrow-up"></i></i></button>
-                        <button class="note-trash-delete-btn" title="Delete Permanently" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-eraser"></i></button>
+                        <button class="note-restore-btn" title="Restore this note" data-note-id="${note.noteId}">
+                            <i class="fa-solid fa-trash-arrow-up"></i>
+                        </button>
+                        <button class="note-trash-delete-btn" title="Delete Permanently" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}">
+                            <i class="fa-solid fa-eraser"></i>
+                        </button>
                     </div>
                 </div>
             `;
+
             container.appendChild(div);
             console.log(`Appended note: ${note.noteId}`);
         });
@@ -166,19 +173,21 @@ class TrashNotes {
         const modal = new bootstrap.Modal(modalEl);
         const confirmBtn = modalEl.querySelector('#confirmRestoreTrashNoteBtn');
 
+        const titleDisplay = modalEl.querySelector('.note-title');
+        if (titleDisplay) titleDisplay.innerText = note.title;
+
         modal.show();
 
-        // Cleanup any old event listeners to prevent duplicates
         const newConfirmHandler = () => {
-            this.restoreNote_POST(note.noteId, note.title, note.content);
-            confirmBtn.removeEventListener('click', newConfirmHandler); // prevent multiple bindings
+            this.restoreNote_POST(note.noteId);
+            confirmBtn.removeEventListener('click', newConfirmHandler);
             modal.hide();
         };
 
         confirmBtn.addEventListener('click', newConfirmHandler);
     }
 
-    restoreNote_POST(noteId, title, content) {
+    restoreNote_POST(noteId) {
         fetch(`/note/restore`, {
             method: 'PUT',
             headers: { "Content-Type": "application/json" },
@@ -188,19 +197,19 @@ class TrashNotes {
             .then(data => {
                 if (data.status === true) {
                     this.showToast("Note restored successfully", "success");
-                    const noteEl = document.querySelector(`.note-sheet[id="${noteId}"]`);
-                    if (noteEl) noteEl.remove(); // Remove from DOM
-                    const trashNoteGrid = document.querySelector('.trash-note__load');
-                    console.log(noteId, title, content);
-                    trashNoteGrid.innerHTML = '';
-                    this.loadTrashedNotes();
 
+                    const noteEl = document.getElementById(noteId);
+                    if (noteEl) noteEl.remove();
+
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    document.querySelector('.trash-note__load').innerHTML = '';
+                    this.loadTrashedNotes({ reset: true });
                 } else {
                     this.showToast(data.message || "Failed to restore note", "danger");
                 }
             })
             .catch(err => {
-                console.error("Delete error:", err);
+                console.error("Restore error:", err);
                 this.showToast("An error occurred while restoring the note", "danger");
             });
     }
@@ -210,19 +219,21 @@ class TrashNotes {
         const modal = new bootstrap.Modal(modalEl);
         const confirmBtn = modalEl.querySelector('#confirmDeleteTrashNoteBtn');
 
+        const titleDisplay = modalEl.querySelector('.note-title');
+        if (titleDisplay) titleDisplay.innerText = note.title;
+
         modal.show();
 
-        // Cleanup any old event listeners to prevent duplicates
         const newConfirmHandler = () => {
-            this.deleteNote_POST(note.noteId, note.title, note.content);
-            confirmBtn.removeEventListener('click', newConfirmHandler); // prevent multiple bindings
+            this.deleteNote_POST(note.noteId);
+            confirmBtn.removeEventListener('click', newConfirmHandler);
             modal.hide();
         };
 
         confirmBtn.addEventListener('click', newConfirmHandler);
     }
 
-    deleteNote_POST(noteId, title, content) {
+    deleteNote_POST(noteId) {
         fetch(`/note/hard-delete`, {
             method: 'POST',
             headers: { "Content-Type": "application/json" },
@@ -232,13 +243,13 @@ class TrashNotes {
             .then(data => {
                 if (data.status === true) {
                     this.showToast("Note deleted successfully", "success");
-                    const noteEl = document.querySelector(`.note-sheet[id="${noteId}"]`);
-                    if (noteEl) noteEl.remove(); // Remove from DOM
-                    const trashNoteGrid = document.querySelector('.trash-note__load');
-                    console.log(noteId, title, content);
-                    trashNoteGrid.innerHTML = '';
-                    this.loadTrashedNotes();
 
+                    const noteEl = document.getElementById(noteId);
+                    if (noteEl) noteEl.remove();
+
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    document.querySelector('.trash-note__load').innerHTML = '';
+                    this.loadTrashedNotes({ reset: true });
                 } else {
                     this.showToast(data.message || "Failed to delete note", "danger");
                 }
@@ -248,7 +259,6 @@ class TrashNotes {
                 this.showToast("An error occurred while deleting the note", "danger");
             });
     }
-
 }
 
 const trashNotesInstance = new TrashNotes();
