@@ -236,30 +236,49 @@ class HomeUser {
 
         const pinnedContainer = document.querySelector('.pinned-note__load');
         const otherContainer = document.querySelector('.other-note__load');
-
-        const isGrid = icon.classList.contains('fa-border-all');
+        const trashContainer = document.querySelector('.trash-note__load');
+        const labelContainer = document.querySelector('.label-note__load');
 
         icon.classList.toggle('fa-border-all');
         icon.classList.toggle('fa-bars');
 
-        if (isGrid) {
-            this.animateTransition(pinnedContainer, 'load-list', 'load-grid');
-            this.animateTransition(otherContainer, 'load-list', 'load-grid');
-        } else {
-            this.animateTransition(pinnedContainer, 'load-grid', 'load-list');
-            this.animateTransition(otherContainer, 'load-grid', 'load-list');
-        }
+        const containers = [pinnedContainer, otherContainer, trashContainer, labelContainer];
+
+        containers.forEach(container => {
+            if (!container) return;
+
+            const hasGrid = container.classList.contains('load-grid');
+            const fromClass = hasGrid ? 'load-grid' : 'load-list';
+            const toClass = hasGrid ? 'load-list' : 'load-grid';
+
+            this.animateTransition(container, toClass, fromClass);
+        });
     }
 
     animateTransition(container, toClass, fromClass) {
-        const cards = container.querySelectorAll('.note-sheet');
-        cards.forEach(card => card.classList.add('animate-out'));
+        if (!container) {
+            console.warn('animateTransition: container is null');
+            return;
+        }
+
+        const noteCards = container.querySelectorAll('.note-sheet');
+        const trashCards = container.querySelectorAll('.note-sheet-trash');
+        const labelCards = container.querySelectorAll('.note-sheet-label');
+
+        // Prioritize: normal notes > trash > label
+        let cardsToAnimate = noteCards.length > 0 ? noteCards
+            : trashCards.length > 0 ? trashCards
+                : labelCards;
+
+        if (cardsToAnimate.length === 0) return;
+
+        cardsToAnimate.forEach(card => card.classList.add('animate-out'));
 
         setTimeout(() => {
             container.classList.remove(fromClass);
             container.classList.add(toClass);
 
-            cards.forEach(card => {
+            cardsToAnimate.forEach(card => {
                 card.classList.remove('animate-out');
                 card.classList.add('animate-in');
 

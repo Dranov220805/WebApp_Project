@@ -176,7 +176,6 @@ class Notes {
             .then(res => res.json())
             .then(data => {
                 if (data.data?.length > 0) {
-                    console.log(data);
                     this.appendNotesToDOM(data.data);
                     this.currentPage++; // Only increment page after successful append
                 } else {
@@ -225,8 +224,6 @@ class Notes {
                 }
             }
 
-            console.log('All labels: ', labels);
-
             const imageHTML = note.imageLink && note.imageLink.trim() !== ''
                 ? `<div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
                    <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
@@ -243,7 +240,7 @@ class Notes {
             </div>
             <div class="note-sheet__menu">
                 <div>
-                    <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
+                    <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack-slash"></i></button>
                     <button title="Add Label" data-bs-target="listLabelNoteModal" id="note-label-list-btn" class="note-label-list-btn"><i class="fa-solid fa-tags"></i></button>
                     <button class="note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
                     <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
@@ -253,7 +250,6 @@ class Notes {
         `;
 
             container.appendChild(div);
-            console.log(`Appended note: ${note.noteId}`);
         });
     }
 
@@ -269,10 +265,8 @@ class Notes {
         })
             .then(res => res.json())
             .then(data => {
-                console.log('Pin note loaded', data);
                 if (data.data?.length > 0) {
                     this.appendPinnedNotesToDOM(data.data);
-                    // this.currentPage++;
                 }
             })
             .catch(err => {
@@ -315,8 +309,6 @@ class Notes {
                 }
             }
 
-            console.log('All labels: ', labels);
-
             const imageHTML = note.imageLink && note.imageLink.trim() !== ''
                 ? `<div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
                    <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
@@ -342,7 +334,6 @@ class Notes {
                 </div>
             `;
             container.appendChild(div);
-            console.log(`Appended note: ${note.noteId}`);
         });
     }
 
@@ -653,8 +644,6 @@ class Notes {
                         } else {
                             if (!document.querySelector(`.note-sheet[data-note-id="${noteId}"]`)) {
                                 const newNote = this.noteSheetModel(noteId, title, content, imageLink);
-                                // document.querySelector('.other-note__load')?.prepend(newNote);
-                                console.log(`Prepended note: ${noteId}`);
                             }
                         }
                         const pinNoteGrid = document.querySelector('.pinned-note__load');
@@ -825,7 +814,7 @@ class Notes {
         </div>
         <div class="note-sheet__menu">
             <div>
-                <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
+                <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack-slash"></i></button>
                 <button title="Add Label" data-bs-target="listLabelNoteModal" id="note-label-list-btn" class="note-label-list-btn"><i class="fa-solid fa-tags"></i></button>
                 <button class="note-delete-btn" title="Delete This Note" data-note-id="${noteId}"><i class="fa-solid fa-trash"></i></button>
                 <button title="Share this Note"><i class="fa-solid fa-users"></i></button>

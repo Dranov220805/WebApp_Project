@@ -52,6 +52,42 @@ class AccountRepository{
         return password_verify($password, $row['password']);
     }
 
+    public function saveRefreshToken($accountId, $token, $expiry)
+    {
+        $sql = "UPDATE Account SET refresh_token = ?, expired_time = ? WHERE accountId = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("sss", $token, $expiry, $accountId);
+        $stmt->execute();
+        $stmt->close();
+    }
+
+    public function getAccountByRefreshToken($refreshToken): ?Account
+    {
+        $sql = "SELECT * FROM Account WHERE refresh_token = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $refreshToken);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        if (!$result || $result->num_rows === 0) return null;
+
+        $row = $result->fetch_assoc();
+        $stmt->close();
+
+        return new Account(
+            $row['accountId'],
+            $row['userName'],
+            $row['password'],
+            $row['email'],
+            $row['profilePicture'],
+            $row['activation_token'],
+            $row['refresh_token'],
+            $row['expired_time'],
+            $row['roleId'],
+            $row['isVerified']
+        );
+    }
+
     public function activateAccountByActivationToken($token) {
         $sql = "UPDATE `Account` SET `isVerified` = 1 WHERE `activation_token` = ?";
         $stmt = $this->conn->prepare($sql);

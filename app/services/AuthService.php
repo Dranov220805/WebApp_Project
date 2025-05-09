@@ -5,7 +5,7 @@ use Firebase\JWT\JWT;
 class AuthService
 {
     private string $jwtSecret = 'your_secret_key';
-    private int $jwtExpiry = 3600; // Token expiry in seconds (e.g., 1 hour)
+    private int $jwtExpiry = 3600; // Token expiry in seconds (1 hour)
     private AccountRepository $accountRepository;
     private AccountService $accountService;
 
@@ -36,10 +36,13 @@ class AuthService
             ];
         }
 
+        $refreshToken = bin2hex(random_bytes(16));
+        $refreshTokenExpiry = date('Y-m-d H:i:s', time() + (7 * 24 * 60 * 60));
+
+        $this->accountRepository->saveRefreshToken($accountId, $refreshToken, $refreshTokenExpiry);
+
         // Generate JWT
         $payload = [
-            'iss' => 'your_issuer', // Issuer
-            'aud' => 'your_audience', // Audience
             'iat' => time(), // Issued at
             'exp' => time() + $this->jwtExpiry, // Expiry
             'data' => [
@@ -59,41 +62,47 @@ class AuthService
 
         return [
             'status' => true,
-            'token' => $jwt,
+            'access_token' => $jwt,
+            'refresh_token' => $refreshToken,
+            'refresh_token_expiry' => $refreshTokenExpiry,
             'message' => 'Login successfully'
         ];
     }
     
     // Called to renew session if user is active
-    public function refreshSession()
+    public function refreshAccessToken($refreshToken)
     {
-        if (!isset($_SESSION['userId'])) {
-            http_response_code(401);
-            echo json_encode(['message' => 'User not logged in']);
-            return;
+        $user = $this->accountRepository->getAccountByRefreshToken($refreshToken);
+        $userPreference = $this->accountRepository->getPreferencesByAccountId($user->getAccountId());
+
+        if (!$user || time() > $user->getExpiredTime()) {
+            return ['status' => false];
         }
 
-        // Set timeout (30 minutes)
-        $timeout = 3 * 60;
+        // Generate new access token
+        $payload = [
+            'iat' => time(),
+            'exp' => time() + 3600,
+            'data' => [
+                'accountId' => $user->getAccountId(),
+                'userName' => $user->getUsername(),
+                'email' => $user->getEmail(),
+                'profilePicture' => $user->getProfilePicture(),
+                'refreshToken' => $user->getRefreshToken(),
+                'expiredTime' => $user->getExpiredTime(),
+                'roleId' => $user->getRoleId(),
+                'isDarkTheme' => $userPreference->isDarkTheme(),
+                'isVerified' => $user->getIsVerified()
+            ]
+        ];
 
-        // Check inactivity timeout
-        if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $timeout) {
-            session_unset();
-            session_destroy();
-            http_response_code(401);
-            echo json_encode(['message' => 'Session expired due to inactivity']);
-            return;
-        }
+        $newJwt = JWT::encode($payload, $this->jwtSecret, 'HS256');
 
-        // Renew session activity
-        $_SESSION['last_activity'] = time();
-
-        // Optional: return some data to frontend
-        echo json_encode([
+        return [
             'status' => true,
-            'message' => 'Session renewed',
-            'userName' => $_SESSION['userName']
-        ]);
+            'access_token' => $newJwt,
+            'data' => $payload['data']
+        ];
     }
 
     public function accountActivate($activation_token) {

@@ -21,9 +21,18 @@ class AuthController extends BaseController {
             $result = $authService->login($data['email'], $data['password']);
 
             if ($result['status'] === true) {
-                // Set JWT as HTTP-only cookie
-                setcookie('jwt_token', $result['token'], [
+                // Access token -> 1 hour
+                setcookie('access_token', $result['access_token'], [
                     'expires' => time() + 3600, // 1 hour
+                    'path' => '/',
+                    'secure' => true,
+                    'httponly' => true,
+                    'samesite' => 'Lax'
+                ]);
+
+                // Refresh token (long-lived) -> 7 days
+                setcookie('refresh_token', $result['refresh_token'], [
+                    'expires' => time() + (7 * 24 * 60 * 60),
                     'path' => '/',
                     'secure' => true,
                     'httponly' => true,
@@ -32,7 +41,6 @@ class AuthController extends BaseController {
 
                 echo json_encode([
                     'status' => true,
-                    'token' => $result['token'],
                     'message' => $result['message']
                 ]);
             } else {
@@ -101,8 +109,8 @@ class AuthController extends BaseController {
     public function changePassword() {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-
-        $email = $_SESSION['email'];
+        $user = $GLOBALS['user'];
+        $email = $user->email;
         $currPassword = $data['currentPassword'];
         $password = $data['newPassword'];
 
@@ -147,10 +155,18 @@ class AuthController extends BaseController {
     public function logout()
     {
         // Clear the JWT cookie
-        setcookie('jwt_token', '', [
+        setcookie('access_token', '', [
             'expires' => time() - 3600,
             'path' => '/',
             'secure' => false,
+            'httponly' => true,
+            'samesite' => 'Lax'
+        ]);
+
+        setcookie('refresh_token', '', [
+            'expires' => time() - (7 * 24 * 60 * 60),
+            'path' => '/',
+            'secure' => true,
             'httponly' => true,
             'samesite' => 'Lax'
         ]);

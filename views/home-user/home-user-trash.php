@@ -17,23 +17,23 @@
 <!--                    Render other notes -->
                         <?php if (!empty($data['trashNotes'])): ?>
                             <?php foreach ($data['trashNotes'] as $note): ?>
-                                <div class="note-sheet note-sheet-trash d-flex flex-column"
+                                <div class="note-sheet-trash note-sheet-trash-trash d-flex flex-column"
                                      data-note-id="<?= htmlspecialchars($note['noteId']) ?>"
                                      data-note-title="<?= htmlspecialchars($note['title']) ?>"
                                      data-note-content="<?= htmlspecialchars($note['content'])?>"
                                      data-note-image="<?= htmlspecialchars($note['imageLink'])?>">
                                     <?php if (!empty($note['imageLink'])) {?>
-                                    <div class="note-sheet__image" style="width: 100%; height: auto; overflow: visible">
+                                    <div class="note-sheet-trash__image" style="width: 100%; height: auto; overflow: visible">
                                         <img src="<?= htmlspecialchars($note['imageLink'])?>" style="width: 100%; height: auto; display: block">
                                     </div>
                                     <?php } ?>
-                                    <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
-                                        <h3 class="note-sheet__title"><?= htmlspecialchars($note['title']) ?></h3>
-                                        <div class="note-sheet__content" style="overflow-x: hidden">
+                                    <div class="note-sheet-trash__title-content flex-column flex-grow-1" style="padding: 16px;">
+                                        <h3 class="note-sheet-trash__title"><?= htmlspecialchars($note['title']) ?></h3>
+                                        <div class="note-sheet-trash__content" style="overflow-x: hidden">
                                             <?= htmlspecialchars($note['content']) ?>
                                         </div>
                                     </div>
-                                    <div class="note-sheet__menu"">
+                                    <div class="note-sheet-trash__menu"">
                                         <div>
                                             <button class="note-restore-btn" title="Restore this note" data-note-id="<?= htmlspecialchars($note['noteId']) ?>"><i class="fa-solid fa-trash-arrow-up"></i></i></button>
                                             <button class="note-trash-delete-btn" title="Delete permanently" data-note-id="<?= htmlspecialchars($note['noteId']) ?>"><i class="fa-solid fa-eraser"></i></button>

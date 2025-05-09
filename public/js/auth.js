@@ -243,9 +243,8 @@ class Auth {
             })
                 .then(res => res.json())
                 .then(data => {
-                    if (data.success) {
-                        this.showLoginToast('Password changed successfully! Please login again', 'success');
-                        window.location.href = "/log/logout";
+                    if (data['status'] === true) {
+                        this.showLoginToast('Password changed successfully!', 'success');
                         $('#changePasswordModal').modal('hide');
                     } else {
                         this.showLoginToast(data.message || 'Failed to change password.', 'danger');

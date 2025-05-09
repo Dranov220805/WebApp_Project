@@ -210,7 +210,7 @@ class LabelNote {
             }
 
             const div = document.createElement("div");
-            div.className = "note-sheet d-flex flex-column";
+            div.className = "note-sheet note-sheet-label d-flex flex-column";
             div.dataset.noteId = note.noteId;
             div.dataset.noteTitle = note.title;
             div.dataset.noteContent = note.content;

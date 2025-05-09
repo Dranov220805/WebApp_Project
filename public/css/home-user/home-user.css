@@ -1,4 +1,18 @@
 /* Content area adjustment */
+.hide-scrollbar {
+    overflow: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+}
+
+html {
+    scroll-behavior: smooth
+}
+
 body {
     overflow: auto;
     scrollbar-gutter: stable overlay;
@@ -451,6 +465,126 @@ body {
     border: none;
 }
 
+.note-sheet-trash {
+    max-width: 500px;
+    width: 235px;
+    min-width: 235px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+    overflow: hidden;
+    max-height: 500px;
+    height: 400px;
+    align-self: start;
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.note-sheet-trash:hover {
+    box-shadow: 0 4px 8px rgba(60,64,67,0.3), 0 6px 10px rgba(60,64,67,0.2);
+    transform: translateY(-2px);
+}
+
+.note-sheet-trash__image {
+    overflow-y: visible;
+}
+
+.note-sheet-trash__title-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 16px;
+    overflow-y: hidden;
+}
+
+.note-sheet-trash__title {
+    margin: 0 0 0.5rem 0;
+    font-size: 18px;
+}
+
+.note-sheet-trash__content {
+    font-size: 14px;
+    color: #444;
+    line-height: 1.4;
+    overflow-y: hidden;
+}
+
+.note-sheet-trash__menu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-top: 1px solid #eee;
+    background-color: #f9f9f9;
+}
+
+.note-sheet-trash__menu button {
+    background: none;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    color: #555;
+    font-size: 16px;
+}
+
+.note-sheet-trash__menu button:hover {
+    background-color: #e0e0e0;
+    transform: scale(1.05);
+}
+
+.note-sheet-trash__menu > div button:not(:last-child) {
+    margin-right: 6px;
+}
+
+.note-sheet-trash__menu > button {
+    margin-left: 8px;
+}
+
+.note-sheet-trash.expanded {
+    position: fixed !important;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    height: 90%;
+    z-index: 1050;
+    overflow-y: auto;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.note-sheet-trash.expanded .note-sheet-trash__content {
+    overflow-y: auto;
+}
+
+.note-sheet-trash__close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 26px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    z-index: 1060;
+}
+
+.load-list .note-sheet-trash {
+    break-inside: avoid;
+    display: inline-block;
+    width: 100%;
+    max-width: 600px;
+    height: fit-content;
+    max-height: 900px;
+    margin-bottom: 16px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+    overflow: hidden;
+}
+
 /* ─────── DARK MODE SUPPORT ─────── */
 body.dark-mode {
     background-color: #202124;
@@ -511,6 +645,34 @@ body.dark-mode .note-sheet__menu button:hover {
 body.dark-mode .note-post__menu {
     /*background-color: #2a2a2a;*/
     /*border-top: 1px solid #444;*/
+}
+
+body.dark-mode .note-sheet-trash,
+body.dark-mode .load-list .note-sheet-trash {
+    background-color: #1c1c1c;
+    box-shadow: 0 1px 3px rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .note-sheet-trash:hover {
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.08);
+}
+
+body.dark-mode .note-sheet-trash__title,
+body.dark-mode .note-sheet-trash__content {
+    color: #dddddd;
+}
+
+body.dark-mode .note-sheet-trash__menu {
+    background-color: #2a2a2a;
+    border-top: 1px solid #444;
+}
+
+body.dark-mode .note-sheet-trash__menu button {
+    color: #dddddd;
+}
+
+body.dark-mode .note-sheet-trash__menu button:hover {
+    background-color: #444;
 }
 
 body.dark-mode .note-post__menu button {

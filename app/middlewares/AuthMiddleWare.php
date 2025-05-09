@@ -43,39 +43,63 @@ class AuthMiddleware
     // Session-based auth check for protected routes
     public function checkSession()
     {
-        $jwt = null;
-
-        // 1. Check Authorization header
-        $headers = getallheaders();
-        $authHeader = $headers['Authorization'] ?? null;
-
-        if ($authHeader && str_starts_with($authHeader, 'Bearer ')) {
-            $jwt = str_replace('Bearer ', '', $authHeader);
-        } else if (isset($_COOKIE['jwt_token'])) {
-            $jwt = $_COOKIE['jwt_token'];
-        } else if (isset($_GET['token'])) {
-            $jwt = $_GET['token'];
-        }
+        $jwt = $_COOKIE['access_token'] ?? null;
 
         if (!$jwt) {
-            return ['status' => false, 'message' => 'Unauthorized - No authentication token found'];
+            return $this->tryRefresh();
         }
+
+        try {
             $decoded = JWT::decode($jwt, new Key($this->jwtSecret, 'HS256'));
 
-            // Optional: Check 'exp' manually (should be a UNIX timestamp)
-            $now = time();
-//            var_dump($now, $decoded->exp);
-            if (isset($decoded->exp) && $decoded->exp < $now) {
-                return ['status' => false, 'message' => 'Token has expired'];
+            if (isset($decoded->exp) && $decoded->exp < time()) {
+                return $this->tryRefresh(); // Token expired → try refresh
             }
 
-            // If token is valid and not expired
             $GLOBALS['user'] = $decoded->data;
 
             return [
                 'status' => true,
                 'token_data' => $decoded
             ];
+
+        } catch (Exception $e) {
+            return $this->tryRefresh(); // Token invalid → try refresh
+        }
+    }
+
+    private function tryRefresh()
+    {
+        $refreshToken = $_COOKIE['refresh_token'] ?? null;
+        if (!$refreshToken) {
+            return [
+                'status' => false,
+                'message' => 'No refresh token'
+            ];
+        }
+
+        $authService = new AuthService();
+        $newTokenResult = $authService->refreshAccessToken($refreshToken);
+
+        if (!$newTokenResult['status']) {
+            return [
+                'status' => false,
+                'message' => 'Invalid refresh token'
+            ];
+        }
+
+        // Set new access token cookie
+        setcookie('access_token', $newTokenResult['access_token'], [
+            'expires' => time() + 3600,
+            'path' => '/',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'Lax'
+        ]);
+
+        $GLOBALS['user'] = $newTokenResult['data'];
+
+        return ['status' => true, 'token_data' => $newTokenResult['data']];
     }
 
     public function getUrlActivationLink()
@@ -119,6 +143,12 @@ class AuthMiddleware
 
     public function changePassword()
     {
+        $checkToken = $this->checkSession();
+
+        if ($checkToken['status'] === false) {
+            header('location:/log/login');
+            exit();
+        }
         $this->authController->changePassword();
     }
 }

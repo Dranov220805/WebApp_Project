@@ -25,7 +25,7 @@ class TrashNotes {
         this.handleNoteClick = (event) => {
             const deleteBtn = event.target.closest(".note-trash-delete-btn");
             const restoreBtn = event.target.closest(".note-restore-btn");
-            const noteEl = event.target.closest('.note-sheet');
+            const noteEl = event.target.closest('.note-sheet-trash');
 
             if (!noteEl) return;
 
@@ -47,8 +47,8 @@ class TrashNotes {
                 return;
             }
 
-            // Prevent expanding the note when clicking buttons inside .note-sheet__menu
-            if (event.target.closest('.note-sheet__menu button')) return;
+            // Prevent expanding the note when clicking buttons inside .note-sheet-trash__menu
+            if (event.target.closest('.note-sheet-trash__menu button')) return;
 
             console.log('Clicked note:', note);
         };
@@ -124,13 +124,13 @@ class TrashNotes {
         if (!container) return;
 
         notes.forEach(note => {
-            if (document.querySelector(`.note-sheet[data-note-id="${note.noteId}"]`)) {
+            if (document.querySelector(`.note-sheet-trash[data-note-id="${note.noteId}"]`)) {
                 console.log(`Skipping duplicate note: ${note.noteId}`);
                 return;
             }
 
             const div = document.createElement("div");
-            div.className = "note-sheet d-flex flex-column";
+            div.className = "note-sheet-trash d-flex flex-column";
             div.id = note.noteId;
             div.dataset.noteId = note.noteId;
             div.dataset.noteTitle = note.title;
@@ -138,20 +138,20 @@ class TrashNotes {
             div.dataset.imageLink = note.imageLink || '';
 
             const imageHTML = note.imageLink?.trim()
-                ? `<div class="note-sheet__image" style="width: 100%; height: auto;">
+                ? `<div class="note-sheet-trash__image" style="width: 100%; height: auto;">
                      <img src="${note.imageLink}" style="width: 100%; height: auto;">
                    </div>`
                 : '';
 
             div.innerHTML = `
                 ${imageHTML}
-                <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
-                    <h3 class="note-sheet__title">${note.title}</h3>
-                    <div class="note-sheet__content" style="overflow-x: hidden">
+                <div class="note-sheet-trash__title-content flex-column flex-grow-1" style="padding: 16px;">
+                    <h3 class="note-sheet-trash__title">${note.title}</h3>
+                    <div class="note-sheet-trash__content" style="overflow-x: hidden">
                         ${note.content.replace(/\n/g, '<br>')}
                     </div>
                 </div>
-                <div class="note-sheet__menu">
+                <div class="note-sheet-trash__menu">
                     <div>
                         <button class="note-restore-btn" title="Restore this note" data-note-id="${note.noteId}">
                             <i class="fa-solid fa-trash-arrow-up"></i>
