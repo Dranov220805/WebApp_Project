@@ -10,11 +10,17 @@ class AccountRepository{
     public function getAccountByEmail($email): ?Account {
         $sql = "SELECT * FROM `Account` WHERE `email` = ?";
         $stmt = $this->conn->prepare($sql);
+
+        if (!$stmt) {
+            throw new Exception("Prepare failed: " . $this->conn->error);
+        }
+
         $stmt->bind_param("s", $email);
         $stmt->execute();
 
         $result = $stmt->get_result();
         if (!$result || $result->num_rows === 0) {
+            $stmt->close();
             return null;
         }
 

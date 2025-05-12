@@ -36,6 +36,18 @@ class NoteService {
         return $this->noteRepository->getLabelNoteByLabelName($labelName, $accountId);
     }
 
+    public function getSharedNoteByAccountId(string $accountId) {
+        return $this->noteRepository->getSharedNoteByAccountId($accountId);
+    }
+
+    public function shareNoteBySharedAccountIdAndReceivedAccountId(string $accountId, string $sharedAccountId, string $receivedAccountId) {
+        return $this->noteRepository->shareNoteBySharedAccountIdAndReceivedAccountId($accountId, $sharedAccountId, $receivedAccountId);
+    }
+
+    public function getNotesSharedByEmail(string $email) {
+        return $this->noteRepository->getNotesSharedByEmail($email);
+    }
+
     public function createNoteByAccountIdAndTitleAndContent($accountId, $title, $content)
     {
         $result = $this->noteRepository->createNoteByAccountIdAndTitleAndContent($accountId, $title, $content);

@@ -29,6 +29,8 @@ class LabelNote {
             const deleteBtn = event.target.closest(".note-label-delete-btn");
             const labelNote = event.target.closest(".note-label-add-btn");
             const listLabelNote = event.target.closest(".note-label-list-btn");
+            const shareBtn = event.target.closest(".note-share-btn");
+            const lockBtn = event.target.closest(".note-lock-btn");
             const noteEl = event.target.closest('.note-sheet-label');
 
             if (!noteEl) return;
@@ -57,6 +59,14 @@ class LabelNote {
                 console.log('Clicked delete button:', note);
                 this.expandDeleteLabelNote(note);
                 return;
+            }
+
+            if (shareBtn) {
+                console.log('Clicked share button:', note);
+            }
+
+            if (lockBtn) {
+                console.log('Clicked lock button:', note);
             }
 
             // Prevent expanding the note when clicking buttons inside .note-sheet__menu

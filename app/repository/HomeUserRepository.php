@@ -34,6 +34,52 @@ class HomeUserRepository{
             'message' => 'ok'
         ];
     }
+
+    public function getSharedEmailByNoteIdAndEmail($noteId, $email): array {
+        $sql = "SELECT NoteSharing.*
+            FROM `NoteSharing`
+            WHERE NoteSharing.sharedEmail = ? AND NoteSharing.noteId = ?";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param('ss', $email, $noteId);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $sharedList = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $sharedList[] = $row;
+        }
+
+        $stmt->close();
+
+        return $sharedList;
+    }
+
+    public function addSharedEmailByNoteIdAndEmailAndNewEmail($noteId, $email, $newEmail) {
+        $noteSharingId = Uuid::uuid4()->toString();
+        $timeShared = date("Y-m-d H:i:s");
+
+        $sql = "INSERT INTO `NoteSharing` (`noteSharingId`, `noteId`, `sharedEmail`, `receivedEmail`, `timeShared`, `canEdit`)
+            VALUES (?, ?, ?, ?, ?, ?)";
+
+        $stmt = $this->conn->prepare($sql);
+        $canEdit = false;
+
+        $stmt->bind_param('sssssi', $noteSharingId, $noteId, $email, $newEmail, $timeShared, $canEdit);
+        $stmt->execute();
+        $stmt->close();
+
+        return new NoteSharing(
+            $noteSharingId,
+            $noteId,
+            $email,
+            $newEmail,
+            $timeShared,
+            $canEdit
+        );
+    }
+
 }
 
 ?>

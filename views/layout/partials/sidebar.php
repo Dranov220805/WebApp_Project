@@ -30,11 +30,11 @@ $labelList = $homeUserController->getUserLabel();
             <span class="sidebar__item--title">Edit Labels</span>
         </a>
 
-        <!-- Archive item -->
-<!--        <a href="/home/archive" class="sidebar-item">-->
-<!--            <i class="sidebar__item--icon fa-solid fa-box-archive" title="Archive"></i>-->
-<!--            <span class="sidebar__item--title">Archive</span>-->
-<!--        </a>-->
+        <!-- Share item -->
+        <a href="/home/share" class="sidebar-item">
+            <i class="sidebar__item--icon fa-solid fa-share-nodes" title="Share Note"></i>
+            <span class="sidebar__item--title">Shares</span>
+        </a>
 
         <!-- Trash item -->
         <a href="/home/trash" class="sidebar-item">

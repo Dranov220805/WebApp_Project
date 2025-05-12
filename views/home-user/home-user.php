@@ -138,6 +138,83 @@
         </div>
     </div>
 
+    <!-- Share Note Modal -->
+    <div class="modal fade" id="shareNoteModal" tabindex="-1" aria-labelledby="shareNoteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content share-note-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="shareNoteModalLabel">Share Note</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <!-- Note Details -->
+                    <div class="mb-3">
+                        <h6 class="fw-bold mb-1">Note Details</h6>
+                        <div class="p-2 border rounded bg-light-subtle dark-mode:bg-dark text-muted" style="height: 90px; overflow: hidden">
+                            <strong class="shared-note--title">Nothing</strong><br>
+                            <small class="shared-note--content" style="max-height: 100px; height: 100%">Nothing in here...</small>
+                        </div>
+                    </div>
+
+                    <!-- Share with -->
+                    <div class="mb-3">
+                        <label class="form-label">Share with</label>
+                        <div class="d-flex">
+                            <input id="share--email__input" type="email" class="form-control me-2" placeholder="Enter email address">
+                            <button id="share--email__btn" class="btn btn-primary">Add</button>
+                        </div>
+                    </div>
+
+                    <!-- People with access -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">People with access</label>
+                        <div id="email--shared__list" class="list-group">
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>sarah@example.com</strong><br>
+                                    <small>Added May 12, 2025</small>
+                                </div>
+                                <select class="form-select w-auto">
+                                    <option selected>Can edit</option>
+                                    <option>Can view</option>
+                                </select>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>john@example.com</strong><br>
+                                    <small>Added May 10, 2025</small>
+                                </div>
+                                <select class="form-select w-auto">
+                                    <option>Can edit</option>
+                                    <option selected>Can view</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- General access -->
+<!--                    <div class="mb-3">-->
+<!--                        <label class="form-label fw-bold">General access</label>-->
+<!--                        <select class="form-select mb-2 w-50">-->
+<!--                            <option selected>Restricted</option>-->
+<!--                            <option>Anyone with the link</option>-->
+<!--                        </select>-->
+<!--                        <div class="input-group">-->
+<!--                            <input type="text" class="form-control" value="https://notes.example.com/share/abc123" readonly>-->
+<!--                            <button class="btn btn-outline-secondary">Copy Link</button>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary">Done</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <?php
         include "./views/layout/partials/overlay_loading.php";
     ?>

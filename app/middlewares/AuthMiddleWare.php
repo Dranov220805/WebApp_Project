@@ -46,14 +46,15 @@ class AuthMiddleware
         $jwt = $_COOKIE['access_token'] ?? null;
 
         if (!$jwt) {
-            return $this->tryRefresh();
+            return $this->tryRefresh(); // No token, try to refresh
         }
 
         try {
             $decoded = JWT::decode($jwt, new Key($this->jwtSecret, 'HS256'));
 
+            // Token is expired
             if (isset($decoded->exp) && $decoded->exp < time()) {
-                return $this->tryRefresh(); // Token expired → try refresh
+                return $this->tryRefresh(); // Attempt refresh
             }
 
             $GLOBALS['user'] = $decoded->data;
@@ -64,13 +65,15 @@ class AuthMiddleware
             ];
 
         } catch (Exception $e) {
-            return $this->tryRefresh(); // Token invalid → try refresh
+            // Token is invalid → try refresh
+            return $this->tryRefresh();
         }
     }
 
     private function tryRefresh()
     {
         $refreshToken = $_COOKIE['refresh_token'] ?? null;
+
         if (!$refreshToken) {
             return [
                 'status' => false,
@@ -88,8 +91,10 @@ class AuthMiddleware
             ];
         }
 
-        // Set new access token cookie
-        setcookie('access_token', $newTokenResult['access_token'], [
+        $newAccessToken = $newTokenResult['access_token'];
+
+        // Set new access token for next requests
+        setcookie('access_token', $newAccessToken, [
             'expires' => time() + 3600,
             'path' => '/',
             'secure' => true,
@@ -97,9 +102,21 @@ class AuthMiddleware
             'samesite' => 'Lax'
         ]);
 
-        $GLOBALS['user'] = $newTokenResult['data'];
+        // Decode token right away so current request has access
+        try {
+            $decoded = JWT::decode($newAccessToken, new Key($this->jwtSecret, 'HS256'));
+            $GLOBALS['user'] = $decoded->data;
 
-        return ['status' => true, 'token_data' => $newTokenResult['data']];
+            return [
+                'status' => true,
+                'token_data' => $decoded
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => 'Failed to decode refreshed token'
+            ];
+        }
     }
 
     public function getUrlActivationLink()

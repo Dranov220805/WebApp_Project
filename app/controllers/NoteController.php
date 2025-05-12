@@ -95,7 +95,7 @@ class NoteController {
         $user = $GLOBALS['user'];
         $accountId = $user->accountId ?? null;
         $intPage = isset($_GET['page']) ? $_GET['page'] : 1;
-        $perPage = isset($_GET['limit']) ? $_GET['limit'] : 10;
+        $perPage = isset($_GET['limit']) ? $_GET['limit'] : 100;
 
         // Basic validation
         if (!$accountId) {
@@ -145,6 +145,31 @@ class NoteController {
                     'status' => true,
                     'data' => $result,
                     'message' => 'Load pinned notes'
+                ]);
+            }
+        }
+    }
+
+    public function getShareNotes() {
+        $user = $GLOBALS['user'];
+        $accountId = $user->accountId ?? null;
+        if (empty($accountId)) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'Missing accountId'
+            ]);
+        } else {
+            $result = $this->noteService->getSharedNoteByAccountId($accountId);
+            if (!$result) {
+                echo json_encode([
+                    'status' => false,
+                    'message' => 'No shared notes found'
+                ]);
+            } else {
+                echo json_encode([
+                    'status' => true,
+                    'data' => $result,
+                    'message' => 'Load shared notes'
                 ]);
             }
         }
@@ -274,7 +299,8 @@ class NoteController {
             return;
         }
 
-        $accountId = $_SESSION['accountId'] ?? null;
+        $user = $GLOBALS['user'];
+        $accountId = $user->accountId ?? null;
 
         if (!$accountId) {
             http_response_code(401);
@@ -291,12 +317,6 @@ class NoteController {
             'status' => true,
             'data' => $notes
         ]);
-    }
-
-    public function getAllNotes() {
-        $notes = $this->noteService->getAllNotes();
-
-        echo json_encode(['data' => $notes]);
     }
 
     public function pinNote_POST() {

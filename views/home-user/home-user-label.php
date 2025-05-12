@@ -13,6 +13,16 @@
     <div id="content" class="content" style="margin-left: 80px;">
         <div class="small-container">
 
+            <!--            Search Note grid-->
+            <div class="pinned-note">
+                <h6 class="note-layout__title">Search Result</h6>
+                <div class="note-grid d-flex justify-content-center">
+                    <div class="search-note__load load-grid" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center">
+                        <!--                        Search Result Note Grid-->
+                    </div>
+                </div>
+            </div>
+
             <!-- Label Notes grid -->
             <div class="label-note">
                 <h6 class="note-layout__title" id="note-layout__title"><?= htmlspecialchars($data['labelName']) ?></h6>
@@ -23,7 +33,7 @@
                                 <?php
                                 $labelAttr = htmlspecialchars(json_encode($note['labels'] ?? []));
                                 ?>
-                                <div class="note-sheet note-sheet-label d-flex flex-column"
+                                <div class="note-sheet note-sheet-label d-flex"
                                      data-note-id="<?= htmlspecialchars($note['noteId']) ?>"
                                      data-note-title="<?= htmlspecialchars($note['title']) ?>"
                                      data-note-content="<?= htmlspecialchars($note['content']) ?>"
@@ -34,8 +44,8 @@
                                         data-note-labels='<?= $labelAttr ?>'>
                                     <?php endif;?>
                                     <?php if (!empty($note['imageLink'])): ?>
-                                        <div class="note-sheet__image" style="width: 100%; height: auto; overflow: visible">
-                                            <img src="<?= htmlspecialchars($note['imageLink']) ?>" style="width: 100%; height: auto; display: block">
+                                        <div class="note-sheet__image" style="overflow: visible">
+                                            <img src="<?= htmlspecialchars($note['imageLink']) ?>" style="display: block">
                                         </div>
                                     <?php endif; ?>
 
@@ -47,11 +57,11 @@
                                     </div>
 
                                     <div class="note-sheet__menu">
-                                        <div>
+                                        <div class="note-sheet__menu--item">
                                             <button title="Add Label" data-bs-target="listLabelNoteModal" id="note-label-list-btn" class="note-label-list-btn"><i class="fa-solid fa-tags"></i></button>
                                             <button class="note-label-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="<?= htmlspecialchars($note['noteId']) ?>"><i class="fa-solid fa-trash"></i></button>
-                                            <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
-                                            <button title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
+                                            <button class="note-share-btn" title="Share this Note"><i class="fa-solid fa-users"></i></button>
+                                            <button class="note-lock-btn" title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
                                         </div>
                                     </div>
                                 </div>

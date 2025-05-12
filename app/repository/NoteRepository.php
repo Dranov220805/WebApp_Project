@@ -12,15 +12,6 @@ class NoteRepository
 
     public function getNotesByAccountId(string $accountId)
     {
-//        $sql = "SELECT n.*, i.imageLink
-//            FROM `Account` a
-//            LEFT JOIN `Note` n ON a.accountId = n.accountId
-//            LEFT JOIN `Modification` m ON m.noteId = n.noteId
-//            LEFT JOIN `Image` i on i.noteId = n.noteId
-//            WHERE a.accountId = ?
-//              AND n.isDeleted = FALSE
-//              AND (m.isPinned IS NULL OR m.isPinned = FALSE)
-//            ORDER BY n.createDate DESC";
         $sql = "SELECT n.*, i.imageLink, l.labelId, l.labelName
                 FROM `Account` a
                 LEFT JOIN `Note` n ON a.accountId = n.accountId
@@ -39,7 +30,6 @@ class NoteRepository
             throw new Exception("Failed to prepare SQL statement: " . $this->conn->error);
         }
 
-        //        $stmt->bind_param("sii", $userName, $limit, $offset);
         $stmt->bind_param("s", $accountId);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -47,7 +37,7 @@ class NoteRepository
         $notes = [];
 
         while ($row = $result->fetch_assoc()) {
-            $notes[] = $row; // Optionally map to a Note model
+            $notes[] = $row;
         }
 
         return $notes;
@@ -307,6 +297,109 @@ class NoteRepository
         }
 
         return array_values($notes);
+    }
+
+    public function getSharedNoteByAccountId($accountId): array {
+        $sql = "SELECT n.*, i.imageLink, l.labelId, l.labelName
+            FROM `Account` a
+            LEFT JOIN `Note` n ON a.accountId = n.accountId
+            LEFT JOIN `Modification` m ON m.noteId = n.noteId
+            LEFT JOIN `Image` i on i.noteId = n.noteId
+            LEFT JOIN `NoteLabel` nl ON nl.noteId = n.noteId
+            LEFT JOIN `Label` l ON l.labelId = nl.labelId
+            WHERE a.accountId = ? 
+            AND n.isDeleted = FALSE
+            ORDER BY n.createDate DESC";
+
+        $stmt = $this->conn->prepare($sql);
+
+        if (!$stmt) {
+            throw new Exception("Failed to prepare SQL statement: " . $this->conn->error);
+        }
+
+        $stmt->bind_param("s", $accountId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $notes = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $noteId = $row['noteId'];
+
+            if (!isset($notes[$noteId])) {
+                $notes[$noteId] = $row;
+                $notes[$noteId]['labels'] = [];
+            }
+
+            if ($row['labelId']) {
+                $notes[$noteId]['labels'][] = [
+                    'labelId' => $row['labelId'],
+                    'labelName' => $row['labelName']
+                ];
+            }
+        }
+
+        return array_values($notes);
+    }
+
+    public function getNotesSharedByEmail($email): array {
+        $sql = "
+            SELECT 
+                ns.*, 
+                n.*,
+                i.imageLink, 
+                l.labelId, 
+                l.labelName
+            FROM NoteSharing ns
+            INNER JOIN Note n ON ns.noteId = n.noteId
+            LEFT JOIN Image i ON i.noteId = n.noteId
+            LEFT JOIN NoteLabel nl ON nl.noteId = n.noteId
+            LEFT JOIN Label l ON l.labelId = nl.labelId
+            WHERE ns.receivedEmail = ? AND n.isDeleted = FALSE
+        ";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $notes = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $notes[] = $row;
+        }
+
+        $stmt->close();
+        return $notes;
+    }
+
+    public function shareNoteBySharedAccountIdAndReceivedAccountId($noteId, $sharedAccountId, $receivedAccountId) {
+        date_default_timezone_set('Asia/Bangkok');
+
+        $noteSharingId = Uuid::uuid4()->toString();
+        $timeShared = date("Y-m-d H:i:s");
+        $canEdit = 0;
+
+        $sql = "INSERT INTO NoteSharing (noteSharingId, noteId, sharedEmail, receivedEmail, timeShared, canEdit) VALUES (?, ?, ?, ?, ?, ?)";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ssssssi", $noteSharingId, $noteId, $sharedAccountId, $receivedAccountId, $timeShared, $canEdit);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        if (!$result) {
+            return null;
+        }
+
+        return new NoteSharing(
+            $noteSharingId,
+            $noteId,
+            $sharedAccountId,
+            $receivedAccountId,
+            $timeShared,
+            $canEdit
+        );
+
     }
 
     public function createNoteByAccountIdAndTitleAndContent($accountId, $title, $content): ?Note

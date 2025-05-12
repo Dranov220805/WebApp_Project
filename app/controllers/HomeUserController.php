@@ -34,7 +34,6 @@ class HomeUserController extends BaseController{
             $pinnedNotes = $this->noteService->getPinnedNotesByAccountId($accountId);
             $otherNotes = $this->noteService->getNotesByAccountId($accountId);
 
-            // Pass data to the view
             $this->Views('home', [
                 'status' => true,
                 'pinnedNotes' => $pinnedNotes,
@@ -82,7 +81,6 @@ class HomeUserController extends BaseController{
         $user = $GLOBALS['user'];
         $accountId = $user->accountId;
 
-        // Basic validation
         if (!$accountId) {
             http_response_code(400);
             echo json_encode(['status' => false, 'message' => 'Missing accountId']);
@@ -99,10 +97,17 @@ class HomeUserController extends BaseController{
             'message' => 'Get label view for this account successfully'
         ]);
     }
-    public function homeArchive() {
-        $content = 'home-user-archive';
-        $footer = 'home';
-        include "./views/layout/index.php";
+    public function homeShare() {
+        $user = $GLOBALS['user'];
+        $email = $user->email;
+
+        $result = $this->noteService->getNotesSharedByEmail($email);
+
+        $this->Views('home-user-share', [
+            'status' => true,
+            'data' => $result,
+            'message' => 'Get shared view for this account successfully'
+        ]);
     }
     public function homeTrash() {
         $user = $GLOBALS['user'];
@@ -163,7 +168,7 @@ class HomeUserController extends BaseController{
                 $result = $this->accountService->updateProfilePictureByAccountId($accountId, $uploadResponse['url']);
                 if ($result['status'] === true) {
 
-                    setcookie('jwt_token', $result['token'], [
+                    setcookie('access_token', $result['token'], [
                         'expires' => time() + 3600, // 1 hour (match your JWT expiry)
                         'path' => '/',
                         'secure' => true, // Set to true if using HTTPS
@@ -255,6 +260,71 @@ class HomeUserController extends BaseController{
             echo json_encode([
                 'status' => false,
                 'message' => "Missing data"
+            ]);
+        }
+    }
+
+    public function addNewSharedEmail_POST() {
+        $content = trim(file_get_contents("php://input"));
+        $data = json_decode($content, true);
+
+        $noteId = $data['noteId'] ?? null;
+        $newEmail = $data['newSharedEmail'] ?? null;
+        $user = $GLOBALS['user'];
+        $email = $user->email;
+        if (empty($noteId) || empty($newEmail) || empty($email)) {
+            echo json_encode([
+                'status' => false,
+                'newEmail' => $newEmail,
+                'email' => $email,
+                'noteId' => $noteId,
+                'message' => "Missing noteId, or newEmail, or Email"
+            ]);
+        }
+        $result = $this->homeUserService->addSharedEmailByNoteIdAndEmailAndNewEmail($noteId, $email, $newEmail);
+        if ($result['status'] === true) {
+            http_response_code(200);
+            echo json_encode([
+               'status' => true,
+               'data' =>$result['data'],
+               'message' => $result['message']
+            ]);
+        } else {
+            http_response_code(400);
+            echo json_encode([
+               'status' => false,
+               'message' => $result['message']
+            ]);
+        }
+    }
+
+    public function sharedEmailList() {
+        $content = trim(file_get_contents("php://input"));
+        $data = json_decode($content, true);
+
+        $noteId = $data['noteId'] ?? null;
+        $user = $GLOBALS['user'];
+        $email = $user->email;
+
+        if (!empty($noteId) || !empty($email)) {
+            $result = $this->homeUserService->getSharedEmailByNoteIdAndEmail($noteId, $email);
+            if ($result) {
+                echo json_encode([
+                    'status' => true,
+                    'result' => $result,
+                    'message' => 'Get emails shared by this note successfully'
+                ]);
+            } else {
+                echo json_encode([
+                   'status' => false,
+                   'message' => 'This note does not have any shared email'
+                ]);
+            }
+        } else {
+            http_response_code(400);
+            echo json_encode([
+                'status' => false,
+                'message' => "Missing noteId or accountId"
             ]);
         }
     }

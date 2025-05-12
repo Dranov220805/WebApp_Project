@@ -6,6 +6,7 @@ import homeUser from './home-user.js';
 import homeUserTrash from './home-user-trash.js';
 import TrashNotes from "./home-user-trash.js";
 import LabelNotes from "./home-user-label.js";
+import ShareNotes from "./home-user-share.js";
 
 // Site functionality
 homeUser.closeToast();

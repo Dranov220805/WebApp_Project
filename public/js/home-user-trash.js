@@ -56,26 +56,26 @@ class TrashNotes {
         document.addEventListener('click', this.handleNoteClick);
         console.log('Attached note click listener');
 
-        window.addEventListener('scroll', this.handleScroll.bind(this));
-        console.log('Attached scroll listener');
+        // window.addEventListener('scroll', this.handleScroll.bind(this));
+        // console.log('Attached scroll listener');
     }
 
-    handleScroll() {
-        const currentScrollTop = window.scrollY;
-
-        if (
-            currentScrollTop > this.lastScrollTop &&
-            window.innerHeight + currentScrollTop >= document.body.offsetHeight - 200
-        ) {
-            if (!this.scrollThrottle) {
-                this.scrollThrottle = true;
-                this.loadTrashedNotes();
-                setTimeout(() => this.scrollThrottle = false, 300);
-            }
-        }
-
-        this.lastScrollTop = Math.max(currentScrollTop, 0);
-    }
+    // handleScroll() {
+    //     const currentScrollTop = window.scrollY;
+    //
+    //     if (
+    //         currentScrollTop > this.lastScrollTop &&
+    //         window.innerHeight + currentScrollTop >= document.body.offsetHeight - 200
+    //     ) {
+    //         if (!this.scrollThrottle) {
+    //             this.scrollThrottle = true;
+    //             this.loadTrashedNotes();
+    //             setTimeout(() => this.scrollThrottle = false, 300);
+    //         }
+    //     }
+    //
+    //     this.lastScrollTop = Math.max(currentScrollTop, 0);
+    // }
 
     showToast(message, type = 'danger', duration = 2000) {
         const toast = document.getElementById("toast");
@@ -130,7 +130,7 @@ class TrashNotes {
             }
 
             const div = document.createElement("div");
-            div.className = "note-sheet-trash d-flex flex-column";
+            div.className = "note-sheet-trash d-flex";
             div.id = note.noteId;
             div.dataset.noteId = note.noteId;
             div.dataset.noteTitle = note.title;
@@ -138,8 +138,8 @@ class TrashNotes {
             div.dataset.imageLink = note.imageLink || '';
 
             const imageHTML = note.imageLink?.trim()
-                ? `<div class="note-sheet-trash__image" style="width: 100%; height: auto;">
-                     <img src="${note.imageLink}" style="width: 100%; height: auto;">
+                ? `<div class="note-sheet-trash__image" style="">
+                     <img src="${note.imageLink}" style="">
                    </div>`
                 : '';
 
@@ -235,7 +235,7 @@ class TrashNotes {
 
     deleteNote_POST(noteId) {
         fetch(`/note/hard-delete`, {
-            method: 'POST',
+            method: 'DELETE',
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ noteId })
         })

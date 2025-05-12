@@ -302,7 +302,13 @@ class HomeUser {
     }
 
     performSearch(query) {
-        fetch(`/note/search?query=${encodeURIComponent(query)}`)
+        fetch(`/note/search?query=${encodeURIComponent(query)}`, {
+            method: 'GET',
+            headers: {
+                "Content-Type": "application/json" ,
+                'Authorization': 'Bearer '
+            },
+        })
             .then(res => res.json())
             .then(data => {
                 if (data.status && data.data.length > 0) {
@@ -360,7 +366,7 @@ class HomeUser {
 
     clearSearchResults() {
         const container = document.querySelector('.search-note__load');
-        container.innerHTML = ''; // Clear search results
+        container.innerHTML = '';
     }
 
 

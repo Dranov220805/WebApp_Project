@@ -17,14 +17,14 @@
 <!--                    Render other notes -->
                         <?php if (!empty($data['trashNotes'])): ?>
                             <?php foreach ($data['trashNotes'] as $note): ?>
-                                <div class="note-sheet-trash note-sheet-trash-trash d-flex flex-column"
+                                <div class="note-sheet-trash note-sheet-trash-trash d-flex"
                                      data-note-id="<?= htmlspecialchars($note['noteId']) ?>"
                                      data-note-title="<?= htmlspecialchars($note['title']) ?>"
                                      data-note-content="<?= htmlspecialchars($note['content'])?>"
                                      data-note-image="<?= htmlspecialchars($note['imageLink'])?>">
                                     <?php if (!empty($note['imageLink'])) {?>
-                                    <div class="note-sheet-trash__image" style="width: 100%; height: auto; overflow: visible">
-                                        <img src="<?= htmlspecialchars($note['imageLink'])?>" style="width: 100%; height: auto; display: block">
+                                    <div class="note-sheet-trash__image" style="overflow: visible">
+                                        <img src="<?= htmlspecialchars($note['imageLink'])?>" style="display: block">
                                     </div>
                                     <?php } ?>
                                     <div class="note-sheet-trash__title-content flex-column flex-grow-1" style="padding: 16px;">
@@ -34,7 +34,7 @@
                                         </div>
                                     </div>
                                     <div class="note-sheet-trash__menu"">
-                                        <div>
+                                        <div class="note-sheet__menu--item">
                                             <button class="note-restore-btn" title="Restore this note" data-note-id="<?= htmlspecialchars($note['noteId']) ?>"><i class="fa-solid fa-trash-arrow-up"></i></i></button>
                                             <button class="note-trash-delete-btn" title="Delete permanently" data-note-id="<?= htmlspecialchars($note['noteId']) ?>"><i class="fa-solid fa-eraser"></i></button>
                                         </div>

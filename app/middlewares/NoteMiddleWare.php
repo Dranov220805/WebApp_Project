@@ -47,6 +47,16 @@ class NoteMiddleWare {
         $this->noteController->SearchNotes();
     }
 
+    public function ShareNotes() {
+        $checkToken = $this->authMiddleware->checkSession();
+
+        if ($checkToken['status'] === false) {
+            header('location:/log/login');
+            exit();
+        }
+        $this->noteController->getShareNotes();
+    }
+
     public function createNote_POST() {
         $checkToken = $this->authMiddleware->checkSession();
 

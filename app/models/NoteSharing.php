@@ -2,6 +2,30 @@
 class NoteSharing {
     public string $noteSharingId;
     public string $noteId;
+    public string $sharedEmail;
+    public string $receivedEmail;
+    public string $timeShared;
+    public bool $canEdit;
+
+    public function getreceivedEmail(): string
+    {
+        return $this->receivedEmail;
+    }
+
+    public function setreceivedEmail(string $receivedEmail): void
+    {
+        $this->receivedEmail = $receivedEmail;
+    }
+
+    public function getsharedEmail(): string
+    {
+        return $this->sharedEmail;
+    }
+
+    public function setsharedEmail(string $sharedEmail): void
+    {
+        $this->sharedEmail = $sharedEmail;
+    }
 
     public function getNoteSharingId(): string
     {
@@ -42,12 +66,12 @@ class NoteSharing {
     {
         $this->canEdit = $canEdit;
     }
-    public string $timeShared;
-    public bool $canEdit;
 
-    public function __construct($noteSharingId, $noteId, $timeShared, $canEdit) {
+    public function __construct($noteSharingId, $noteId, $sharedEmail, $receivedEmail, $timeShared, $canEdit) {
         $this->noteSharingId = $noteSharingId;
         $this->noteId = $noteId;
+        $this->sharedEmail = $sharedEmail;
+        $this->receivedEmail = $receivedEmail;
         $this->timeShared = $timeShared;
         $this->canEdit = $canEdit;
     }

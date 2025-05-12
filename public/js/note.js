@@ -41,6 +41,8 @@ class Notes {
             const listLabelNote = event.target.closest(".note-label-list-btn");
             const pinBtn = event.target.closest(".note-pin-btn");
             const unpinBtn = event.target.closest(".pinned-note-pin-btn");
+            const shareBtn = event.target.closest(".note-share-btn");
+            const lockBtn = event.target.closest(".note-lock-btn");
             const noteEl = event.target.closest('.note-sheet');
 
             if (!noteEl) return;
@@ -81,6 +83,16 @@ class Notes {
                 console.log('Clicked unpin button:', note);
                 this.unpinNote_POST(note.noteId, note.title, note.content, note.imageLink);
                 return;
+            }
+
+            if (shareBtn) {
+                console.log('Clicked share button:', note);
+                this.expandShareNote(note);
+            }
+
+            if (lockBtn) {
+                console.log('Clicked lock button:', note);
+                this.expandLockNote(note);
             }
 
             // Prevent expanding the note when clicking buttons inside .note-sheet__menu
@@ -202,7 +214,7 @@ class Notes {
             }
 
             const div = document.createElement("div");
-            div.className = "note-sheet d-flex flex-column";
+            div.className = "note-sheet d-flex";
             div.dataset.noteId = note.noteId;
             div.dataset.noteTitle = note.title;
             div.dataset.noteContent = note.content;
@@ -225,8 +237,8 @@ class Notes {
             }
 
             const imageHTML = note.imageLink && note.imageLink.trim() !== ''
-                ? `<div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
-                   <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
+                ? `<div class="note-sheet__image" style="overflow-y: visible">
+                   <img src="${note.imageLink}" style="display: block">
                </div>`
                 : '';
 
@@ -239,12 +251,12 @@ class Notes {
                 </div>
             </div>
             <div class="note-sheet__menu">
-                <div>
+                <div class="note-sheet__menu--item">
                     <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack-slash"></i></button>
                     <button title="Add Label" data-bs-target="listLabelNoteModal" id="note-label-list-btn" class="note-label-list-btn"><i class="fa-solid fa-tags"></i></button>
                     <button class="note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
-                    <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
-                    <button title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
+                    <button class="note-share-btn" title="Share this Note"><i class="fa-solid fa-users"></i></button>
+                    <button class="note-lock-btn" title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
                 </div>
             </div>
         `;
@@ -287,7 +299,7 @@ class Notes {
             }
 
             const div = document.createElement("div");
-            div.className = "note-sheet d-flex flex-column";
+            div.className = "note-sheet d-flex";
             div.dataset.noteId = note.noteId;
             div.dataset.noteTitle = note.title;
             div.dataset.noteContent = note.content;
@@ -310,8 +322,8 @@ class Notes {
             }
 
             const imageHTML = note.imageLink && note.imageLink.trim() !== ''
-                ? `<div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
-                   <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
+                ? `<div class="note-sheet__image" style="overflow-y: visible">
+                   <img src="${note.imageLink}" style="display: block">
                </div>`
                 : '';
 
@@ -324,12 +336,12 @@ class Notes {
                     </div>
                 </div>
                 <div class="note-sheet__menu">
-                    <div>
+                    <div class="note-sheet__menu--item">
                         <button class="pinned-note-pin-btn" title="Unpin Note"><i class="fa-solid fa-thumbtack"></i></button>
                         <button title="Add Label" data-bs-target="listLabelNoteModal" id="note-label-list-btn" class="note-label-list-btn"><i class="fa-solid fa-tags"></i></button>
                         <button class="pinned-note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
-                        <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
-                        <button title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
+                        <button class="note-share-btn" title="Share this Note"><i class="fa-solid fa-users"></i></button>
+                        <button class="note-lock-btn" title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
                     </div>
                 </div>
             `;
@@ -617,7 +629,7 @@ class Notes {
             showSavingIcon();
 
             fetch('/note/update', {
-                method: 'POST',
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     noteId,
@@ -785,7 +797,7 @@ class Notes {
         if (!otherNoteGrid) return;
 
         const div = document.createElement("div");
-        div.className = "note-sheet d-flex flex-column";
+        div.className = "note-sheet d-flex";
         div.dataset.noteId = noteId;
         div.dataset.title = title ?? "";
         div.dataset.content = content ?? "";
@@ -799,8 +811,8 @@ class Notes {
         }
 
         const imageHTML = imageLink && imageLink.trim() !== ''
-            ? `<div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
-                   <img src="${imageLink}" style="width: 100%; height: auto; display: block">
+            ? `<div class="note-sheet__image" style="overflow-y: visible">
+                   <img src="${imageLink}" style="display: block">
                </div>`
             : '';
 
@@ -813,12 +825,12 @@ class Notes {
             </div>
         </div>
         <div class="note-sheet__menu">
-            <div>
+            <div class="note-sheet__menu--item">
                 <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack-slash"></i></button>
                 <button title="Add Label" data-bs-target="listLabelNoteModal" id="note-label-list-btn" class="note-label-list-btn"><i class="fa-solid fa-tags"></i></button>
                 <button class="note-delete-btn" title="Delete This Note" data-note-id="${noteId}"><i class="fa-solid fa-trash"></i></button>
-                <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
-                <button title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
+                <button class="note-share-btn" title="Share this Note"><i class="fa-solid fa-users"></i></button>
+                <button class="note-lock-btn" title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
             </div>
         </div>
     `;
@@ -830,7 +842,7 @@ class Notes {
         const pinnedNoteGrid = document.querySelector('.pinned-note__load');
 
         const div = document.createElement("div");
-        div.className = "note-sheet d-flex flex-column";
+        div.className = "note-sheet d-flex";
         div.dataset.id = noteId;
         div.dataset.title = title;
         div.dataset.content = content;
@@ -844,8 +856,8 @@ class Notes {
         }
 
         const imageHTML = imageLink && imageLink.trim() !== ''
-            ? `<div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
-                   <img src="${imageLink}" style="width: 100%; height: auto; display: block">
+            ? `<div class="note-sheet__image" style="overflow-y: visible">
+                   <img src="${imageLink}" style="display: block">
                </div>`
             : '';
 
@@ -858,12 +870,12 @@ class Notes {
                 </div>      
             </div>
             <div class="note-sheet__menu">
-                <div>
+                <div class="note-sheet__menu--item">
                     <button class="pinned-note-pin-btn" title="Unpin Note"><i class="fa-solid fa-thumbtack"></i></button>
                     <button title="Add Label" data-bs-target="listLabelNoteModal" id="note-label-list-btn" class="note-label-list-btn"><i class="fa-solid fa-tags"></i></button>
                     <button class="pinned-note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${noteId}"><i class="fa-solid fa-trash"></i></button>
-                    <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
-                    <button title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
+                    <button class="note-share-btn" title="Share this Note"><i class="fa-solid fa-users"></i></button>
+                    <button class="note-lock-btn" title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
                 </div>
             </div>
         `;
@@ -947,7 +959,7 @@ class Notes {
 
     removeNoteFromLabel_POST(noteId, labelName) {
         fetch(`/label/note-delete`, {
-            method: 'POST',
+            method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 noteId,
@@ -1057,7 +1069,7 @@ class Notes {
 
     deleteNote_POST(noteId, title, content) {
         fetch(`/note/delete`, {
-            method: 'POST',
+            method: 'DELETE',
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ noteId })
         })
@@ -1095,6 +1107,112 @@ class Notes {
                 console.error("Delete error:", err);
                 this.showToast("An error occurred while deleting the note", "danger");
             });
+    }
+
+    expandShareNote(note) {
+        const modalEl = document.getElementById('shareNoteModal');
+        const modal = new bootstrap.Modal(modalEl);
+        const shareNoteTitle = document.querySelector('.shared-note--title');
+        const shareNoteContent = document.querySelector('.shared-note--content');
+        const shareEmailBtn = document.querySelector('#share--email__btn');
+        const emailSharedList = document.querySelector('#email--shared__list');
+
+        // Set note content in modal
+        shareNoteTitle.innerText = note.title;
+        shareNoteContent.innerText = note.content;
+
+        // Load shared emails list
+        this.getSharedEmail(note.noteId);
+
+        const newBtnHandler = () => {
+            const newSharedEmail = $('#share--email__input').val();
+            fetch(`/share-list/add`, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    noteId: note.noteId,
+                    newSharedEmail
+                })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status) {
+                        console.log("Shared successfully.");
+                        emailSharedList.value = '';
+                        this.getSharedEmail(note.noteId);
+                    } else {
+                        console.error(data.message || "Failed to share note.");
+                    }
+                    shareEmailBtn.removeEventListener('click', newBtnHandler);
+                })
+                .catch(err => console.error("Error sharing:", err));
+        }
+
+        shareEmailBtn.addEventListener('click', newBtnHandler);
+
+        modal.show();
+    }
+
+    getSharedEmail(noteId) {
+        fetch(`/share-list`, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ noteId })
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`Server returned ${res.status}`);
+                }
+                return res.json();
+            })
+            .then(data => {
+                const emailSharedList = document.querySelector("#email--shared__list");
+                emailSharedList.innerHTML = '';
+
+                const { status, result, message } = data;
+
+                if (!status || !result || result.length === 0) {
+                    emailSharedList.innerText = message || 'No shared email found!';
+                    return;
+                }
+
+                result.forEach(entry => {
+                    const email = entry.receivedEmail || entry.email || '[Unknown Email]';
+                    const date = entry.timeShared ? new Date(entry.timeShared).toLocaleDateString('en-US', {
+                        year: 'numeric', month: 'long', day: 'numeric'
+                    }) : 'Unknown date';
+
+                    const item = document.createElement('div');
+                    item.className = "list-group-item d-flex justify-content-between align-items-center";
+
+                    item.innerHTML = `
+                <div>
+                    <strong>${email}</strong><br>
+                    <small>Added ${date}</small>
+                </div>
+                <select class="form-select w-auto">
+                    <option ${entry.canEdit ? 'selected' : ''}>Can edit</option>
+                    <option ${!entry.canEdit ? 'selected' : ''}>Can view</option>
+                </select>
+            `;
+
+                    emailSharedList.appendChild(item);
+                });
+            })
+            .catch(err => {
+                const emailSharedList = document.querySelector("#email--shared__list");
+                emailSharedList.innerHTML = '';
+                emailSharedList.innerText = 'Error loading shared emails. Please try again.';
+                console.error("Fetch error:", err);
+            });
+    }
+
+    expandLockNote(note) {
+
     }
 
 }

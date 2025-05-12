@@ -23,6 +23,7 @@ body {
 }
 
 .note-sheet {
+    flex-direction: column;
     max-width: 500px;
     width: 235px;
     min-width: 235px;
@@ -36,6 +37,21 @@ body {
 
     /* Transition for smooth hover effects */
     transition: box-shadow 0.3s ease, transform 0.2s ease;
+    transition: transform 0.3s ease;
+
+    .note-sheet__image img {
+        width: 100%;
+        height: auto;
+    }
+}
+
+.note-sheet-trash {
+    flex-direction: column;
+}
+
+.note-sheet-trash__image img {
+    width: 100%;
+    height: auto;
 }
 
 /* Hover effect */
@@ -100,12 +116,12 @@ body {
 
 /* Icon spacing for left group */
 .note-sheet__menu > div button:not(:last-child) {
-    margin-right: 6px;
+    margin-right: 0px;
 }
 
 /* Optional: Slight spacing if needed on the rightmost button */
 .note-sheet__menu > button {
-    margin-left: 8px;
+    margin-left: 0px;
 }
 
 /* ────────── Expanded Mode ────────── */
@@ -303,15 +319,39 @@ body {
 .load-list .note-sheet {
     break-inside: avoid; /* Prevents cards from breaking across columns */
     display: inline-block; /* Important for column layout */
+    flex-direction: row;
     width: 100%;
-    max-width: 600px;
+    max-width: 100%;
     height: fit-content;
-    max-height: 900px;
+    max-height: 200px;
     margin-bottom: 16px;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
     overflow: hidden;
+
+    .note-sheet__menu--item {
+        display: flex;
+        flex-direction: column;
+
+        .note-sheet__menu--item > button {
+            margin-right: 0px;
+        }
+    }
+
+    .note-sheet__image img {
+        width: auto;
+        height: 100%;
+    }
+}
+
+.load-list .note-sheet-trash {
+    flex-direction: row;
+
+    .note-sheet-trash__image img {
+        width: 100%;
+        height: auto;
+    }
 }
 
 .note-modal-display {
@@ -585,6 +625,10 @@ body {
     overflow: hidden;
 }
 
+#shareNoteModal {
+    height: 100%;
+}
+
 /* ─────── DARK MODE SUPPORT ─────── */
 body.dark-mode {
     background-color: #202124;
@@ -803,6 +847,82 @@ body.dark-mode .btn-close {
 .body.dark-mode .label-post__submit:hover {
     color: white;
     background-color: #5771ff;
+}
+
+
+/*Dark mode for share modal*/
+
+body.dark-mode {
+    background-color: #121212;
+    color: #f0f0f0;
+}
+
+body.dark-mode .bg-light-subtle,
+body.dark-mode .form-control,
+body.dark-mode .form-select,
+body.dark-mode .list-group-item,
+body.dark-mode .input-group input {
+    background-color: #2b2b2b;
+    color: #ffffff;
+    border-color: #444;
+}
+
+body.dark-mode .btn-outline-secondary {
+    color: #ccc;
+    border-color: #555;
+}
+
+/*Dark mode for shared page*/
+
+body.dark-mode .card {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    border-color: #333;
+}
+
+body.dark-mode .btn-outline-secondary {
+    color: #ccc;
+    border-color: #555;
+}
+
+.shared-note-card {
+    transition: box-shadow 0.2s ease;
+}
+
+.shared-note-card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.access-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 8px;
+}
+
+.access-readonly {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+.access-edit {
+    background-color: #d0ebff;
+    color: #084298;
+}
+
+body.dark-mode .access-readonly {
+    background-color: #2b2b2b;
+    color: #ccc;
+}
+
+body.dark-mode .access-edit {
+    background-color: #2d4b6b;
+    color: #bcdcff;
+}
+
+.card-header {
+    background-color: transparent;
+    border-bottom: none;
 }
 
 /* Toggle dark mode by toggling the `dark-mode` class on the <body> tag */

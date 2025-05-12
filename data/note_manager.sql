@@ -71,6 +71,8 @@ CREATE TABLE `Note` (
 CREATE TABLE `NoteSharing` (
   `noteSharingId` CHAR(36) NOT NULL PRIMARY KEY,
   `noteId` CHAR(36) NOT NULL,
+  `sharedEmail` VARCHAR(200) NOT NULL,
+  `receivedEmail` VARCHAR(200) NOT NULL,
   `timeShared` DATETIME NOT NULL DEFAULT NOW(),
   `canEdit` BOOLEAN NOT NULL DEFAULT FALSE
 );

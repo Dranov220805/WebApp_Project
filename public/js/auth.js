@@ -57,10 +57,11 @@ class Auth {
                     $('#password-input').val('');
                     if (status === true) {
                         this.showLoginToast(message, 'success');
-                        setTimeout(() => {
-                            // Navigate to home page - token will be sent via cookie
-                            window.location.href = '/home';
-                        }, 100);
+                        // Navigate to home page - token will be sent via cookie
+                        window.location.href = '/home';
+                        // setTimeout(() => {
+                        //
+                        // }, 100);
                     } else {
                         this.showLoginToast(message, 'danger');
                     }

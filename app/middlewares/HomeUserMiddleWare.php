@@ -53,14 +53,14 @@ class HomeUserMiddleWare {
         }
         $this->homeUserController->homeLabel_POST($labelName);
     }
-    public function homeArchive() {
+    public function homeShare() {
         $checkToken = $this->authMiddleware->checkSession();
 
         if ($checkToken['status'] === false) {
             header('location:/log/login');
             exit();
         }
-        $this->homeUserController->homeArchive();
+        $this->homeUserController->homeShare();
     }
     public function homeTrash() {
         $checkToken = $this->authMiddleware->checkSession();
@@ -106,5 +106,25 @@ class HomeUserMiddleWare {
             exit();
         }
         $this->homeUserController->updatePreference();
+    }
+
+    public function addNewSharedEmail_POST() {
+        $checkToken = $this->authMiddleware->checkSession();
+
+        if ($checkToken['status'] === false) {
+            header('location:/log/login');
+            exit();
+        }
+        $this->homeUserController->addNewSharedEmail_POST();
+    }
+
+    public function sharedEmailList() {
+        $checkToken = $this->authMiddleware->checkSession();
+
+        if ($checkToken['status'] === false) {
+            header('location:/log/login');
+            exit();
+        }
+        $this->homeUserController->sharedEmailList();
     }
 }
