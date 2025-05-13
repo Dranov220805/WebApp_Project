@@ -104,6 +104,20 @@ class Notes {
             this.expandNote(note);
         };
 
+        document.querySelector('#email--shared__list').addEventListener('click', (event) => {
+            const removeBtn = event.target.closest('button.btn-danger');
+
+            if (removeBtn) {
+                const container = removeBtn.closest('.list-group-item');
+                const email = container.querySelector('strong')?.textContent;
+                const noteId = this.currentNote.noteId;
+
+                if (email) {
+                    this.handleRemoveShareEmail(noteId, email, container);
+                }
+            }
+        });
+
         document.addEventListener('click', this.handleNoteClick);
         console.log('Attached note click listener');
         document.addEventListener('click', this.handleDeleteClick);
@@ -136,8 +150,8 @@ class Notes {
         }
 
         const autoResizeTextarea = (textarea) => {
+            textarea.style.minHeight = '200' + 'px';
             textarea.style.height = 'auto'; // Reset height
-            // textarea.style.minHeight = '200';
             textarea.style.height = textarea.scrollHeight + 'px'; // Set to scroll height
         };
 
@@ -159,22 +173,6 @@ class Notes {
 
         this.lastScrollTop = Math.max(currentScrollTop, 0);
     }
-
-    // showToast(message, type = 'danger', duration = 2000) {
-    //     const toast = document.getElementById("toast");
-    //     const messageElement = document.getElementById("toast-message");
-    //     const closeBtn = document.getElementById("toast-close");
-    //
-    //     if (!toast || !messageElement || !closeBtn) return;
-    //
-    //     messageElement.innerText = message;
-    //     toast.classList.remove("d-none", "bg-success", "bg-danger");
-    //     toast.classList.add(`bg-${type}`);
-    //
-    //     toast.classList.remove("d-none");
-    //
-    //     const hideTimeout = setTimeout(() => toast.classList.add("d-none"), duration);
-    // }
 
     loadNotes() {
         if (this.isLoading) return;
@@ -1174,6 +1172,39 @@ class Notes {
             .catch(err => console.error("Error sharing:", err));
     }
 
+    handleRemoveShareEmail(noteId, email, container) {
+        const overlay = document.getElementById('overlay-loading');
+        if (overlay) overlay.classList.remove('d-none');
+
+        fetch(`/share-list/delete`, {
+            method: 'DELETE',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                noteId,
+                sharedEmail: email
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status) {
+                    this.showToast('Sharing removed successfully.', 'success');
+                    // Remove the entry from the UI
+                    if (container) container.remove();
+                } else {
+                    this.showToast(data.message || 'Failed to remove sharing.', 'danger');
+                }
+            })
+            .catch(err => {
+                console.error("Error removing sharing:", err);
+                this.showToast("Error removing sharing.", 'danger');
+            })
+            .finally(() => {
+                if (overlay) overlay.classList.add('d-none');
+            });
+    }
+
     getSharedEmail(noteId) {
         fetch(`/share-list`, {
             method: 'POST',
@@ -1206,18 +1237,49 @@ class Notes {
                     }) : 'Unknown date';
 
                     const item = document.createElement('div');
-                    item.className = "list-group-item d-flex justify-content-between align-items-center";
+                    item.className = "list-group-item d-flex note-share--menu__title";
 
                     item.innerHTML = `
-                <div>
-                    <strong>${email}</strong><br>
-                    <small>Added ${date}</small>
-                </div>
-                <select class="form-select w-auto">
-                    <option ${entry.canEdit ? 'selected' : ''}>Can edit</option>
-                    <option ${!entry.canEdit ? 'selected' : ''}>Can view</option>
-                </select>
-            `;
+                        <div class="note-share--menu__content">
+                            <strong>${email}</strong><br>
+                            <small>Added ${date}</small>
+                        </div>
+                        <div class="note-share--menu__item">
+                            <select class="form-select w-auto permission-select">
+                                <option value="1" ${entry.canEdit ? 'selected' : ''}>Can edit</option>
+                                <option value="0" ${!entry.canEdit ? 'selected' : ''}>Can view</option>
+                            </select>
+                            <button class="btn btn-danger flex-end" style="margin-top: 5px">Remove</button>
+                        </div>
+                    `;
+
+                    const select = item.querySelector('.permission-select');
+                    select.addEventListener('change', () => {
+                        const newPermission = select.value === '1';
+                        fetch(`/share-list/update-permission`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                noteId,
+                                receivedEmail: email,
+                                canEdit: newPermission
+                            })
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.status) {
+                                    this.showToast("Permission updated", 'success');
+                                } else {
+                                    this.showToast("Failed to update permission", 'danger');
+                                }
+                            })
+                            .catch(err => {
+                                console.error("Error updating permission:", err);
+                                this.showToast("Error occurred while updating permission", 'danger');
+                            });
+                    });
 
                     emailSharedList.appendChild(item);
                 });

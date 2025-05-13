@@ -52,7 +52,7 @@
 
     <!-- Restore Confirmation Modal -->
     <div class="modal fade" id="restoreTrashNoteModal" tabindex="-1" aria-labelledby="restoreTrashNoteModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered ">
+        <div class="modal-dialog modal-dialog-centered" style="margin-left: auto; margin-right: auto">
             <div class="modal-content" style="width: 100%; height: 100%">
                 <div class="modal-header">
                     <h5 class="modal-title" id="restoreTrashNoteModalLabel">Confirm Restore Note</h5>
@@ -71,7 +71,7 @@
 
     <!-- Delete Confirmation Modal -->
     <div class="modal fade" id="deleteTrashNoteModal" tabindex="-1" aria-labelledby="deleteTrashNoteModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered ">
+        <div class="modal-dialog modal-dialog-centered" style="margin-left: auto; margin-right: auto">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="deleteTrashNoteModalLabel">Confirm Delete Permanently</h5>

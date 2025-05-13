@@ -57,6 +57,39 @@ class HomeUserService {
         ];
     }
 
+    public function removeSharedEmailByNoteIdAndEmail($noteId, $email) {
+        $result = $this->homeUserRepository->removeSharedEmailByNoteIdAndEmail($noteId, $email);
+        if ($result) {
+            return [
+                'status' => true,
+                'data' => $result,
+                'message' => 'Remove this share successfully'
+            ];
+        } else {
+            return [
+                'status' => false,
+                'data' => $result,
+                'message' => 'Cannot remove this share'
+            ];
+        }
+    }
+
+    public function updatePermissionByNoteIdAndEmail($noteId, $email, $canEdit) {
+        $result = $this->homeUserRepository->updatePermissionByNoteIdAndEmail($noteId, $email, $canEdit);
+        if ($result) {
+            return [
+                'status' => true,
+                'data' => $result,
+                'message' => 'Update permission successfully'
+            ];
+        } else {
+            return [
+                'status' => false,
+                'data' => $result,
+                'message' => 'Update permission failed'
+            ];
+        }
+    }
 
     public function getSharedEmailByNoteIdAndEmail($noteId, $email) {
         return $this->homeUserRepository->getSharedEmailByNoteIdAndEmail($noteId, $email);

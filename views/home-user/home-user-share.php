@@ -14,78 +14,82 @@
     <!-- Main content area -->
     <div id="content" class="content" style="margin-left: 80px;">
         <div class="small-container">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="mb-0">Shared with me</h4>
-            </div>
+            <!-- Shared Notes grid -->
+            <div class="label-note">
+                <h6 class="note-layout__title" id="note-layout__title">Shared with me</h6>
+                <div class="note-grid d-flex justify-content-center">
+                    <div class="label-note__load load-grid" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center">
+                        <?php if (!empty($data['data'])): ?>
+                            <?php
+                            // Group notes by noteId and aggregate labels
+                            $groupedNotes = [];
+                            foreach ($data['data'] as $note) {
+                                $noteId = $note['noteId'];
+                                if (!isset($groupedNotes[$noteId])) {
+                                    $groupedNotes[$noteId] = $note;
+                                    $groupedNotes[$noteId]['labels'] = [];
+                                }
+                                $groupedNotes[$noteId]['labels'][] = $note['labelName'];
+                            }
+                            ?>
 
-    <div class="row g-3 share-note-grid">
-        <?php if (!empty($data['data'])): ?>
-            <?php
-            // Group notes by noteId and aggregate labels
-            $groupedNotes = [];
-            foreach ($data['data'] as $note) {
-                $noteId = $note['noteId'];
-                if (!isset($groupedNotes[$noteId])) {
-                    $groupedNotes[$noteId] = $note;
-                    $groupedNotes[$noteId]['labels'] = [];
-                }
-                $groupedNotes[$noteId]['labels'][] = $note['labelName'];
-            }
-            ?>
+                            <?php foreach ($groupedNotes as $note): ?>
+                                <div class="col-12">
+                                    <div class="card shared-note-card" style="max-height: 230px">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-start" style="width: 100%; max-width: 100%;">
+                                                <div class="" style="width: 100%">
+                                                    <div class="small text-muted mb-1">
+                                                        Shared by <strong><?= htmlspecialchars($note['sharedEmail']) ?></strong>
+                                                    </div>
+                                                    <div class="text-muted small mb-2">
+                                                        Shared on <?= date('M d, Y', strtotime($note['timeShared'])) ?>
+                                                    </div>
 
-            <?php foreach ($groupedNotes as $note): ?>
-                <div class="col-12">
-                    <div class="card shared-note-card" style="max-height: 230px">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-start" style="width: 100%">
-                                <div class="" style="width: 100%">
-                                    <div class="small text-muted mb-1">
-                                        Shared by <strong><?= htmlspecialchars($note['sharedEmail']) ?></strong>
-                                    </div>
-                                    <div class="text-muted small mb-2">
-                                        Shared on <?= date('M d, Y', strtotime($note['timeShared'])) ?>
-                                    </div>
+                                                    <!-- Optional: Title & Content if available -->
+                                                    <?php if (!empty($note['title'])): ?>
+                                                        <h6 class="fw-bold"><?= htmlspecialchars($note['title']) ?></h6>
+                                                    <?php endif; ?>
+                                                    <?php if (!empty($note['content'])): ?>
+                                                        <p class="mb-1 text-muted" style="overflow-y: hidden; max-height: 48px; padding-right: 20%"><?= htmlspecialchars($note['content']) ?></p>
+                                                    <?php endif; ?>
 
-                                    <!-- Optional: Title & Content if available -->
-                                    <?php if (!empty($note['title'])): ?>
-                                        <h6 class="fw-bold"><?= htmlspecialchars($note['title']) ?></h6>
-                                    <?php endif; ?>
-                                    <?php if (!empty($note['content'])): ?>
-                                        <p class="mb-1 text-muted" style="overflow-y: hidden; max-height: 48px"><?= htmlspecialchars($note['content']) ?></p>
-                                    <?php endif; ?>
+                                                    <!-- Labels -->
+                                                    <?php if (!empty($note['labels'])) {?>
+                                                        <div class="mt-2">
+                                                            <?php foreach ($note['labels'] as $label): ?>
+                                                                <?php if(!empty($label)) {?>
+                                                                    <span class="badge bg-secondary me-1"><?= htmlspecialchars($label) ?></span>
+                                                                <?php }?>
+                                                            <?php endforeach; ?>
+                                                        </div>
+                                                    <?php }?>
+                                                </div>
 
-                                    <!-- Labels -->
-                                    <?php if (!empty($note['labels'])) {?>
-                                        <div class="mt-2">
-                                            <?php foreach ($note['labels'] as $label): ?>
-                                                <?php if(!empty($label)) {?>
-                                                    <span class="badge bg-secondary me-1"><?= htmlspecialchars($label) ?></span>
-                                            <?php }?>
-                                            <?php endforeach; ?>
+                                                <div class="text-end" style="display: flex; flex-direction: column; width: 100px; justify-content: space-between; align-items: center">
+                                                    <?php if ($note['canEdit']): ?>
+                                                        <span class="access-label access-edit" style="width: fit-content">Can edit</span>
+                                                    <?php else: ?>
+                                                        <span class="access-label access-readonly" style="width: fit-content">Read-only</span>
+                                                    <?php endif; ?>
+                                                    <?php if (!empty($note['imageLink'])) {?>
+                                                        <div style="height: 100%; width: auto; max-height: 100px">
+                                                            <img src="<?= htmlspecialchars($note['imageLink']) ?>" class="rounded" alt="User Avatar" style="margin-top: 0px; height: 100%; width: auto">
+                                                        </div>
+                                                    <?php }?>
+                                                </div>
+                                            </div>
                                         </div>
-                                    <?php }?>
+                                    </div>
                                 </div>
-
-                                <div class="text-end" style="display: flex; flex-direction: column; width: 100px; justify-content: space-between; align-items: center">
-                                    <?php if ($note['canEdit']): ?>
-                                        <span class="access-label access-edit" style="width: fit-content">Can edit</span>
-                                    <?php else: ?>
-                                        <span class="access-label access-readonly" style="width: fit-content">Read-only</span>
-                                    <?php endif; ?>
-                                    <?php if (!empty($note['imageLink'])) {?>
-                                        <div style="height: 100%; width: auto; max-height: 100px">
-                                            <img src="<?= htmlspecialchars($note['imageLink']) ?>" class="rounded mt-2" alt="User Avatar" style="margin-top: 0px; height: 100%; width: auto">
-                                        </div>
-                                    <?php }?>
-                                </div>
-                            </div>
-                        </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p class="text-muted">No shared notes found.</p>
+                        <?php endif; ?>
                     </div>
                 </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p class="text-muted">No shared notes found.</p>
-        <?php endif; ?>
+            </div>
+        </div>
     </div>
 
 <!--            <div class="row g-3 share-note-grid">-->

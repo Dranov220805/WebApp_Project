@@ -183,12 +183,12 @@ class AuthController extends BaseController {
         $result = $this->authService->checkVerification($email);
 
         if($result['status'] === true) {
-            return json_encode([
+            echo json_encode([
                 'status' => true,
                 'message' => $result['message']
             ]);
         } else {
-            return json_encode([
+            echo json_encode([
                 'status' => false,
                 'message' => $result['message']
             ]);

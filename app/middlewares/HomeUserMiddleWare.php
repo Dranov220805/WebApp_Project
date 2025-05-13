@@ -110,6 +110,26 @@ class HomeUserMiddleWare {
         $this->homeUserController->addNewSharedEmail_POST();
     }
 
+    public function deleteSharedEmail_DELETE() {
+        $checkToken = $this->authMiddleware->checkSession();
+
+        if ($checkToken['status'] === false) {
+            header('location:/log/login');
+            exit();
+        }
+        $this->homeUserController->deleteSharedEmail_DELETE();
+    }
+
+    public function updateShareEmail_PUT() {
+        $checkToken = $this->authMiddleware->checkSession();
+
+        if ($checkToken['status'] === false) {
+            header('location:/log/login');
+            exit();
+        }
+        $this->homeUserController->updateShareEmail_PUT();
+    }
+
     public function sharedEmailList() {
         $checkToken = $this->authMiddleware->checkSession();
 

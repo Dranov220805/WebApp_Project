@@ -51,7 +51,7 @@
 
 <!-- The Modal -->
 <div class="modal fade" id="infoModal" data-bs-backdrop="false" data-bs-scroll="true">
-    <div class="modal-dialog" style="margin-right: 30px; margin-left: auto; border-radius: 10px">
+    <div class="modal-dialog" style="">
         <div class="modal-content" style="width: 100%">
 
             <div class="modal-header">

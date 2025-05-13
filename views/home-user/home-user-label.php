@@ -13,16 +13,6 @@
     <div id="content" class="content" style="margin-left: 80px;">
         <div class="small-container">
 
-            <!--            Search Note grid-->
-            <div class="pinned-note">
-                <h6 class="note-layout__title">Search Result</h6>
-                <div class="note-grid d-flex justify-content-center">
-                    <div class="search-note__load load-grid" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center">
-                        <!--                        Search Result Note Grid-->
-                    </div>
-                </div>
-            </div>
-
             <!-- Label Notes grid -->
             <div class="label-note">
                 <h6 class="note-layout__title" id="note-layout__title"><?= htmlspecialchars($data['labelName']) ?></h6>
@@ -77,7 +67,7 @@
 
     <!-- Modal Structure for show Note Detail-->
     <div class="modal fade" id="noteLabelModal" tabindex="-1" aria-labelledby="noteLabelModalLabel" data-bs-backdrop="true" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable note-modal-display position-fixed top-50 start-50 translate-middle fade show note-detail__modal--dialog" style="height: 80%">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable note-modal-display position-fixed start-50 top-50 translate-middle fade show note-detail__modal--dialog" style="margin-left: auto; margin-right: auto">
             <div class="modal-content note-detail__modal" style="overflow: auto">
                 <div class="modal-content-body" style="height: inherit; overflow-y: auto; display: flex; flex-direction: column">
                     <div class="note-sheet__image" style="width: 100%; height: auto; overflow: visible">
@@ -115,7 +105,7 @@
 
     <!-- Delete Confirmation Modal -->
     <div class="modal fade" id="deleteNoteModal" tabindex="-1" aria-labelledby="deleteNoteModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered ">
+        <div class="modal-dialog modal-dialog-centered" style="margin-left: auto; margin-right: auto">
             <div class="modal-content" style="width: 100%; height: 100%">
                 <div class="modal-header">
                     <h5 class="modal-title" id="deleteNoteModalLabel">Confirm Delete</h5>
@@ -127,6 +117,83 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button id="confirmDeleteNoteBtn" type="button" class="btn btn-danger">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Note Modal -->
+    <div class="modal fade" id="shareNoteModal" tabindex="-1" aria-labelledby="shareNoteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" style="margin-left: auto; margin-right: auto">
+            <div class="modal-content share-note-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="shareNoteModalLabel">Share Note</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <!-- Note Details -->
+                    <div class="mb-3">
+                        <h6 class="fw-bold mb-1">Note Details</h6>
+                        <div class="p-2 border rounded bg-light-subtle dark-mode:bg-dark text-muted" style="height: 90px; overflow: hidden">
+                            <strong class="shared-note--title">Nothing</strong><br>
+                            <small class="shared-note--content" style="max-height: 100px; height: 100%">Nothing in here...</small>
+                        </div>
+                    </div>
+
+                    <!-- Share with -->
+                    <div class="mb-3">
+                        <label class="form-label">Share with</label>
+                        <div class="d-flex">
+                            <input id="share--email__input" type="email" class="form-control me-2" placeholder="Enter email address">
+                            <button id="share--email__btn" class="btn btn-primary">Add</button>
+                        </div>
+                    </div>
+
+                    <!-- People with access -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">People with access</label>
+                        <div id="email--shared__list" class="list-group">
+<!--                            <div class="list-group-item d-flex justify-content-between align-items-center">-->
+<!--                                <div>-->
+<!--                                    <strong>sarah@example.com</strong><br>-->
+<!--                                    <small>Added May 12, 2025</small>-->
+<!--                                </div>-->
+<!--                                <select class="form-select w-auto">-->
+<!--                                    <option selected>Can edit</option>-->
+<!--                                    <option>Can view</option>-->
+<!--                                </select>-->
+<!--                            </div>-->
+<!--                            <div class="list-group-item d-flex justify-content-between align-items-center">-->
+<!--                                <div>-->
+<!--                                    <strong>john@example.com</strong><br>-->
+<!--                                    <small>Added May 10, 2025</small>-->
+<!--                                </div>-->
+<!--                                <select class="form-select w-auto">-->
+<!--                                    <option>Can edit</option>-->
+<!--                                    <option selected>Can view</option>-->
+<!--                                </select>-->
+<!--                            </div>-->
+                        </div>
+                    </div>
+
+                    <!-- General access -->
+                    <!--                    <div class="mb-3">-->
+                    <!--                        <label class="form-label fw-bold">General access</label>-->
+                    <!--                        <select class="form-select mb-2 w-50">-->
+                    <!--                            <option selected>Restricted</option>-->
+                    <!--                            <option>Anyone with the link</option>-->
+                    <!--                        </select>-->
+                    <!--                        <div class="input-group">-->
+                    <!--                            <input type="text" class="form-control" value="https://notes.example.com/share/abc123" readonly>-->
+                    <!--                            <button class="btn btn-outline-secondary">Copy Link</button>-->
+                    <!--                        </div>-->
+                    <!--                    </div>-->
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary">Done</button>
                 </div>
             </div>
         </div>

@@ -281,6 +281,70 @@ class HomeUserController extends BaseController{
         }
     }
 
+    public function deleteSharedEmail_DELETE() {
+        $content = trim(file_get_contents("php://input"));
+        $data = json_decode($content, true);
+
+        $noteId = $data['noteId'] ?? null;
+        $email = $data['sharedEmail'] ?? null;
+        if (empty($noteId) || empty($email)) {
+            echo json_encode([
+                'status' => false,
+                'email' => $email,
+                'noteId' => $noteId,
+                'message' => "Missing noteId, or Email"
+            ]);
+        }
+        $result = $this->homeUserService->removeSharedEmailByNoteIdAndEmail($noteId, $email);
+        if ($result['status'] === true) {
+            http_response_code(200);
+            echo json_encode([
+                'status' => true,
+                'data' =>$result['data'],
+                'message' => $result['message']
+            ]);
+        } else {
+            http_response_code(400);
+            echo json_encode([
+                'status' => false,
+                'message' => $result['message']
+            ]);
+        }
+    }
+
+    public function updateShareEmail_PUT() {
+        $content = trim(file_get_contents("php://input"));
+        $data = json_decode($content, true);
+
+        $noteId = $data['noteId'] ?? null;
+        $email = $data['receivedEmail'] ?? null;
+        $canEdit = $data['canEdit'] ?? null;
+        if (empty($noteId) || empty($email)) {
+            echo json_encode([
+                'status' => false,
+                'email' => $email,
+                'noteId' => $noteId,
+                'canEdit' => $canEdit,
+                'message' => "Missing noteId, Email or canEdit"
+            ]);
+        }
+        $result = $this->homeUserService->updatePermissionByNoteIdAndEmail($noteId, $email, $canEdit);
+        if ($result['status'] === true) {
+            http_response_code(200);
+            echo json_encode([
+                'status' => true,
+                'data' =>$result['data'],
+                'message' => $result['message']
+            ]);
+        } else {
+            http_response_code(400);
+            echo json_encode([
+                'status' => false,
+                'message' => $result['message']
+            ]);
+        }
+    }
+
     public function sharedEmailList() {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);

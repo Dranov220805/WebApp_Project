@@ -80,6 +80,34 @@ class HomeUserRepository{
         );
     }
 
+    public function removeSharedEmailByNoteIdAndEmail($noteId, $email): bool {
+        $sql = "DELETE FROM `NoteSharing` WHERE `noteId` = ? AND `receivedEmail` = ?";
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            return false;
+        }
+
+        $stmt->bind_param('ss', $noteId, $email);
+        $success = $stmt->execute();
+        $stmt->close();
+
+        return $success;
+    }
+
+    public function updatePermissionByNoteIdAndEmail($noteId, $receivedEmail, $canEdit): bool {
+        $sql = "UPDATE `NoteSharing` SET `canEdit` = ? WHERE `noteId` = ? AND `receivedEmail` = ?";
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) return false;
+
+        $stmt->bind_param('iss', $canEdit, $noteId, $receivedEmail);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        return $result;
+    }
+
     public function isNoteAlreadySharedTo($noteId, $email): bool {
         $sql = "SELECT * FROM NoteSharing WHERE noteId = ? AND sharedEmail = ?";
         $stmt = $this->conn->prepare($sql);

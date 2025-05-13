@@ -96,7 +96,7 @@
 
             <!-- Change Password Modal -->
             <div class="modal fade" id="changePasswordModal" tabindex="-1" style="height: fit-content; min-height: 600px;" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
-                <div class="modal-dialog" style="margin-top: 100px; margin-bottom: auto">
+                <div class="modal-dialog" style="margin-top: 100px; margin-bottom: auto; margin-left: auto; margin-right: auto">
                     <div class="modal-content" style="width: 100%; max-width: 500px">
                         <div class="modal-header">
                             <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>

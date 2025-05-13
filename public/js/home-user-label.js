@@ -63,10 +63,12 @@ class LabelNote {
 
             if (shareBtn) {
                 console.log('Clicked share button:', note);
+                this.expandShareLabelNote(note);
             }
 
             if (lockBtn) {
                 console.log('Clicked lock button:', note);
+                this.expandLockLabelNote(note);
             }
 
             // Prevent expanding the note when clicking buttons inside .note-sheet__menu
@@ -75,6 +77,20 @@ class LabelNote {
             console.log('Clicked note:', note);
             this.expandLabelNote(note);
         };
+
+        document.querySelector('#email--shared__list').addEventListener('click', (event) => {
+            const removeBtn = event.target.closest('button.btn-danger');
+
+            if (removeBtn) {
+                const container = removeBtn.closest('.list-group-item');
+                const email = container.querySelector('strong')?.textContent;
+                const noteId = this.currentNote.noteId;
+
+                if (email) {
+                    this.handleRemoveShareEmail(noteId, email, container);
+                }
+            }
+        });
 
         document.addEventListener('click', this.handleNoteClick);
         console.log('Attached note click listener');
@@ -867,6 +883,174 @@ class LabelNote {
                 console.error("Delete error:", err);
                 this.showToast("An error occurred while deleting the note", "danger");
             });
+    }
+
+    expandShareLabelNote(note) {
+        const modalEl = document.getElementById('shareNoteModal');
+        const modal = new bootstrap.Modal(modalEl);
+
+        this.currentNote = note;
+
+        document.querySelector('.shared-note--title').innerText = note.title;
+        document.querySelector('.shared-note--content').innerText = note.content;
+
+        this.getSharedEmail(note.noteId);
+        modal.show();
+    }
+
+    handleAddShareEmail() {
+        const newSharedEmail = $('#share--email__input').val();
+        const noteId = this.currentNote.noteId;
+        const emailSharedList = document.querySelector('#email--shared__list');
+
+        fetch(`/share-list/add`, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                noteId,
+                newSharedEmail
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status) {
+                    console.log("Shared successfully.");
+                    this.showToast("Note shared successfully!", 'success');
+                    $('#share--email__input').val('');
+                    this.getSharedEmail(noteId);
+                } else {
+                    console.error(data.message || "Failed to share note.");
+                    this.showToast(data.message || "Failed to share note.", 'danger');
+                    $('#share--email__input').val('');
+                }
+            })
+            .catch(err => console.error("Error sharing:", err));
+    }
+
+    handleRemoveShareEmail(noteId, email, container) {
+        const overlay = document.getElementById('overlay-loading');
+        if (overlay) overlay.classList.remove('d-none');
+
+        fetch(`/share-list/delete`, {
+            method: 'DELETE',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                noteId,
+                sharedEmail: email
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status) {
+                    this.showToast('Sharing removed successfully.', 'success');
+                    // Remove the entry from the UI
+                    if (container) container.remove();
+                } else {
+                    this.showToast(data.message || 'Failed to remove sharing.', 'danger');
+                }
+            })
+            .catch(err => {
+                console.error("Error removing sharing:", err);
+                this.showToast("Error removing sharing.", 'danger');
+            })
+            .finally(() => {
+                if (overlay) overlay.classList.add('d-none');
+            });
+    }
+
+    getSharedEmail(noteId) {
+        fetch(`/share-list`, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ noteId })
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`Server returned ${res.status}`);
+                }
+                return res.json();
+            })
+            .then(data => {
+                const emailSharedList = document.querySelector("#email--shared__list");
+                emailSharedList.innerHTML = '';
+
+                const { status, result, message } = data;
+
+                if (!status || !result || result.length === 0) {
+                    emailSharedList.innerText = message || 'No shared email found!';
+                    return;
+                }
+
+                result.forEach(entry => {
+                    const email = entry.receivedEmail || entry.email || '[Unknown Email]';
+                    const date = entry.timeShared ? new Date(entry.timeShared).toLocaleDateString('en-US', {
+                        year: 'numeric', month: 'long', day: 'numeric'
+                    }) : 'Unknown date';
+
+                    const item = document.createElement('div');
+                    item.className = "list-group-item d-flex note-share--menu__title";
+
+                    item.innerHTML = `
+                        <div class="note-share--menu__content">
+                            <strong>${email}</strong><br>
+                            <small>Added ${date}</small>
+                        </div>
+                        <div class="note-share--menu__item">
+                            <select class="form-select w-auto permission-select">
+                                <option value="1" ${entry.canEdit ? 'selected' : ''}>Can edit</option>
+                                <option value="0" ${!entry.canEdit ? 'selected' : ''}>Can view</option>
+                            </select>
+                            <button class="btn btn-danger flex-end" style="margin-top: 5px">Remove</button>
+                        </div>
+                    `;
+
+                    const select = item.querySelector('.permission-select');
+                    select.addEventListener('change', () => {
+                        const newPermission = select.value === '1';
+                        fetch(`/share-list/update-permission`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                noteId,
+                                receivedEmail: email,
+                                canEdit: newPermission
+                            })
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.status) {
+                                    this.showToast("Permission updated", 'success');
+                                } else {
+                                    this.showToast("Failed to update permission", 'danger');
+                                }
+                            })
+                            .catch(err => {
+                                console.error("Error updating permission:", err);
+                                this.showToast("Error occurred while updating permission", 'danger');
+                            });
+                    });
+
+                    emailSharedList.appendChild(item);
+                });
+            })
+            .catch(err => {
+                const emailSharedList = document.querySelector("#email--shared__list");
+                emailSharedList.innerHTML = '';
+                emailSharedList.innerText = 'Error loading shared emails. Please try again.';
+                console.error("Fetch error:", err);
+            });
+    }
+
+    expandLockNote(note) {
+
     }
 
 }

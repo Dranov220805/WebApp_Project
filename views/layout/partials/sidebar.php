@@ -73,7 +73,7 @@ $labelList = $homeUserController->getUserLabel();
 
 <!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteLabelModal" tabindex="-1" aria-labelledby="deleteLabelModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered ">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="deleteLabelModalLabel">Confirm Delete Permanently</h5>
@@ -92,7 +92,7 @@ $labelList = $homeUserController->getUserLabel();
 
 <!--    Modal structure for showing list of labels-->
 <div class="modal fade" id="listLabelNoteModal" tabindex="-1" aria-labelledby="listLabelNoteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-scrollable" style="margin: auto; margin-top: 200px">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addLabelNoteModalLabel">Assign Labels</h5>

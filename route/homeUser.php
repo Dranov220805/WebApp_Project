@@ -60,6 +60,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
                 if ($_GET['param_2'] == 'add') {
                     $homeUserMiddleWare->addNewSharedEmail_POST();
                 }
+                break;
         }
     } else if (isset($_GET['param_1'])) {
         switch ($_GET['param_1']) {
@@ -72,6 +73,21 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
     if (isset($_GET['param_1'], $_GET['param_2'])) {
         if ($_GET['param_1'] === 'home' && $_GET['param_2'] === 'preferences') {
             $homeUserMiddleWare->updatePreference();
+        }
+        switch ($_GET['param_1']) {
+            case 'share-list':
+                if ($_GET['param_2'] == 'update-permission') {
+                    $homeUserMiddleWare->updateShareEmail_PUT();
+                }
+        }
+    }
+} else if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+    if (isset($_GET['param_1']) && isset($_GET['param_2'])) {
+        switch ($_GET['param_1']) {
+            case 'share-list':
+                if ($_GET['param_2'] == 'delete') {
+                    $homeUserMiddleWare->deleteSharedEmail_DELETE();
+                }
         }
     }
 }
