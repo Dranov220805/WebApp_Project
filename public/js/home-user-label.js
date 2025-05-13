@@ -213,7 +213,9 @@ class LabelNote {
 
         this.labelName = document.getElementById("note-layout__title")?.textContent?.trim() || '';
 
-        fetch(`/note/label/${encodeURIComponent(this.labelName)}`, {
+        const encodedLabel = encodeURIComponent(this.labelName).replace(/%20/g, '+');
+
+        fetch(`/note/label/${encodedLabel}`, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
             }

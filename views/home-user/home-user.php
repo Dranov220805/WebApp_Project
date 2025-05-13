@@ -106,7 +106,6 @@
             <div class="modal-content" style="width: 100%; height: 100%">
                 <div class="modal-header">
                     <h5 class="modal-title" id="deleteNoteModalLabel">Confirm Delete</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     Are you sure you want to delete this note?
@@ -125,7 +124,6 @@
             <div class="modal-content" style="width: 100%; height: 100%">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addLabelNoteModalLabel">Confirm Delete</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     Add this note to which label ?

@@ -34,24 +34,41 @@
                             ?>
 
                             <?php foreach ($groupedNotes as $note): ?>
+                                <?php
+                                $labelAttr = htmlspecialchars(json_encode($note['labels'] ?? []));
+                                ?>
                                 <div class="col-12">
-                                    <div class="card shared-note-card" style="max-height: 230px">
+                                    <div class="card shared-note-card" style="max-height: 230px"
+                                         data-note-id="<?= htmlspecialchars($note['noteId']) ?>"
+                                         data-note-title="<?= htmlspecialchars($note['title']) ?>"
+                                         data-note-content="<?= htmlspecialchars($note['content']) ?>"
+                                        <?php if (!empty($note['imageLink'])): ?>
+                                            data-note-image="<?= htmlspecialchars($note['imageLink']) ?>"
+                                        <?php endif; ?>
+                                        <?php if (!empty($note['labels'])) :?>
+                                         data-note-labels='<?= $labelAttr ?>'
+                                        <?php endif;?>
+                                        <?php if ($note['canEdit']): ?>
+                                            data-note-edit="true"
+                                        <?php else: ?>
+                                            data-note-edit="false"
+                                        <?php endif; ?>>
                                         <div class="card-body">
                                             <div class="d-flex justify-content-start" style="width: 100%; max-width: 100%;">
                                                 <div class="" style="width: 100%">
-                                                    <div class="small text-muted mb-1">
+                                                    <div class="small mb-1 note--share__by">
                                                         Shared by <strong><?= htmlspecialchars($note['sharedEmail']) ?></strong>
                                                     </div>
-                                                    <div class="text-muted small mb-2">
+                                                    <div class="small mb-2 note--share__time">
                                                         Shared on <?= date('M d, Y', strtotime($note['timeShared'])) ?>
                                                     </div>
 
                                                     <!-- Optional: Title & Content if available -->
                                                     <?php if (!empty($note['title'])): ?>
-                                                        <h6 class="fw-bold"><?= htmlspecialchars($note['title']) ?></h6>
+                                                        <h6 class="fw-bold note--share__title"><?= htmlspecialchars($note['title']) ?></h6>
                                                     <?php endif; ?>
                                                     <?php if (!empty($note['content'])): ?>
-                                                        <p class="mb-1 text-muted" style="overflow-y: hidden; max-height: 48px; padding-right: 20%"><?= htmlspecialchars($note['content']) ?></p>
+                                                        <p class="mb-1 note--share__content" style="overflow-y: hidden; max-height: 48px; padding-right: 20%"><?= htmlspecialchars($note['content']) ?></p>
                                                     <?php endif; ?>
 
                                                     <!-- Labels -->
@@ -66,14 +83,14 @@
                                                     <?php }?>
                                                 </div>
 
-                                                <div class="text-end" style="display: flex; flex-direction: column; width: 100px; justify-content: space-between; align-items: center">
+                                                <div class="text-end" style="display: flex; flex-direction: column; width: 120px; justify-content: space-between; align-items: end">
                                                     <?php if ($note['canEdit']): ?>
                                                         <span class="access-label access-edit" style="width: fit-content">Can edit</span>
                                                     <?php else: ?>
                                                         <span class="access-label access-readonly" style="width: fit-content">Read-only</span>
                                                     <?php endif; ?>
                                                     <?php if (!empty($note['imageLink'])) {?>
-                                                        <div style="height: 100%; width: auto; max-height: 100px">
+                                                        <div class="note--share__image">
                                                             <img src="<?= htmlspecialchars($note['imageLink']) ?>" class="rounded" alt="User Avatar" style="margin-top: 0px; height: 100%; width: auto">
                                                         </div>
                                                     <?php }?>
@@ -91,42 +108,22 @@
             </div>
         </div>
     </div>
-
-<!--            <div class="row g-3 share-note-grid">-->
-<!--                Card 1 -->
-<!--                <div class="col-12">-->
-<!--                    <div class="card shared-note-card">-->
-<!--                        <div class="card-body">-->
-<!--                            <div class="d-flex justify-content-between">-->
-<!--                                <div>-->
-<!--                                    <div class="small text-muted mb-1">Shared by <strong>alex@example.com</strong></div>-->
-<!--                                    <div class="text-muted small mb-2">Shared on May 12, 2025</div>-->
-<!--                                    <h6 class="fw-bold">Project Timeline</h6>-->
-<!--                                    <p class="mb-1 text-muted">Timeline and milestones for Q2 2025...</p>-->
-<!--                                </div>-->
-<!--                                <div class="text-end">-->
-<!--                                    <span class="access-label access-readonly">Read-only</span>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-        </div>
-    </div>
+</div>
+</div>
 
     <!-- Modal Structure for show Note Detail-->
-    <div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" data-bs-backdrop="true" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable note-modal-display position-fixed top-50 start-50 translate-middle fade show note-detail__modal--dialog" style="height: 80%">
+    <div class="modal fade" id="noteShareModal" tabindex="-1" aria-labelledby="noteShareModalLabel" data-bs-backdrop="true" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable note-detail__modal--dialog" style="margin-left: auto; margin-right: auto">
             <div class="modal-content note-detail__modal" style="overflow: auto">
                 <div class="modal-content-body" style="height: inherit; overflow-y: auto; display: flex; flex-direction: column">
                     <div class="note-sheet__image" style="width: 100%; height: auto; overflow: visible">
-                        <!--Render Image Link here-->
+                        <!--                        Render Image Link here-->
                     </div>
                     <div class="modal-header">
                         <input type="text" class="modal-title note-title-input-autosave form-control border-0" id="noteModalLabel"/>
                     </div>
                     <div class="modal-body" style="flex-grow: 1; min-height: 300px; height: fit-content; overflow-y: visible">
-                        <textarea class="note-content-input-autosave form-control" style=" overflow-y: visible;"></textarea>
+                        <textarea class="note-content-input-autosave form-control" style="overflow-y: visible;"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer d-flex justify-content-start align-items-center">
@@ -158,7 +155,6 @@
             <div class="modal-content" style="width: 100%; height: 100%">
                 <div class="modal-header">
                     <h5 class="modal-title" id="deleteNoteModalLabel">Confirm Delete</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     Are you sure you want to delete this note?
@@ -177,7 +173,6 @@
             <div class="modal-content" style="width: 100%; height: 100%">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addLabelNoteModalLabel">Confirm Delete</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     Add this note to which label ?

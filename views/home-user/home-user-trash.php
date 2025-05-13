@@ -56,7 +56,6 @@
             <div class="modal-content" style="width: 100%; height: 100%">
                 <div class="modal-header">
                     <h5 class="modal-title" id="restoreTrashNoteModalLabel">Confirm Restore Note</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     Are you sure you want to restore this note?
@@ -75,7 +74,6 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="deleteTrashNoteModalLabel">Confirm Delete Permanently</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     Are you sure you want to permanently delete this note?

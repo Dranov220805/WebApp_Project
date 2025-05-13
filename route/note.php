@@ -32,6 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                     $noteMiddleWare->SearchNotes();
                 } else if ($_GET['param_2'] == 'share') {
                     $noteMiddleWare->ShareNotes();
+                } else if ($_GET['param_2'] == 'share-list') {
+
                 }
                 break;
             default:

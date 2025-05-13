@@ -522,6 +522,16 @@ body {
     }
 }
 
+#noteShareModal {
+    height: 100%;
+    max-height: 100%;
+
+    .modal-dialog {
+        width: 95%;
+        height: fit-content;
+    }
+}
+
 #editLabelsModal {
     height: 100%;
     max-height: 100%;
@@ -670,11 +680,24 @@ body {
     color: white;
 }
 
+
+/*.btn {*/
+/*    color: white;*/
+/*    background-color: #1a2e44;*/
+/*}*/
+
+/*.btn:hover {*/
+/*    background-color: #5771ff;*/
+/*    color: white;*/
+/*}*/
+
 .label-post__input {
     border: none;
     outline: none;
     resize: none;
     overflow-y: hidden;
+    color: black;
+    background-color: white;
 }
 
 .btn-save-preference {
@@ -832,6 +855,38 @@ body {
     align-items: end;
 }
 
+.note--share__image {
+    height: 100%;
+    width: auto;
+    max-height: 100px;
+    border: 3px dotted black;
+}
+
+.note--share__by {
+    color: black;
+}
+
+.note--share__time {
+    color: black;
+}
+
+.note--share__title {
+    color: black;
+}
+
+.note--share__content {
+    color: black;
+}
+
+.note--share__image {
+    color: black;
+}
+
+.sidebar__item--input {
+    color: white;
+    background-color: #f9f9f9;
+}
+
 /* ─────── DARK MODE SUPPORT ─────── */
 body.dark-mode {
     background-color: #202124;
@@ -931,6 +986,10 @@ body.dark-mode .note-post__menu button:hover {
 }
 
 body.dark-mode .create-note-btn {
+    color: white;
+}
+
+body.dark-mode .create-note-btn:hover {
     background-color: #5771ff;
     color: white;
 }
@@ -1037,21 +1096,41 @@ body.dark-mode .btn-close {
     color: white;
 }
 
-.body.dark-mode .btn-change:hover {
+body.dark-mode .btn-change:hover {
     color: white;
     background-color: #5771ff;
 }
 
-.body.dark-mode .label-post__submit {
+body.dark-mode .label-post__submit {
     color: white;
     background-color: #5771ff;
 }
 
-.body.dark-mode .label-post__submit:hover {
+body.dark-mode .label-post__submit:hover {
     color: white;
     background-color: #5771ff;
 }
 
+body.dark-mode .sidebar__item--input {
+    color: white;
+    background-color: #2a2a2a;
+}
+
+body.dark-mode .label-post__input {
+    color: white;
+    background-color: #2a2a2a;
+}
+
+/*body.dark-mode .btn {*/
+/*    background-color: #5771ff;*/
+/*    color: white;*/
+/*    border: none;*/
+/*}*/
+
+/*body.dark-mode .btn:hover {*/
+/*    color: white;*/
+/*    background-color: #1a2e44;*/
+/*}*/
 
 /*Dark mode for share modal*/
 
@@ -1088,12 +1167,44 @@ body.dark-mode .btn-outline-secondary {
     border-color: #555;
 }
 
+body.dark-mode .note--share__by {
+    color: #e0e0e0;
+}
+
+body.dark-mode .note--share__time {
+    color: #e0e0e0;
+}
+
+body.dark-mode .note--share__title {
+    color: #e0e0e0;
+}
+
+body.dark-mode .note--share__content {
+    color: #e0e0e0;
+}
+
+body.dark-mode .note--share__image {
+    border-color: #e0e0e0;
+}
+
+body.dark-mode .modal-dialog {
+    background-color: rgba(0, 0, 0, 0);
+}
+
 .shared-note-card {
     transition: box-shadow 0.2s ease;
 }
 
 .shared-note-card:hover {
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+body.dark-mode .shared-note-card {
+    transition: box-shadow 0.2s ease;
+}
+
+body.dark-mode .shared-note-card:hover {
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.08);
 }
 
 .access-label {

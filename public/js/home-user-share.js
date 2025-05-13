@@ -25,7 +25,7 @@ class ShareNotes {
         this.handleNoteClick = (event) => {
             const deleteBtn = event.target.closest(".note-trash-delete-btn");
             const restoreBtn = event.target.closest(".note-restore-btn");
-            const noteEl = event.target.closest('.note-sheet-trash');
+            const noteEl = event.target.closest('.shared-note-card');
 
             if (!noteEl) return;
 
@@ -33,24 +33,15 @@ class ShareNotes {
                 noteId: noteEl.dataset.noteId || noteEl.dataset.id,
                 title: noteEl.dataset.noteTitle || noteEl.dataset.title,
                 content: noteEl.dataset.noteContent || noteEl.dataset.content,
+                imageLink: noteEl.dataset.noteImage  || noteEl.dataset.image,
+                canEdit: noteEl.dataset.noteEdit || noteEl.dataset.canEdit
             };
 
-            // if (deleteBtn) {
-            //     console.log('Clicked delete button:', note);
-            //     this.expandDeleteNote(note);
-            //     return;
-            // }
-            //
-            // if (restoreBtn) {
-            //     console.log('Clicked restore button:', note);
-            //     this.expandRestoreNote(note);
-            //     return;
-            // }
 
-            // Prevent expanding the note when clicking buttons inside .note-sheet-trash__menu
             if (event.target.closest('.note-sheet-trash__menu button')) return;
 
             console.log('Clicked note:', note);
+            this.expandShareNote(note);
         };
 
         document.addEventListener('click', this.handleNoteClick);
@@ -58,6 +49,17 @@ class ShareNotes {
 
         // window.addEventListener('scroll', this.handleScroll.bind(this));
         // console.log('Attached scroll listener');
+
+        const autoResizeTextarea = (textarea) => {
+            textarea.style.height = '100%';
+            textarea.style.minHeight = '300px';
+            textarea.style.height = textarea.scrollHeight + 'px'; // Set to scroll height
+        };
+
+        const myTextarea = document.querySelector('.note-content-input-autosave');
+        myTextarea.addEventListener('input', () => autoResizeTextarea(myTextarea));
+
+        autoResizeTextarea(myTextarea);
     }
 
     handleScroll() {
@@ -96,13 +98,9 @@ class ShareNotes {
         toast.show();
     }
 
-    loadSharedNotes({ reset = false } = {}) {
-        if (this.isLoadingTrash) return;
-        this.isLoadingTrash = true;
+    loadSharedNotes() {
 
-        if (reset) this.currentPage = 1;
-
-        fetch(`/note/trash-list?page=${this.currentPage}&limit=${this.limit}`, {
+        fetch(`/note/share-list`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -184,6 +182,60 @@ class ShareNotes {
             container.appendChild(div);
         });
     }
+
+    expandShareNote(note) {
+        console.log(note);
+        const modalEl = document.getElementById('noteShareModal');
+        const modal = new bootstrap.Modal(modalEl);
+        const noteId = note.noteId;
+
+        const imageLink = modalEl.querySelector('.note-sheet__image');
+        const titleInput = modalEl.querySelector('.note-title-input-autosave');
+        const contentInput = modalEl.querySelector('.note-content-input-autosave');
+        const icon = modalEl.querySelector('.save-status-icon i');
+        const iconText = modalEl.querySelector('.save-status-icon p');
+
+        imageLink.innerHTML = note.imageLink ? `<img src="${note.imageLink}" style="width: 100%; height: auto; display: block">` : '';
+        titleInput.value = note.title || '';
+        contentInput.value = note.content || '';
+        icon.className = 'fa-solid fa-check-circle text-success';
+        iconText.innerHTML = 'Saved';
+
+        modal.show();
+
+        // Store noteId and image DOM ref on class instance
+        this.currentNoteId = noteId;
+        this.imageLinkRef = imageLink;
+
+        const triggerUploadBtn = modalEl.querySelector('#triggerImageUpload');
+        const triggerDeleteBtn = modalEl.querySelector('#triggerImageDelete');
+        const imageInput = modalEl.querySelector('#imageInput');
+        const noteIdInput = modalEl.querySelector('#noteIdInput');
+        const inputTextarea = modalEl.querySelector('.note-content-input-autosave');
+
+        inputTextarea.style.height = '100%';
+        imageInput.dataset.noteId = noteId;
+        noteIdInput.value = noteId;
+        noteIdInput.dataset.imageUrl = note.imageLink || '';
+
+        // Block editing if user doesn't have permission
+        const canEdit = note.canEdit === 'true' || note.canEdit === true;
+
+        titleInput.readOnly = !canEdit;
+        contentInput.readOnly = !canEdit;
+        triggerUploadBtn.disabled = !canEdit;
+        triggerDeleteBtn.disabled = !canEdit;
+
+        // Optionally style fields differently if not editable
+        if (!canEdit) {
+            // titleInput.classList.add('bg-light');
+            // contentInput.classList.add('bg-light');
+        } else {
+            // titleInput.classList.remove('bg-light');
+            // contentInput.classList.remove('bg-light');
+        }
+    }
+
 }
 
 const ShareNotesInstance = new ShareNotes();

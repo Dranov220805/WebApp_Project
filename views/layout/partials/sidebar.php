@@ -49,7 +49,6 @@ $labelList = $homeUserController->getUserLabel();
         <div class="modal-content" style="width: 100%; height: 100%">
             <div class="modal-header">
                 <h5 class="modal-title" id="editLabelsModalLabel">Manage Labels</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body d-flex flex-column" id="label-management-body">
                 <?php foreach ($labelList as $label): ?>
@@ -77,7 +76,6 @@ $labelList = $homeUserController->getUserLabel();
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="deleteLabelModalLabel">Confirm Delete Permanently</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 Are you sure you want to permanently delete this note?
@@ -96,7 +94,6 @@ $labelList = $homeUserController->getUserLabel();
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addLabelNoteModalLabel">Assign Labels</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="label-checkbox-list">
                 <!-- Labels will be loaded dynamically here -->
