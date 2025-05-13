@@ -262,7 +262,7 @@ class NoteRepository
     }
 
     public function getLabelNoteByLabelName(string $labelName, string $accountId) {
-        $sql = "SELECT Label.labelName, Note.noteId, Note.title, Note.content, Image.imageLink, Label.labelId
+        $sql = "SELECT Note.*, Image.imageLink, Label.labelId, Label.labelName
             FROM Label
             INNER JOIN NoteLabel ON Label.labelId = NoteLabel.labelId
             INNER JOIN Note ON Note.noteId = NoteLabel.noteId

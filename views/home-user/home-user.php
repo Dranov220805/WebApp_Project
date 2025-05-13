@@ -74,7 +74,7 @@
                         <input type="text" class="modal-title note-title-input-autosave form-control border-0" id="noteModalLabel"/>
                     </div>
                     <div class="modal-body" style="flex-grow: 1; min-height: 300px; height: fit-content; overflow-y: visible">
-                        <textarea class="note-content-input-autosave form-control" style=" overflow-y: visible;"></textarea>
+                        <textarea class="note-content-input-autosave form-control" style="overflow-y: visible;"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer d-flex justify-content-start align-items-center">

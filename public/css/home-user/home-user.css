@@ -245,9 +245,7 @@ body {
     resize: none;
     width: 100%;
     overflow: hidden;
-    height: 0;
-    opacity: 0;
-    transition: height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
 }
 
 
@@ -345,6 +343,35 @@ body {
     }
 }
 
+.load-list .note-sheet-label {
+    break-inside: avoid; /* Prevents cards from breaking across columns */
+    display: inline-block; /* Important for column layout */
+    flex-direction: row;
+    width: 100%;
+    max-width: 100%;
+    height: fit-content;
+    max-height: 200px;
+    margin-bottom: 16px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+    overflow: hidden;
+
+    .note-sheet__menu--item {
+        display: flex;
+        flex-direction: column;
+
+        .note-sheet__menu--item > button {
+            margin-right: 0px;
+        }
+    }
+
+    .note-sheet__image img {
+        width: auto;
+        height: 100%;
+    }
+}
+
 .load-list .note-sheet-trash {
     flex-direction: row;
 
@@ -401,8 +428,7 @@ body {
 
 .note-content-input-autosave {
     /*height: 500px;*/
-    height: 100%;
-    overflow: visible;
+    min-height: 300px;
     resize: none;
     border: none;
 }
@@ -479,6 +505,11 @@ body {
 #noteLabelModal {
     height: 100%;
     max-height: 100%;
+
+    .modal-dialog {
+        width: 95%;
+        height: fit-content;
+    }
 }
 
 #noteModal {
@@ -487,6 +518,16 @@ body {
 
     .modal-dialog {
         width: 95%;
+        height: fit-content;
+    }
+}
+
+#editLabelsModal {
+    height: 100%;
+    max-height: 100%;
+
+    .modal-dialog {
+        width: 80%;
         height: fit-content;
     }
 }
@@ -527,6 +568,7 @@ body {
 
     #shareNoteModal .modal-dialog {
         width: 100%;
+        max-width: 100%;
         height: fit-content;
     }
 }

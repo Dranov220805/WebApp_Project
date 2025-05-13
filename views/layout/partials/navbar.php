@@ -4,7 +4,7 @@
 <nav class="navbar fixed-top">
     <div class="d-flex align-items-center w-100 navbar__content">
         <!-- Left side: Menu icon (sidebar toggle) and Logo -->
-        <div class="d-flex align-items-center" style="padding-right: 20px">
+        <div class="d-flex align-items-center" style="padding-right: 10px">
             <button id="sidebar-toggle" class="sidebar-toggle">
                 <i class="navbar__item--icon fa-solid fa-bars"></i>
             </button>
@@ -36,15 +36,17 @@
                 <i class="navbar__item--icon fa-solid fa-gear"></i>
             </a>
 
-            <button data-bs-toggle="modal" class="info-modal" data-bs-target="#infoModal" data-bs-backdrop="false" data-bs-scroll="true" style="display: flex; justify-content: center; align-items: center; height: 40px">
-                <!--                <i class="navbar__item--icon fa-regular fa-circle-user"></i>-->
-                <?php if (!empty($GLOBALS['user']->profilePicture)): ?>
-                    <img id="navbar--image__icon" src="<?= $GLOBALS['user']->profilePicture ?>" style="width: 30px; border-radius: 50px">
-                <?php else: ?>
-                    <i class="fa-regular fa-circle-user" style="font-size: 25px"></i>
-                <?php endif; ?>
+            <div class="btn icon-btn">
+                <button data-bs-toggle="modal" class="info-modal" data-bs-target="#infoModal" data-bs-backdrop="false" data-bs-scroll="true" style="display: flex; justify-content: center; align-items: center; height: 40px">
+                    <!--                <i class="navbar__item--icon fa-regular fa-circle-user"></i>-->
+                    <?php if (!empty($GLOBALS['user']->profilePicture)): ?>
+                        <img id="navbar--image__icon" src="<?= $GLOBALS['user']->profilePicture ?>" style="width: 30px; border-radius: 50px">
+                    <?php else: ?>
+                        <i class="fa-regular fa-circle-user" style="font-size: 25px"></i>
+                    <?php endif; ?>
 
-            </button>
+                </button>
+            </div>
         </div>
     </div>
 </nav>

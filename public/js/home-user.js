@@ -177,21 +177,23 @@ class HomeUser {
     }
 
     checkVerification() {
-        fetch('/auth/verification', {
-            method: 'GET'
-        })
-            .then(res => res.json())
-            .then(data => {
-                const {status, message} = data;
-                if (status === true) {
-
-                } else {
-                    this.showToast('Account has not been verified','warning');
-                }
+        if (document.querySelector('.username--title__modal')) {
+            fetch('/auth/verification', {
+                method: 'GET'
             })
-            .catch(
-                err => console.log(err)
-            );
+                .then(res => res.json())
+                .then(data => {
+                    const {status, message} = data;
+                    if (status === true) {
+
+                    } else {
+                        this.showToast('Account has not been verified','warning');
+                    }
+                })
+                .catch(
+                    err => console.log(err)
+                );
+        }
     }
 
     toggleSidebar() {

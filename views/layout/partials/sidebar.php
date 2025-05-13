@@ -45,7 +45,7 @@ $labelList = $homeUserController->getUserLabel();
 </div>
 
 <div class="modal fade" id="editLabelsModal" tabindex="-1" aria-labelledby="editLabelsModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="width: 100%; height: 100%">
             <div class="modal-header">
                 <h5 class="modal-title" id="editLabelsModalLabel">Manage Labels</h5>
@@ -62,7 +62,7 @@ $labelList = $homeUserController->getUserLabel();
                 </div>
                 <?php endforeach; ?>
             </div>
-            <div class="modal-footer d-flex" style="justify-content: start">
+            <div class="modal-footer d-flex" style="justify-content: end">
                 <input class="label-post__input" placeholder="New label here" style="flex-grow: 1; font-size: 18px">
                 <button type="button" class="btn btn-primary label-post__submit"> Add new label</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -92,7 +92,7 @@ $labelList = $homeUserController->getUserLabel();
 
 <!--    Modal structure for showing list of labels-->
 <div class="modal fade" id="listLabelNoteModal" tabindex="-1" aria-labelledby="listLabelNoteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable" style="margin: auto; margin-top: 200px">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" style="margin: auto">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addLabelNoteModalLabel">Assign Labels</h5>

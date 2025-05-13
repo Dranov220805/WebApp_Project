@@ -139,7 +139,7 @@ class Notes {
             noteInput.addEventListener("input", this.autoResizeInput);
         }
 
-        this.initNotePostTrigger();
+        // this.initNotePostTrigger();
 
         const modalEl = document.getElementById('noteModal');
         if (modalEl) {
@@ -150,8 +150,8 @@ class Notes {
         }
 
         const autoResizeTextarea = (textarea) => {
-            textarea.style.minHeight = '200' + 'px';
-            textarea.style.height = 'auto'; // Reset height
+            textarea.style.height = '100%';
+            textarea.style.minHeight = '300px';
             textarea.style.height = textarea.scrollHeight + 'px'; // Set to scroll height
         };
 
@@ -159,6 +159,30 @@ class Notes {
         myTextarea.addEventListener('input', () => autoResizeTextarea(myTextarea));
 
         autoResizeTextarea(myTextarea);
+
+        const titleInput = document.querySelector('.note-text__content');
+        const contentTextarea = document.querySelector('.note-post__input');
+
+        const toggleTitleInput = () => {
+            const hasContent = contentTextarea.value.trim() !== '';
+
+            if (hasContent) {
+                titleInput.classList.remove('d-none');
+                titleInput.style.height = '30' + 'px';
+                titleInput.style.opacity = '1';
+            } else {
+                titleInput.classList.add('d-none');
+                titleInput.value = '';
+                titleInput.style.height = '0' + 'px';
+                titleInput.style.opacity = '0';
+            }
+        };
+
+        // Bind the event
+        contentTextarea.addEventListener('input', toggleTitleInput);
+
+        // Run on page load in case textarea is pre-filled
+        toggleTitleInput();
 
     }
 
@@ -774,7 +798,7 @@ class Notes {
                 if (status === true) {
                     this.showToast('Note created successfully!', 'success');
                     titleInput.value = '';
-                    titleInput.style.display = 'none';
+                    titleInput.classList.add('d-none');
                     contentInput.value = '';
                     const newNote = this.noteSheetModel(noteId, title, content);
                     console.log(`Prepended note: ${noteId}`);
