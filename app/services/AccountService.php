@@ -67,35 +67,26 @@ class AccountService{
             ];
         }
     }
-    public function checkVerification($email) {
-        $result = $this->accountRepository->getAccountByEmail($email);
-
-        if ($result->getIsVerified()) {
-            $_SESSION['isVerified'] = true;
-            return [
-                'status' => true,
-                'message' => 'Account is verified'
-            ];
-        } else {
-            $_SESSION['isVerified'] = false;
-            return [
-                'status' => false,
-                'message' => 'Account is not verified'
-            ];
-        }
-    }
 
     public function getPreferencesByAccountId($accountId) {
         return $this->accountRepository->getPreferencesByAccountId($accountId);
     }
 
-    public function updatePreferenceByAccountId($account_id, $theme, $fontSize, $noteColor) {
-        $result = $this->accountRepository->updatePreferenceByAccountId($account_id, $theme, $fontSize, $noteColor);
+    public function updatePreferenceByAccountId($accountId, $userName, $theme, $fontSize, $noteColor) {
+        $result = $this->accountRepository->updatePreferenceByAccountId($accountId, $userName, $theme, $fontSize, $noteColor);
 
         if ($result ) { // assuming $result is a Preference object on success
-            $userData = $GLOBALS["user"];
-            $email = $userData->email;
-            $user = $this->accountRepository->getAccountByEmail($email);
+            try {
+                $user = $this->accountRepository->getAccountByAccountId($accountId);
+                $userPreference = $this->accountRepository->getPreferencesByAccountId($accountId);
+            }
+            catch (\Exception $e) {
+                return [
+                    'status' => false,
+                    'data' => $result,
+                    'message' => 'Update user preference failed'
+                ];
+            }
 
             // Generate JWT
             $payload = [
@@ -111,7 +102,7 @@ class AccountService{
                     'refreshToken' => $user->getRefreshToken(),
                     'expiredTime' => $user->getExpiredTime(),
                     'roleId' => $user->getRoleId(),
-                    'isDarkTheme' => $theme == 'dark',
+                    'isDarkTheme' => $userPreference->isDarkTheme(),
                     'isVerified' => $user->getIsVerified()
                 ]
             ];

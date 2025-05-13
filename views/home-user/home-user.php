@@ -214,15 +214,7 @@
             </div>
         </div>
     </div>
-
-    <?php
-        include "./views/layout/partials/overlay_loading.php";
-    ?>
 </div>
 
 <!-- JavaScript for loading note content -->
 <script src="/public/js/note.js" type="module"></script>
-
-<script>
-
-</script>

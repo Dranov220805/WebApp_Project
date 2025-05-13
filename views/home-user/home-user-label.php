@@ -131,8 +131,4 @@
             </div>
         </div>
     </div>
-
-    <?php
-    include "./views/layout/partials/overlay_loading.php";
-    ?>
 </div>

@@ -71,14 +71,6 @@ class HomeUserMiddleWare {
         }
         $this->homeUserController->homeTrash();
     }
-    public function checkVerification() {
-        $result = $this->homeUserController->checkVerification();
-        if ($result['status'] === true) {
-            return $_SESSION['isVerified'] = 1;
-        } else {
-            return $_SESSION['isVerified'] = 0;
-        }
-    }
     public function userPreference() {
         $checkToken = $this->authMiddleware->checkSession();
 

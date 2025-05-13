@@ -77,19 +77,23 @@ class TrashNotes {
     //     this.lastScrollTop = Math.max(currentScrollTop, 0);
     // }
 
-    showToast(message, type = 'danger', duration = 2000) {
-        const toast = document.getElementById("toast");
-        const messageElement = document.getElementById("toast-message");
-        const closeBtn = document.getElementById("toast-close");
+    showToast(message, type = 'success') {
+        const toastEl = document.getElementById('shareToast');
+        const toastBody = document.getElementById('shareToastMessage');
 
-        if (!toast || !messageElement || !closeBtn) return;
+        // Set toast message
+        toastBody.textContent = message;
 
-        messageElement.innerText = message;
-        toast.classList.remove("d-none", "bg-success", "bg-danger");
-        toast.classList.add(`bg-${type}`);
-        toast.classList.remove("d-none");
+        // Change toast background color based on type
+        toastEl.className = `toast align-items-center text-white bg-${type} border-0`;
 
-        setTimeout(() => toast.classList.add("d-none"), duration);
+        // Create a Bootstrap Toast instance with autoHide enabled
+        const toast = new bootstrap.Toast(toastEl, {
+            delay: 1000,      // Duration in milliseconds
+            autohide: true    // Enables auto-hiding
+        });
+
+        toast.show();
     }
 
     loadTrashedNotes({ reset = false } = {}) {

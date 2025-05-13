@@ -132,24 +132,6 @@ class HomeUserController extends BaseController{
 
     }
 
-    public function checkVerification() {
-        $email = $_SESSION['email'];
-
-        $result = $this->accountService->checkVerification($email);
-
-        if($result['status'] === true) {
-            return [
-                'status' => true,
-                'message' => $result['message']
-            ];
-        } else {
-            return[
-                'status' => false,
-                'message' => $result['message']
-            ];
-        }
-    }
-
     public function uploadAvatar() {
         header('Content-Type: application/json');
 
@@ -229,13 +211,13 @@ class HomeUserController extends BaseController{
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
 
-        if (!empty($data['theme']) || !empty($data['noteFont']) || !empty($data['noteColor'])) {
-            $result = $this->accountService->updatePreferenceByAccountId($accountId, $data['theme'], $data['noteFont'], $data['noteColor']);
+        if (!empty($data['theme']) || !empty($data['userName']) || !empty($data['noteFont']) || !empty($data['noteColor'])) {
+            $result = $this->accountService->updatePreferenceByAccountId($accountId, $data['userName'], $data['theme'], $data['noteFont'], $data['noteColor']);
 
             if ($result['status'] === true) {
                 http_response_code(200);
 
-                setcookie('jwt_token', $result['token'], [
+                setcookie('access_token', $result['token'], [
                     'expires' => time() + 3600, // 1 hour (match your JWT expiry)
                     'path' => '/',
                     'secure' => true, // Set to true if using HTTPS
@@ -245,6 +227,7 @@ class HomeUserController extends BaseController{
 
                 echo json_encode([
                     'status' => true,
+                    'userName' => $data['userName'],
                     'data' => $result['token'],
                     'message' => $result['message']
                 ]);

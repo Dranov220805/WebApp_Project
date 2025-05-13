@@ -140,20 +140,23 @@ class LabelNote {
         this.lastScrollTop = Math.max(currentScrollTop, 0);
     }
 
-    showToast(message, type = 'danger', duration = 2000) {
-        const toast = document.getElementById("toast");
-        const messageElement = document.getElementById("toast-message");
-        const closeBtn = document.getElementById("toast-close");
+    showToast(message, type = 'success') {
+        const toastEl = document.getElementById('shareToast');
+        const toastBody = document.getElementById('shareToastMessage');
 
-        if (!toast || !messageElement || !closeBtn) return;
+        // Set toast message
+        toastBody.textContent = message;
 
-        messageElement.innerText = message;
-        toast.classList.remove("d-none", "bg-success", "bg-danger");
-        toast.classList.add(`bg-${type}`);
+        // Change toast background color based on type
+        toastEl.className = `toast align-items-center text-white bg-${type} border-0`;
 
-        toast.classList.remove("d-none");
+        // Create a Bootstrap Toast instance with autoHide enabled
+        const toast = new bootstrap.Toast(toastEl, {
+            delay: 1000,      // Duration in milliseconds
+            autohide: true    // Enables auto-hiding
+        });
 
-        const hideTimeout = setTimeout(() => toast.classList.add("d-none"), duration);
+        toast.show();
     }
 
     loadLabelNotes() {
@@ -275,7 +278,7 @@ class LabelNote {
 
     renameLabel_POST(oldLabel, newLabel) {
         fetch('/label/update', {
-            method: 'POST',
+            method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 oldLabel,
@@ -292,7 +295,8 @@ class LabelNote {
                         const span = el.querySelector('.sidebar__item--title');
                         if (span && span.textContent.trim() === oldLabel) {
                             span.textContent = newLabel;
-                            el.setAttribute('href', `/home/label/${encodeURIComponent(newLabel)}`);
+                            const encodedLabel = encodeURIComponent(newLabel).replace(/%20/g, '+');
+                            el.setAttribute('href', `/home/label/${encodedLabel}`);
                         }
                     });
 

@@ -7,6 +7,40 @@ class AccountRepository{
         $this->conn = DatabaseManager::getInstance()->getConnection();
     }
 
+    public function getAccountByAccountId($accountId){
+        $sql = "SELECT * FROM `Account` WHERE `accountId` = ?";
+        $stmt = $this->conn->prepare($sql);
+
+        if (!$stmt) {
+            throw new Exception("Prepare failed: " . $this->conn->error);
+        }
+
+        $stmt->bind_param("s", $accountId);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        if (!$result || $result->num_rows === 0) {
+            $stmt->close();
+            return null;
+        }
+
+        $row = $result->fetch_assoc();
+        $stmt->close();
+
+        return new Account(
+            $row['accountId'],
+            $row['userName'],
+            $row['password'],
+            $row['email'],
+            $row['profilePicture'],
+            $row['activation_token'],
+            $row['refresh_token'],
+            $row['expired_time'],
+            $row['roleId'],
+            $row['isVerified']
+        );
+    }
+
     public function getAccountByEmail($email): ?Account {
         $sql = "SELECT * FROM `Account` WHERE `email` = ?";
         $stmt = $this->conn->prepare($sql);
@@ -292,7 +326,7 @@ class AccountRepository{
         }
     }
 
-    public function updatePreferenceByAccountId($accountId, $theme, $noteFont, $noteColor): mixed {
+    public function updatePreferenceByAccountId($accountId, $userName, $theme, $noteFont, $noteColor): mixed {
         $isDarkTheme = $theme === 'dark' ? 1 : 0;
 
         $sql = "UPDATE `Preference`
@@ -304,6 +338,18 @@ class AccountRepository{
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("isss", $isDarkTheme, $noteFont, $noteColor, $accountId);
         $stmt->execute();
+
+        $accountSql = "UPDATE `Account` SET `username` = ? WHERE `accountId` = ?";
+        $stmt = $this->conn->prepare($accountSql);
+        $stmt->bind_param("ss", $userName, $accountId);
+        $result = $stmt->execute();
+
+        if (!$result) {
+            return [
+                'status' => 'false',
+                'message' => 'Error updating account'
+            ];
+        }
 
         if ($stmt->affected_rows > 0) {
             $stmt->close();

@@ -27,7 +27,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
                 break;
             case 'auth':
                 if($_GET['param_2'] == 'verification'){
-//                    $authMiddleware->checkVerification();
+                    $authMiddleware->checkVerification();
                 } else if ($_GET['param_2'] == 'activate'){
                     $authMiddleware->getUrlActivationLink();
                 }

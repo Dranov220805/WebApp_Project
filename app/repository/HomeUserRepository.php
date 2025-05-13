@@ -80,6 +80,18 @@ class HomeUserRepository{
         );
     }
 
+    public function isNoteAlreadySharedTo($noteId, $email): bool {
+        $sql = "SELECT * FROM NoteSharing WHERE noteId = ? AND sharedEmail = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ss", $noteId, $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $alreadyShared = $result && $result->num_rows > 0;
+        $stmt->close();
+        return $alreadyShared;
+    }
+
+
 }
 
 ?>

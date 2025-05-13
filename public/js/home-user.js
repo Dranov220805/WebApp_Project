@@ -21,7 +21,7 @@ class HomeUser {
 
         // this.loadUserPreference();
         this.attachEventListeners();
-        // this.checkVerification();
+        this.checkVerification();
         this.handleAvatarUpload();
         this.attachPreferenceSaveHandler();
     }
@@ -38,22 +38,23 @@ class HomeUser {
         })
     }
 
-    showToast(message, type, duration = 3000) {
-        const toast = document.getElementById("toast");
-        const messageElement = document.getElementById("toast-message");
-        const closeBtn = document.getElementById("toast-close");
+    showToast(message, type = 'success') {
+        const toastEl = document.getElementById('shareToast');
+        const toastBody = document.getElementById('shareToastMessage');
 
-        if (!toast || !messageElement || !closeBtn) return;
+        // Set toast message
+        toastBody.textContent = message;
 
-        messageElement.innerText = message;
-        toast.classList.remove("d-none", "bg-success", "bg-danger");
-        toast.classList.add(`bg-${type}`);
+        // Change toast background color based on type
+        toastEl.className = `toast align-items-center text-white bg-${type} border-0`;
 
-        toast.classList.remove("d-none");
+        // Create a Bootstrap Toast instance with autoHide enabled
+        const toast = new bootstrap.Toast(toastEl, {
+            delay: 1000,      // Duration in milliseconds
+            autohide: true    // Enables auto-hiding
+        });
 
-        const hideTimeout = setTimeout(() => toast.classList.add("d-none"), duration);
-
-        console.log("Toast:", { message, type, toastVisible: !toast.classList.contains('d-none') });
+        toast.show();
     }
 
     attachPreferenceSaveHandler() {
@@ -61,12 +62,14 @@ class HomeUser {
         if (!saveBtn) return;
 
         saveBtn.addEventListener('click', async () => {
+            const userName = document.querySelector('.username--rename__input').value;
             const theme = document.getElementById('theme-selector')?.value || 'system';
             const fontSize = document.getElementById('font-size-selector')?.value || '14px';
             const selectedColorElement = document.querySelector('.color-option.active');
             const noteColor = selectedColorElement ? selectedColorElement.dataset.color : '#000000';
 
             const body = {
+                userName,
                 theme,
                 noteFont: fontSize,
                 noteColor
@@ -88,6 +91,10 @@ class HomeUser {
                 console.log(result);
 
                 if (result.status === true) {
+                    const userNameTag = document.querySelector('.username--title__modal');
+                    const userNameTag2 = document.querySelector('.username--title__modal-2');
+                    userNameTag.innerText = result.userName;
+                    userNameTag2.innerText = result.userName;
                     this.showToast('Preferences saved successfully', 'success');
                     // Optionally apply changes: this.applyPreferences(result.data);
                 } else {

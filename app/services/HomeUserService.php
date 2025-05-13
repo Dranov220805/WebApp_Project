@@ -20,27 +20,43 @@ class HomeUserService {
     }
 
     public function addSharedEmailByNoteIdAndEmailAndNewEmail($noteId, $email, $newEmail) {
-        $checkEmailExist = $this->accountRepository->getAccountByEmail($email);
-        $checkEmail = $checkEmailExist->getEmail();
-        if ($checkEmail === $newEmail) {
+        // Prevent sharing to yourself
+        if ($email === $newEmail) {
             return [
                 'status' => false,
                 'message' => 'Cannot share note to yourself'
             ];
         }
-        if (!empty($checkEmailExist)) {
-            $result = $this->homeUserRepository->addSharedEmailByNoteIdAndEmailAndNewEmail($noteId, $email, $newEmail);
+
+        // Check if target email exists
+        $targetAccount = $this->accountRepository->getAccountByEmail($newEmail);
+
+        if ($targetAccount === null) {
             return [
-                'status' => true,
-                'data' => $result,
-                'message' => 'Shared this note successfully'
+                'status' => false,
+                'message' => 'Target email does not exist in the system'
             ];
         }
+
+        // Check if the note has already been shared to this account
+        $alreadyShared = $this->homeUserRepository->isNoteAlreadySharedTo($noteId, $email);
+        if ($alreadyShared) {
+            return [
+                'status' => false,
+                'message' => 'This note has already been shared to this email'
+            ];
+        }
+
+        // Proceed with sharing
+        $result = $this->homeUserRepository->addSharedEmailByNoteIdAndEmailAndNewEmail($noteId, $email, $newEmail);
+
         return [
-            'status' => false,
-            'message' => 'Email is not exist'
+            'status' => true,
+            'data' => $result,
+            'message' => 'Shared this note successfully'
         ];
     }
+
 
     public function getSharedEmailByNoteIdAndEmail($noteId, $email) {
         return $this->homeUserRepository->getSharedEmailByNoteIdAndEmail($noteId, $email);

@@ -168,4 +168,14 @@ class AuthMiddleware
         }
         $this->authController->changePassword();
     }
+
+    public function checkVerification() {
+        $checkToken = $this->checkSession();
+
+        if ($checkToken['status'] === false) {
+            header('location:/log/login');
+            exit();
+        }
+        $this->authController->checkVerification();
+    }
 }

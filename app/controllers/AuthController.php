@@ -176,9 +176,25 @@ class AuthController extends BaseController {
         exit();
     }
 
-    public function refreshToken() {
-        $this->authService->refreshSession();
+    public function checkVerification() {
+        $user = $GLOBALS['user'];
+        $email = $user->email;
+
+        $result = $this->authService->checkVerification($email);
+
+        if($result['status'] === true) {
+            return json_encode([
+                'status' => true,
+                'message' => $result['message']
+            ]);
+        } else {
+            return json_encode([
+                'status' => false,
+                'message' => $result['message']
+            ]);
+        }
     }
+
 }
 
 ?>

@@ -29,6 +29,16 @@
 
                 <div class="section-divider"></div>
 
+                <!-- Account Section -->
+                <div class="section-title">Account</div>
+
+                <div class="setting-row">
+                    <div class="setting-label">Username</div>
+                    <input class="form-control username--rename__input" style="width: 200px" placeholder="<?= $GLOBALS['user']->userName?>" value="<?= $GLOBALS['user']->userName?>">
+                </div>
+
+                <div class="section-divider"></div>
+
                 <!-- Appearance Section -->
                 <div class="section-title">Appearance</div>
 
@@ -125,10 +135,6 @@
             </div>
         </div>
     </div>
-    <?php
-    include "./views/layout/partials/overlay_loading.php";
-    ?>
-
 
     <!-- JavaScript and Css for functionality -->
 

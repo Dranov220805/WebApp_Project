@@ -28,6 +28,8 @@ class Notes {
         this.boundHandleUpload = this.handleFileUpload.bind(this);
         this.boundHandleDelete = this.handleDeleteImage.bind(this);
         this.boundTriggerInput = this.triggerImageInputClick.bind(this);
+        this.boundEmailShareHandler = this.newBtnHandler.bind(this); // bind once
+        document.querySelector('#share--email__btn').addEventListener('click', this.boundEmailShareHandler);
     }
 
     setupEvents() {
@@ -158,21 +160,21 @@ class Notes {
         this.lastScrollTop = Math.max(currentScrollTop, 0);
     }
 
-    showToast(message, type = 'danger', duration = 2000) {
-        const toast = document.getElementById("toast");
-        const messageElement = document.getElementById("toast-message");
-        const closeBtn = document.getElementById("toast-close");
-
-        if (!toast || !messageElement || !closeBtn) return;
-
-        messageElement.innerText = message;
-        toast.classList.remove("d-none", "bg-success", "bg-danger");
-        toast.classList.add(`bg-${type}`);
-
-        toast.classList.remove("d-none");
-
-        const hideTimeout = setTimeout(() => toast.classList.add("d-none"), duration);
-    }
+    // showToast(message, type = 'danger', duration = 2000) {
+    //     const toast = document.getElementById("toast");
+    //     const messageElement = document.getElementById("toast-message");
+    //     const closeBtn = document.getElementById("toast-close");
+    //
+    //     if (!toast || !messageElement || !closeBtn) return;
+    //
+    //     messageElement.innerText = message;
+    //     toast.classList.remove("d-none", "bg-success", "bg-danger");
+    //     toast.classList.add(`bg-${type}`);
+    //
+    //     toast.classList.remove("d-none");
+    //
+    //     const hideTimeout = setTimeout(() => toast.classList.add("d-none"), duration);
+    // }
 
     loadNotes() {
         if (this.isLoading) return;
@@ -1109,50 +1111,67 @@ class Notes {
             });
     }
 
+    showToast(message, type = 'success') {
+        const toastEl = document.getElementById('shareToast');
+        const toastBody = document.getElementById('shareToastMessage');
+
+        // Set toast message
+        toastBody.textContent = message;
+
+        // Change toast background color based on type
+        toastEl.className = `toast align-items-center text-white bg-${type} border-0`;
+
+        // Create a Bootstrap Toast instance with autoHide enabled
+        const toast = new bootstrap.Toast(toastEl, {
+            delay: 1000,      // Duration in milliseconds
+            autohide: true    // Enables auto-hiding
+        });
+
+        toast.show();
+    }
+
     expandShareNote(note) {
         const modalEl = document.getElementById('shareNoteModal');
         const modal = new bootstrap.Modal(modalEl);
-        const shareNoteTitle = document.querySelector('.shared-note--title');
-        const shareNoteContent = document.querySelector('.shared-note--content');
-        const shareEmailBtn = document.querySelector('#share--email__btn');
+
+        this.currentNote = note;
+
+        document.querySelector('.shared-note--title').innerText = note.title;
+        document.querySelector('.shared-note--content').innerText = note.content;
+
+        this.getSharedEmail(note.noteId);
+        modal.show();
+    }
+
+    newBtnHandler() {
+        const newSharedEmail = $('#share--email__input').val();
+        const noteId = this.currentNote.noteId;
         const emailSharedList = document.querySelector('#email--shared__list');
 
-        // Set note content in modal
-        shareNoteTitle.innerText = note.title;
-        shareNoteContent.innerText = note.content;
-
-        // Load shared emails list
-        this.getSharedEmail(note.noteId);
-
-        const newBtnHandler = () => {
-            const newSharedEmail = $('#share--email__input').val();
-            fetch(`/share-list/add`, {
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    noteId: note.noteId,
-                    newSharedEmail
-                })
+        fetch(`/share-list/add`, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                noteId,
+                newSharedEmail
             })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status) {
-                        console.log("Shared successfully.");
-                        emailSharedList.value = '';
-                        this.getSharedEmail(note.noteId);
-                    } else {
-                        console.error(data.message || "Failed to share note.");
-                    }
-                    shareEmailBtn.removeEventListener('click', newBtnHandler);
-                })
-                .catch(err => console.error("Error sharing:", err));
-        }
-
-        shareEmailBtn.addEventListener('click', newBtnHandler);
-
-        modal.show();
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status) {
+                    console.log("Shared successfully.");
+                    this.showToast("Note shared successfully!", 'success');
+                    $('#share--email__input').val('');
+                    this.getSharedEmail(noteId);
+                } else {
+                    console.error(data.message || "Failed to share note.");
+                    this.showToast(data.message || "Failed to share note.", 'danger');
+                    $('#share--email__input').val('');
+                }
+            })
+            .catch(err => console.error("Error sharing:", err));
     }
 
     getSharedEmail(noteId) {

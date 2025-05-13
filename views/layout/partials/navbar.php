@@ -55,7 +55,7 @@
         <div class="modal-content" style="width: 100%">
 
             <div class="modal-header">
-                <h4 class="modal-title" style="flex-grow: 1">Hello, <?= $GLOBALS['user']->userName ?></h4>
+                <h4 class="modal-title username--title__modal" style="flex-grow: 1">Hello, <?= $GLOBALS['user']->userName ?></h4>
                 <span style="display: flex; justify-content: center; align-items: center; width: 40px; height: 40px">
                     <?php if (!empty($GLOBALS['user']->profilePicture)): ?>
                         <img id="modal--image__icon" src="<?= $GLOBALS['user']->profilePicture ?>" style="width: 30px; border-radius: 50px">
@@ -68,7 +68,7 @@
             </div>
 
             <div class="modal-body">
-                <strong>Username: </strong> <?= $GLOBALS['user']->userName ?>
+                <strong style="margin-bottom: 0px;">Username: <span class="username--title__modal-2" style="font-weight: 500"><?= $GLOBALS['user']->userName ?></span></strong>
                 <br>
                 <strong>Email: </strong> <?= $GLOBALS['user']->email ?>
                 <br>

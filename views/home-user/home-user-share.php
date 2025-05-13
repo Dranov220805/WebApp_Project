@@ -35,12 +35,12 @@
 
             <?php foreach ($groupedNotes as $note): ?>
                 <div class="col-12">
-                    <div class="card shared-note-card">
+                    <div class="card shared-note-card" style="max-height: 230px">
                         <div class="card-body">
-                            <div class="d-flex justify-content-between">
-                                <div>
+                            <div class="d-flex justify-content-start" style="width: 100%">
+                                <div class="" style="width: 100%">
                                     <div class="small text-muted mb-1">
-                                        Shared by <strong><?= htmlspecialchars($note['receivedEmail']) ?></strong>
+                                        Shared by <strong><?= htmlspecialchars($note['sharedEmail']) ?></strong>
                                     </div>
                                     <div class="text-muted small mb-2">
                                         Shared on <?= date('M d, Y', strtotime($note['timeShared'])) ?>
@@ -51,26 +51,32 @@
                                         <h6 class="fw-bold"><?= htmlspecialchars($note['title']) ?></h6>
                                     <?php endif; ?>
                                     <?php if (!empty($note['content'])): ?>
-                                        <p class="mb-1 text-muted"><?= htmlspecialchars($note['content']) ?></p>
+                                        <p class="mb-1 text-muted" style="overflow-y: hidden; max-height: 48px"><?= htmlspecialchars($note['content']) ?></p>
                                     <?php endif; ?>
 
                                     <!-- Labels -->
-                                    <div class="mt-2">
-                                        <?php foreach ($note['labels'] as $label): ?>
-                                            <span class="badge bg-secondary me-1"><?= htmlspecialchars($label) ?></span>
-                                        <?php endforeach; ?>
-                                    </div>
+                                    <?php if (!empty($note['labels'])) {?>
+                                        <div class="mt-2">
+                                            <?php foreach ($note['labels'] as $label): ?>
+                                                <?php if(!empty($label)) {?>
+                                                    <span class="badge bg-secondary me-1"><?= htmlspecialchars($label) ?></span>
+                                            <?php }?>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php }?>
                                 </div>
 
-                                <div class="text-end">
+                                <div class="text-end" style="display: flex; flex-direction: column; width: 100px; justify-content: space-between; align-items: center">
                                     <?php if ($note['canEdit']): ?>
-                                        <span class="access-label access-edit">Can edit</span>
+                                        <span class="access-label access-edit" style="width: fit-content">Can edit</span>
                                     <?php else: ?>
-                                        <span class="access-label access-readonly">Read-only</span>
+                                        <span class="access-label access-readonly" style="width: fit-content">Read-only</span>
                                     <?php endif; ?>
-                                    <div>
-                                        <img src="<?= htmlspecialchars($note['imageLink']) ?>" class="rounded mt-2" width="48" height="48" alt="User Avatar">
-                                    </div>
+                                    <?php if (!empty($note['imageLink'])) {?>
+                                        <div style="height: 100%; width: auto; max-height: 100px">
+                                            <img src="<?= htmlspecialchars($note['imageLink']) ?>" class="rounded mt-2" alt="User Avatar" style="margin-top: 0px; height: 100%; width: auto">
+                                        </div>
+                                    <?php }?>
                                 </div>
                             </div>
                         </div>
@@ -179,12 +185,4 @@
             </div>
         </div>
     </div>
-
-    <?php
-    include "./views/layout/partials/overlay_loading.php";
-    ?>
 </div>
-
-<script>
-
-</script>
