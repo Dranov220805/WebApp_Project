@@ -28,7 +28,7 @@ class Notes {
         this.boundHandleUpload = this.handleFileUpload.bind(this);
         this.boundHandleDelete = this.handleDeleteImage.bind(this);
         this.boundTriggerInput = this.triggerImageInputClick.bind(this);
-        this.boundEmailShareHandler = this.newBtnHandler.bind(this); // bind once
+        this.boundEmailShareHandler = this.handleAddShareEmail.bind(this); // bind once
         document.querySelector('#share--email__btn').addEventListener('click', this.boundEmailShareHandler);
     }
 
@@ -1143,7 +1143,7 @@ class Notes {
         modal.show();
     }
 
-    newBtnHandler() {
+    handleAddShareEmail() {
         const newSharedEmail = $('#share--email__input').val();
         const noteId = this.currentNote.noteId;
         const emailSharedList = document.querySelector('#email--shared__list');
