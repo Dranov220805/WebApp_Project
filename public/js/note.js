@@ -1,3 +1,5 @@
+import { NoteCollaborator } from './noteCollaborator.js';
+
 class Notes {
     static instance = null;
 
@@ -589,6 +591,101 @@ class Notes {
         const modal = new bootstrap.Modal(modalEl);
         const noteId = note.noteId;
 
+        // Check if the note is shared with other users
+        this.checkIfNoteIsShared(noteId)
+            .then(isShared => {
+                // Setup modal UI
+                const imageLink = modalEl.querySelector('.note-sheet__image');
+                const titleInput = modalEl.querySelector('.note-title-input-autosave');
+                const contentInput = modalEl.querySelector('.note-content-input-autosave');
+                const icon = modalEl.querySelector('.save-status-icon i');
+                const iconText = modalEl.querySelector('.save-status-icon p');
+
+                imageLink.innerHTML = note.imageLink ? `<img src="${note.imageLink}" style="width: 100%; height: auto; display: block">` : '';
+                titleInput.value = note.title || '';
+                contentInput.value = note.content || '';
+                icon.className = 'fa-solid fa-check-circle text-success';
+                iconText.innerHTML = 'Saved';
+
+                // Store reference to current note
+                this.currentNoteId = noteId;
+                this.imageLinkRef = imageLink;
+
+                // Setup file management
+                const triggerUploadBtn = modalEl.querySelector('#triggerImageUpload');
+                const triggerDeleteBtn = modalEl.querySelector('#triggerImageDelete');
+                const imageInput = modalEl.querySelector('#imageInput');
+                const noteIdInput = modalEl.querySelector('#noteIdInput');
+
+                if (imageInput) imageInput.dataset.noteId = noteId;
+                if (noteIdInput) {
+                    noteIdInput.value = noteId;
+                    noteIdInput.dataset.imageUrl = note.imageLink || '';
+                }
+
+                // Setup event listeners for image management
+                if (triggerUploadBtn) this.clearAndBindListener(triggerUploadBtn, 'click', this.boundTriggerInput);
+                if (imageInput) this.clearAndBindListener(imageInput, 'change', this.boundHandleUpload);
+                if (triggerDeleteBtn) this.clearAndBindListener(triggerDeleteBtn, 'click', this.boundHandleDelete);
+
+                // Setup auto-save functionality
+                this.setupAutoSaveModal(noteId, titleInput, contentInput, icon, iconText, isShared);
+
+                // Create WebSocket collaborator if note is shared
+                if (isShared === true) {
+                    console.log("Note is shared, establishing WebSocket connection");
+
+                    // Create collaboration UI elements if they don't exist
+                    // this.setupCollaborationUI(modalEl);
+
+                    // Initialize collaborator
+                    this.noteCollaborator = new NoteCollaborator(noteId, titleInput, contentInput);
+                    this.noteCollaborator.connect();
+                } else {
+                    console.log("This note is not shared with any users. No WebSocket connection established.");
+                }
+
+                // Clean up when modal is closed
+                modalEl.addEventListener('hidden.bs.modal', () => {
+                    if (this.noteCollaborator) {
+                        this.noteCollaborator.disconnect();
+                        this.noteCollaborator = null;
+                    }
+                }, { once: true });
+
+                modal.show();
+            })
+            .catch(error => {
+                console.error("Error checking note sharing status:", error);
+                // Fallback to regular note opening
+                this.setupNoteModal(modalEl, note);
+            });
+    }
+
+    // Function to check if the note is shared with other users
+    checkIfNoteIsShared(noteId) {
+        return fetch(`/share-list`, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer '
+            },
+            body: JSON.stringify({ noteId })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === true) {
+                    return true;
+                }
+            })
+            .catch(error => {
+                console.error("Failed to check note sharing status", error);
+                return false; // In case of error, treat it as not shared
+            });
+    }
+
+    // Separate function to handle setting up the modal
+    setupNoteModal(modalEl, note) {
+        const modal = new bootstrap.Modal(modalEl);
         const imageLink = modalEl.querySelector('.note-sheet__image');
         const titleInput = modalEl.querySelector('.note-title-input-autosave');
         const contentInput = modalEl.querySelector('.note-content-input-autosave');
@@ -607,7 +704,7 @@ class Notes {
         this.currentNoteId = noteId;
         this.imageLinkRef = imageLink;
 
-        this.setupAutoSaveModal(noteId, titleInput, contentInput, icon, iconText);
+        this.setupAutoSaveModal(noteId, titleInput, contentInput, icon, iconText, false);
 
         const triggerUploadBtn = modalEl.querySelector('#triggerImageUpload');
         const triggerDeleteBtn = modalEl.querySelector('#triggerImageDelete');
@@ -625,7 +722,7 @@ class Notes {
         this.clearAndBindListener(triggerDeleteBtn, 'click', this.boundHandleDelete);
     }
 
-    setupAutoSaveModal(noteId, titleInput, contentInput, icon, iconText) {
+    setupAutoSaveModal(noteId, titleInput, contentInput, icon, iconText, isShared) {
         let timeout = null;
         let isSaving = false;
 
@@ -652,14 +749,47 @@ class Notes {
             isSaving = true;
             showSavingIcon();
 
+            const title = titleInput.value;
+            const content = contentInput.value;
+
+            if (isShared && this.noteCollaborator) {
+                this.noteCollaborator.sendUpdate(title, content);
+
+                // TEMPORARY: also persist via HTTP API
+                fetch('/note/update', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ noteId, title, content })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === true) {
+                            showSavedIcon();
+                            const pinNoteGrid = document.querySelector('.pinned-note__load');
+                            const otherNoteGrid = document.querySelector('.other-note__load');
+                            pinNoteGrid.innerHTML = '';
+                            otherNoteGrid.innerHTML = '';
+                            this.loadNewPinnedNotes();
+                            this.loadNewNotes();
+                        } else {
+                            showErrorIcon();
+                            this.showToast('Failed to save shared note.', 'warning');
+                        }
+                    })
+                    .catch(() => {
+                        showErrorIcon();
+                        this.showToast('Error saving shared note.', 'danger');
+                    })
+                    .finally(() => { isSaving = false; });
+
+                return;
+            }
+
+            // Normal API update for non-shared notes
             fetch('/note/update', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    noteId,
-                    title: titleInput.value,
-                    content: contentInput.value
-                })
+                body: JSON.stringify({ noteId, title, content })
             })
                 .then(res => {
                     if (!res.ok) throw new Error(`HTTP error ${res.status}`);
@@ -669,7 +799,6 @@ class Notes {
                     const { status, noteId, title, content, imageLink } = data;
                     if (status === true) {
                         showSavedIcon();
-                        console.log(data);
                         const noteElement = document.querySelector(`.note-sheet[data-note-id="${noteId}"]`);
                         if (noteElement) {
                             noteElement.querySelector('.note-sheet__title').textContent = title;
@@ -677,10 +806,6 @@ class Notes {
                             noteElement.dataset.noteTitle = title;
                             noteElement.dataset.noteContent = content;
                             noteElement.dataset.imageLink = imageLink;
-                        } else {
-                            if (!document.querySelector(`.note-sheet[data-note-id="${noteId}"]`)) {
-                                const newNote = this.noteSheetModel(noteId, title, content, imageLink);
-                            }
                         }
                         const pinNoteGrid = document.querySelector('.pinned-note__load');
                         const otherNoteGrid = document.querySelector('.other-note__load');

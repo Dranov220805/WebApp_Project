@@ -363,7 +363,7 @@ class HomeUser {
                     <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
                     <button title="Add Label" data-bs-target="listLabelNoteModal" id="note-label-list-btn" class="note-label-list-btn"><i class="fa-solid fa-tags"></i></button>
                     <button class="note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
-                    <button title="Share this Note"><i class="fa-solid fa-users"></i></button>
+                    <button class="note-share-btn" title="Share this Note"><i class="fa-solid fa-users"></i></button>
                     <button title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
                 </div>
             </div>
