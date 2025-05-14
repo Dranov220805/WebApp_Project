@@ -97,9 +97,10 @@ class AuthMiddleware
         setcookie('access_token', $newAccessToken, [
             'expires' => time() + 3600,
             'path' => '/',
+//            'domain' => 'pernote.id.vn',
             'secure' => true,
             'httponly' => true,
-            'samesite' => 'Lax'
+            'samesite' => 'none'
         ]);
 
         // Decode token right away so current request has access
