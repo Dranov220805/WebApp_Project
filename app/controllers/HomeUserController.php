@@ -153,9 +153,10 @@ class HomeUserController extends BaseController{
                     setcookie('access_token', $result['token'], [
                         'expires' => time() + 3600, // 1 hour (match your JWT expiry)
                         'path' => '/',
+//                        'domain' => 'pernote.id.vn',
                         'secure' => true, // Set to true if using HTTPS
                         'httponly' => true,
-                        'samesite' => 'Lax'
+                        'samesite' => 'none'
                     ]);
 
                     echo json_encode([
@@ -220,9 +221,10 @@ class HomeUserController extends BaseController{
                 setcookie('access_token', $result['token'], [
                     'expires' => time() + 3600, // 1 hour (match your JWT expiry)
                     'path' => '/',
+//                    'domain' => 'pernote.id.vn',
                     'secure' => true, // Set to true if using HTTPS
                     'httponly' => true,
-                    'samesite' => 'Lax'
+                    'samesite' => 'none'
                 ]);
 
                 echo json_encode([
