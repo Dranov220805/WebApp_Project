@@ -184,16 +184,21 @@ export class NoteCollaborator {
         // Only handle updates for the current note
         if (message.noteId !== this.noteId) return;
 
-        // Ignore updates from the same user
-        if (message.editorEmail === this.userEmail) return;
+        // REMOVE THIS LINE:
+        // if (message.editorEmail === this.userEmail) return;
+        // The server already ensures that updates are not sent back to the originator.
+        // Any 'update' message received here is from another editor.
 
-        console.log('Received update from:', message.editorEmail);
+        console.log('Received update from:', message.editorEmail, '(My email:', this.userEmail, ') for note:', message.noteId);
 
         // Save selection/cursor position
         const isTitleFocused = document.activeElement === this.titleInput;
         const isContentFocused = document.activeElement === this.contentInput;
-        const titleSelectionStart = isTitleFocused ? this.titleInput.selectionStart : null;
-        const contentSelectionStart = isContentFocused ? this.contentInput.selectionStart : null;
+        const titleSelectionStart = isTitleFocused && this.titleInput ? this.titleInput.selectionStart : null;
+        const titleSelectionEnd = isTitleFocused && this.titleInput ? this.titleInput.selectionEnd : null;
+        const contentSelectionStart = isContentFocused && this.contentInput ? this.contentInput.selectionStart : null;
+        const contentSelectionEnd = isContentFocused && this.contentInput ? this.contentInput.selectionEnd : null;
+
 
         // Update content
         if (message.title !== undefined && this.titleInput) {
@@ -205,13 +210,13 @@ export class NoteCollaborator {
         }
 
         // Restore cursor positions
-        if (isTitleFocused && titleSelectionStart !== null) {
-            this.titleInput.setSelectionRange(titleSelectionStart, titleSelectionStart);
+        if (isTitleFocused && titleSelectionStart !== null && this.titleInput) {
+            this.titleInput.setSelectionRange(titleSelectionStart, titleSelectionEnd);
         }
 
-        if (isContentFocused && contentSelectionStart !== null) {
+        if (isContentFocused && contentSelectionStart !== null && this.contentInput) {
             this.contentInput.selectionStart = contentSelectionStart;
-            this.contentInput.selectionEnd = contentSelectionStart;
+            this.contentInput.selectionEnd = contentSelectionEnd;
         }
 
         // Show who made the changes

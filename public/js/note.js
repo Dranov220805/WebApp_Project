@@ -788,7 +788,9 @@ class Notes {
             // Normal API update for non-shared notes
             fetch('/note/update', {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify({ noteId, title, content })
             })
                 .then(res => {
