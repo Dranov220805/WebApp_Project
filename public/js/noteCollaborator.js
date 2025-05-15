@@ -219,6 +219,41 @@ export class NoteCollaborator {
             this.contentInput.selectionEnd = contentSelectionEnd;
         }
 
+        // Dynamically check and refresh note sections
+        // const sections = [
+        //     { className: 'other-note__load', loader: this.loadNewNotes.bind(this) },
+        //     { className: 'pinned-note__load', loader: this.loadNewPinnedNotes.bind(this) },
+        //     { className: 'label-note__load', loader: this.loadNewLabelNote.bind(this) },
+        //     // { className: 'share-note__load', loader: this.loadSharedNotes.bind(this) }
+        // ];
+        //
+        // sections.forEach(section => {
+        //     const element = document.querySelector(`.${section.className}`);
+        //     if (element) {
+        //         element.innerHTML = '';
+        //         section.loader();
+        //     }
+        // });
+
+        const noteElement = document.querySelector(`.note-sheet[data-note-id="${message.noteId}"]`);
+        if (noteElement) {
+            noteElement.querySelector('.note-sheet__title').textContent = message.title;
+            noteElement.querySelector('.note-sheet__content').innerHTML = message.content.replace(/\n/g, '<br>');
+            noteElement.dataset.noteTitle = message.title;
+            noteElement.dataset.noteContent = message.content;
+        }
+
+        const noteCard = document.querySelector(`[data-note-id="${message.noteId}"]`);
+        if (noteCard) {
+            noteCard.dataset.noteTitle = message.title;
+            noteCard.dataset.noteContent = message.content;
+
+            const titleEl = noteCard.querySelector('.note--share__title');
+            const contentEl = noteCard.querySelector('.note--share__content');
+            if (titleEl) titleEl.textContent = message.title;
+            if (contentEl) contentEl.textContent = message.content;
+        }
+
         // Show who made the changes
         this.showEditorActivity(message.editorEmail);
     }
@@ -273,5 +308,369 @@ export class NoteCollaborator {
                 statusElement.querySelector('span').textContent = 'Disconnected - Changes not synced';
             }
         }
+    }
+
+    loadNewNotes() {
+        if (this.isLoadingNotes) return;
+        this.isLoadingNotes = true;
+        this.currentPage = 1;
+        this.limit = 10;
+
+        fetch(`/note/list?page=${this.currentPage}&limit=${this.limit}`, {
+            headers: {
+                'Authorization': 'Bearer '
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.data?.length > 0) {
+                    this.appendNotesToDOM(data.data);
+                    this.currentPage++;
+                }
+            })
+            .catch(err => {
+                console.error('Fetch failed:', err);
+                this.showToast('Failed to load notes. Please try again.');
+            })
+            .finally(() => this.isLoadingNotes = false);
+    }
+
+    appendNotesToDOM(notes) {
+        const container = document.querySelector(".other-note__load");
+        if (!container) return;
+
+        notes.forEach(note => {
+            if (document.querySelector(`.note-sheet[data-note-id="${note.noteId}"]`)) {
+                console.log(`Skipping duplicate note: ${note.noteId}`);
+                return;
+            }
+
+            const div = document.createElement("div");
+            div.className = "note-sheet d-flex";
+            div.dataset.noteId = note.noteId;
+            div.dataset.noteTitle = note.title;
+            div.dataset.noteContent = note.content;
+
+            if (note.imageLink && note.imageLink.trim() !== '') {
+                div.dataset.imageLink = note.imageLink;
+            }
+
+            if (note.labels && note.labels.length > 0) {
+                div.dataset.labels = JSON.stringify(note.labels);
+            }
+
+            let labels = [];
+            if (div.dataset.labels) {
+                try {
+                    labels = JSON.parse(div.dataset.labels);
+                } catch (e) {
+                    console.error("Failed to parse labels:", e);
+                }
+            }
+
+            const imageHTML = note.imageLink && note.imageLink.trim() !== ''
+                ? `<div class="note-sheet__image" style="overflow-y: visible">
+                   <img src="${note.imageLink}" style="display: block">
+               </div>`
+                : '';
+
+            div.innerHTML = `
+            ${imageHTML}
+            <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
+                <h3 class="note-sheet__title">${note.title}</h3>
+                <div class="note-sheet__content" style="overflow-x: hidden">
+                    ${note.content.replace(/\n/g, '<br>')}
+                </div>
+            </div>
+            <div class="note-sheet__menu">
+                <div class="note-sheet__menu--item">
+                    <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack-slash"></i></button>
+                    <button title="Add Label" data-bs-target="listLabelNoteModal" id="note-label-list-btn" class="note-label-list-btn"><i class="fa-solid fa-tags"></i></button>
+                    <button class="note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
+                    <button class="note-share-btn" title="Share this Note"><i class="fa-solid fa-users"></i></button>
+                    <button class="note-lock-btn" title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
+                </div>
+            </div>
+        `;
+
+            container.appendChild(div);
+        });
+    }
+
+    loadNewPinnedNotes() {
+        if (this.isLoadingPinnedNotes) return;
+        this.isLoadingPinnedNotes = true;
+        this.currentPage = 1;
+        this.limit = 100;
+
+        fetch(`/note/pinned-list?page=${this.currentPage}&limit=${this.limit}`, {
+            headers: {
+                'Authorization': 'Bearer '
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.data?.length > 0) {
+                    this.appendPinnedNotesToDOM(data.data);
+                    this.currentPage++;
+                }
+            })
+            .catch(err => {
+                console.error('Fetch failed:', err);
+                this.showToast('Failed to load notes. Please try again.');
+            })
+            .finally(() => this.isLoadingPinnedNotes = false);
+    }
+
+    appendPinnedNotesToDOM(notes) {
+        const container = document.querySelector(".pinned-note__load");
+        if (!container) return;
+
+        notes.forEach(note => {
+            if (document.querySelector(`.note-sheet[data-note-id="${note.noteId}"]`)) {
+                console.log(`Skipping duplicate note: ${note.noteId}`);
+                return;
+            }
+
+            const div = document.createElement("div");
+            div.className = "note-sheet d-flex";
+            div.dataset.noteId = note.noteId;
+            div.dataset.noteTitle = note.title;
+            div.dataset.noteContent = note.content;
+
+            if (note.imageLink && note.imageLink.trim() !== '') {
+                div.dataset.imageLink = note.imageLink;
+            }
+
+            if (note.labels && note.labels.length > 0) {
+                div.dataset.labels = JSON.stringify(note.labels);
+            }
+
+            let labels = [];
+            if (div.dataset.labels) {
+                try {
+                    labels = JSON.parse(div.dataset.labels);
+                } catch (e) {
+                    console.error("Failed to parse labels:", e);
+                }
+            }
+
+            const imageHTML = note.imageLink && note.imageLink.trim() !== ''
+                ? `<div class="note-sheet__image" style="overflow-y: visible">
+                   <img src="${note.imageLink}" style="display: block">
+               </div>`
+                : '';
+
+            div.innerHTML = `
+                ${imageHTML}
+                <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
+                    <h3 class="note-sheet__title">${note.title}</h3>
+                    <div class="note-sheet__content" style="overflow-x: hidden">
+                        ${note.content.replace(/\n/g, '<br>')}
+                    </div>
+                </div>
+                <div class="note-sheet__menu">
+                    <div class="note-sheet__menu--item">
+                        <button class="pinned-note-pin-btn" title="Unpin Note"><i class="fa-solid fa-thumbtack"></i></button>
+                        <button title="Add Label" data-bs-target="listLabelNoteModal" id="note-label-list-btn" class="note-label-list-btn"><i class="fa-solid fa-tags"></i></button>
+                        <button class="pinned-note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
+                        <button class="note-share-btn" title="Share this Note"><i class="fa-solid fa-users"></i></button>
+                        <button class="note-lock-btn" title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    loadNewLabelNote() {
+        if (this.isLoadingNotes) return;
+        this.isLoadingNotes = true;
+
+        this.labelName = document.getElementById("note-layout__title")?.textContent?.trim() || '';
+
+        const encodedLabel = encodeURIComponent(this.labelName).replace(/%20/g, '+');
+
+        fetch(`/note/label/${encodedLabel}`, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                if (data.data?.length > 0) {
+                    this.appendLabelNotesToDOM(data.data);
+                    this.currentPage++;
+                }
+            })
+            .catch(err => {
+                console.error('Fetch failed:', err);
+                this.showToast('Failed to load notes. Please try again.');
+            })
+            .finally(() => this.isLoadingNotes = false);
+    }
+
+    appendLabelNotesToDOM(notes) {
+        console.log(notes);
+        const container = document.querySelector(".label-note__load");
+        if (!container) return;
+
+        notes.forEach(note => {
+            if (document.querySelector(`.note-sheet[data-note-id="${note.noteId}"]`)) {
+                console.log(`Skipping duplicate note: ${note.noteId}`);
+                return;
+            }
+
+            const div = document.createElement("div");
+            div.className = "note-sheet note-sheet-label d-flex";
+            div.dataset.noteId = note.noteId;
+            div.dataset.noteTitle = note.title;
+            div.dataset.noteContent = note.content;
+
+            if (note.imageLink && note.imageLink.trim() !== '') {
+                div.dataset.imageLink = note.imageLink;
+            }
+
+            if (note.labels && note.labels.length > 0) {
+                div.dataset.labels = JSON.stringify(note.labels);
+            }
+
+            let labels = [];
+            if (div.dataset.labels) {
+                try {
+                    labels = JSON.parse(div.dataset.labels);
+                } catch (e) {
+                    console.error("Failed to parse labels:", e);
+                }
+            }
+
+            console.log('All labels: ', labels);
+
+            const imageHTML = note.imageLink && note.imageLink.trim() !== ''
+                ? `<div class="note-sheet__image" style="overflow: visible">
+                   <img src="${note.imageLink}" style="display: block">
+               </div>`
+                : '';
+
+            div.innerHTML = `
+            ${imageHTML}
+            <div class="note-sheet__title-content flex-grow-1" style="padding: 16px;">
+                <h3 class="note-sheet__title">${note.title}</h3>
+                <div class="note-sheet__content" style="overflow-x: hidden">
+                    ${note.content.replace(/\n/g, '<br>')}
+                </div>
+            </div>
+            <div class="note-sheet__menu">
+                <div class="note-sheet__menu--item">
+                    <button title="Add Label" data-bs-target="listLabelNoteModal" id="note-label-list-btn" class="note-label-list-btn"><i class="fa-solid fa-tags"></i></button>
+                    <button class="note-label-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
+                    <button class="note-share-btn" title="Share this Note"><i class="fa-solid fa-users"></i></button>
+                    <button class="note-lock-btn" title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
+                </div>
+            </div>
+        `;
+
+            container.appendChild(div);
+        });
+    }
+
+    loadSharedNotes() {
+
+        fetch(`/note/share-list`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                if (data.data?.length > 0) {
+                    this.appendTrashedNotesToDOM(data.data);
+                    this.currentPage++;
+                }
+            })
+            .catch(err => {
+                console.error('Fetch failed:', err);
+                this.showToast('Failed to load notes. Please try again.');
+            })
+            .finally(() => this.isLoadingTrash = false);
+    }
+
+    appendSharedNotesToDOM(notes) {
+        const container = document.querySelector(".share-note__load");
+        if (!container) return;
+
+        // Group notes by noteId and aggregate labels (just like in PHP)
+        const groupedNotes = {};
+        notes.forEach(note => {
+            const noteId = note.noteId;
+            if (!groupedNotes[noteId]) {
+                groupedNotes[noteId] = { ...note, labels: [] };
+            }
+            if (note.labelName && !groupedNotes[noteId].labels.includes(note.labelName)) {
+                groupedNotes[noteId].labels.push(note.labelName);
+            }
+        });
+
+        Object.values(groupedNotes).forEach(note => {
+            if (document.querySelector(`.shared-note-card[data-note-id="${note.noteId}"]`)) {
+                console.log(`Skipping duplicate note: ${note.noteId}`);
+                return;
+            }
+
+            const noteDiv = document.createElement("div");
+            noteDiv.className = "col-12";
+
+            const canEditText = note.canEdit ? "Can edit" : "Read-only";
+            const accessClass = note.canEdit ? "access-edit" : "access-readonly";
+
+            const labelsHTML = (note.labels || []).map(label =>
+                label ? `<span class="badge bg-secondary me-1">${label}</span>` : ''
+            ).join("");
+
+            const imageHTML = note.imageLink && note.imageLink.trim() !== ''
+                ? `<div class="note--share__image">
+                    <img src="${note.imageLink}" class="rounded" alt="User Avatar" style="margin-top: 0px; height: 100%; width: auto">
+               </div>`
+                : '';
+
+            const labelAttr = JSON.stringify(note.labels || []);
+
+            noteDiv.innerHTML = `
+            <div class="card shared-note-card" style="max-height: 230px"
+                data-note-id="${note.noteId}"
+                data-note-title="${note.title || ''}"
+                data-note-content="${note.content || ''}"
+                ${note.imageLink ? `data-note-image="${note.imageLink}"` : ''}
+                ${note.labels.length > 0 ? `data-note-labels='${labelAttr}'` : ''}
+                data-note-edit="${note.canEdit ? 'true' : 'false'}">
+                <div class="card-body">
+                    <div class="d-flex justify-content-start" style="width: 100%; max-width: 100%;">
+                        <div style="width: 100%">
+                            <div class="small mb-1 note--share__by">
+                                Shared by <strong>${note.sharedEmail}</strong>
+                            </div>
+                            <div class="small mb-2 note--share__time">
+                                Shared on ${new Date(note.timeShared).toLocaleDateString('en-US', {
+                month: 'short', day: '2-digit', year: 'numeric'
+            })}
+                            </div>
+                            ${note.title ? `<h6 class="fw-bold note--share__title">${note.title}</h6>` : ''}
+                            ${note.content ? `<p class="mb-1 note--share__content" style="overflow-y: hidden; max-height: 48px; padding-right: 20%">${note.content}</p>` : ''}
+                            ${labelsHTML ? `<div class="mt-2">${labelsHTML}</div>` : ''}
+                        </div>
+                        <div class="text-end" style="display: flex; flex-direction: column; width: 120px; justify-content: space-between; align-items: end">
+                            <span class="access-label ${accessClass}" style="width: fit-content">${canEditText}</span>
+                            ${imageHTML}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+            container.appendChild(noteDiv);
+        });
     }
 }

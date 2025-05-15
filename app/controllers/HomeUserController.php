@@ -156,7 +156,7 @@ class HomeUserController extends BaseController{
 //                        'domain' => 'pernote.id.vn',
                         'secure' => true, // Set to true if using HTTPS
                         'httponly' => true,
-                        'samesite' => 'none'
+                        'samesite' => 'None'
                     ]);
 
                     echo json_encode([
@@ -224,7 +224,7 @@ class HomeUserController extends BaseController{
 //                    'domain' => 'pernote.id.vn',
                     'secure' => true, // Set to true if using HTTPS
                     'httponly' => true,
-                    'samesite' => 'none'
+                    'samesite' => 'None'
                 ]);
 
                 echo json_encode([

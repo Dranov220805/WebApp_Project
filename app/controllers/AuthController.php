@@ -28,7 +28,7 @@ class AuthController extends BaseController {
 //                    'domain' => 'pernote.id.vn',
                     'secure' => true,
                     'httponly' => true,
-                    'samesite' => 'none'
+                    'samesite' => 'None'
                 ]);
 
                 // Refresh token (long-lived) -> 7 days
@@ -38,7 +38,7 @@ class AuthController extends BaseController {
 //                    'domain' => 'pernote.id.vn',
                     'secure' => true,
                     'httponly' => true,
-                    'samesite' => 'none'
+                    'samesite' => 'None'
                 ]);
 
                 echo json_encode([
@@ -163,7 +163,7 @@ class AuthController extends BaseController {
 //            'domain' => 'pernote.id.vn',
             'secure' => true,
             'httponly' => true,
-            'samesite' => 'none'
+            'samesite' => 'None'
         ]);
 
         setcookie('refresh_token', '', [
@@ -172,7 +172,7 @@ class AuthController extends BaseController {
 //            'domain' => 'pernote.id.vn',
             'secure' => true,
             'httponly' => true,
-            'samesite' => 'none'
+            'samesite' => 'None'
         ]);
 
         // Perform the redirect

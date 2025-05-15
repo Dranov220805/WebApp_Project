@@ -34,11 +34,11 @@ include "./views/layout/partials/header.php";
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="login-section-2__form--remember-me" value="isRemembered">
-                            <label class="form-check-label" id="remember-me" for="login-section-2__form--remember-me">Remember me</label>
-                        </div>
+                    <div class="d-flex justify-content-end align-items-center mb-3">
+<!--                        <div class="form-check">-->
+<!--                            <input class="form-check-input" type="checkbox" id="login-section-2__form--remember-me" value="isRemembered">-->
+<!--                            <label class="form-check-label" id="remember-me" for="login-section-2__form--remember-me">Remember me</label>-->
+<!--                        </div>-->
                         <a href="auth/forgot" id="login-section-2__form--forgot_password" class="small">Forgot password?</a>
                     </div>
 

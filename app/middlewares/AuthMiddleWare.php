@@ -100,7 +100,7 @@ class AuthMiddleware
 //            'domain' => 'pernote.id.vn',
             'secure' => true,
             'httponly' => true,
-            'samesite' => 'none'
+            'samesite' => 'None'
         ]);
 
         // Decode token right away so current request has access

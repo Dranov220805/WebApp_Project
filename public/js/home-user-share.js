@@ -132,7 +132,7 @@ class ShareNotes {
     }
 
     appendSharedNotesToDOM(notes) {
-        const container = document.querySelector(".label-note__load");
+        const container = document.querySelector(".share-note__load");
         if (!container) return;
 
         // Group notes by noteId and aggregate labels (just like in PHP)
@@ -229,24 +229,14 @@ class ShareNotes {
         this.currentNoteId = noteId;
         this.imageLinkRef = imageLink;
 
-        const triggerUploadBtn = modalEl.querySelector('#triggerImageUpload');
-        const triggerDeleteBtn = modalEl.querySelector('#triggerImageDelete');
-        const imageInput = modalEl.querySelector('#imageInput');
-        const noteIdInput = modalEl.querySelector('#noteIdInput');
         const inputTextarea = modalEl.querySelector('.note-content-input-autosave');
-
         inputTextarea.style.height = '100%';
-        imageInput.dataset.noteId = noteId;
-        noteIdInput.value = noteId;
-        noteIdInput.dataset.imageUrl = note.imageLink || '';
 
         // Block editing if user doesn't have permission
         const canEdit = note.canEdit === 'true' || note.canEdit === true;
 
         titleInput.readOnly = !canEdit;
         contentInput.readOnly = !canEdit;
-        triggerUploadBtn.disabled = !canEdit;
-        triggerDeleteBtn.disabled = !canEdit;
 
         // Setup auto-save mechanism if editable
         if (canEdit) {

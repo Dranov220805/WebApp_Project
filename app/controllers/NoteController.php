@@ -63,7 +63,7 @@ class NoteController {
         $user = $GLOBALS['user'];
         $accountId = $user->accountId;
         $intPage = isset($_GET['page']) ? $_GET['page'] : 1;
-        $perPage = isset($_GET['limit']) ? $_GET['limit'] : 10;
+        $perPage = isset($_GET['limit']) ? $_GET['limit'] : 100;
 
         if (!$accountId) {
             http_response_code(400);

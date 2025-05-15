@@ -18,7 +18,7 @@
             <div class="label-note">
                 <h6 class="note-layout__title" id="note-layout__title">Shared with me</h6>
                 <div class="note-grid d-flex justify-content-center">
-                    <div class="label-note__load load-grid" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center">
+                    <div class="share-note__load load-grid" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center">
                         <?php if (!empty($data['data'])): ?>
                             <?php
                             // Group notes by noteId and aggregate labels
@@ -133,16 +133,6 @@
                         <i class="fa-solid fa-check-circle text-success"></i>
                     </span>
                 </div>
-                <form id="imageUploadForm" action="#" onsubmit="return false" enctype="multipart/form-data">
-                    <input type="file" name="image" id="imageInput" style="display: none;">
-                    <a type="button" class="btn btn-success note-image__post" id="triggerImageUpload">
-                        <i class="fa-regular fa-images"></i>
-                    </a>
-                    <input type="hidden" name="noteId" id="noteIdInput">
-                </form>
-                <a type="button" class="btn btn-danger note-image__delete" id="triggerImageDelete">
-                    <i class="fa-solid fa-trash"></i>
-                </a>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
