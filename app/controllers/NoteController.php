@@ -6,28 +6,15 @@ class NoteController {
         $this->noteService = new NoteService();
     }
 
-<<<<<<< Updated upstream
-    public function getNotes($user) {
-        $accountId = $user->accountId ?? null;
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    public function getNotes() {
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId ?? null;
-=======
     public function getNotes($user) {
         $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
-=======
-    public function getNotes($user) {
-        $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 
         if (!$accountId) {
             http_response_code(401);
-            echo json_encode(['status' => false, 'message' => 'Missing accountId']);
+            echo json_encode([
+                'status' => false,
+                'message' => 'Missing accountId'
+            ]);
             return;
         } else {
             $note = $this->noteService->getNotesByAccountId($accountId);
@@ -39,24 +26,9 @@ class NoteController {
         }
     }
 
-<<<<<<< Updated upstream
-    public function getNotesPaginated($user) {
-        $accountId = $user->accountId;
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    public function getNotesPaginated() {
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId;
-=======
     public function getNotesPaginated($user) {
         $accountId = $user['accountId'];
->>>>>>> Stashed changes
-=======
-    public function getNotesPaginated($user) {
-        $accountId = $user['accountId'];
->>>>>>> Stashed changes
->>>>>>> Stashed changes
+
         $intPage = isset($_GET['page']) ? $_GET['page'] : 1;
         $perPage = isset($_GET['limit']) ? $_GET['limit'] : 10;
 
@@ -89,24 +61,9 @@ class NoteController {
         ]);
     }
 
-<<<<<<< Updated upstream
-    public function getPinnedNotesPaginated($user) {
-        $accountId = $user->accountId;
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    public function getPinnedNotesPaginated() {
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId;
-=======
     public function getPinnedNotesPaginated($user) {
         $accountId = $user['accountId'];
->>>>>>> Stashed changes
-=======
-    public function getPinnedNotesPaginated($user) {
-        $accountId = $user['accountId'];
->>>>>>> Stashed changes
->>>>>>> Stashed changes
+
         $intPage = isset($_GET['page']) ? $_GET['page'] : 1;
         $perPage = isset($_GET['limit']) ? $_GET['limit'] : 100;
 
@@ -136,24 +93,9 @@ class NoteController {
         ]);
     }
 
-<<<<<<< Updated upstream
-    public function getTrashNotePaginated($user) {
-        $accountId = $user->accountId ?? null;
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    public function getTrashNotePaginated() {
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId ?? null;
-=======
     public function getTrashNotePaginated($user) {
         $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
-=======
-    public function getTrashNotePaginated($user) {
-        $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
->>>>>>> Stashed changes
+
         $intPage = isset($_GET['page']) ? $_GET['page'] : 1;
         $perPage = isset($_GET['limit']) ? $_GET['limit'] : 100;
 
@@ -184,24 +126,9 @@ class NoteController {
         ]);
     }
 
-<<<<<<< Updated upstream
-    public function getPinnedNotes($user) {
-        $accountId = $user->accountId ?? null;
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    public function getPinnedNotes() {
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId ?? null;
-=======
     public function getPinnedNotes($user) {
         $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
-=======
-    public function getPinnedNotes($user) {
-        $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
->>>>>>> Stashed changes
+
         if (empty($accountId)) {
             echo json_encode([
                 'status' => false,
@@ -225,24 +152,9 @@ class NoteController {
         }
     }
 
-<<<<<<< Updated upstream
-    public function getShareNotes($user) {
-        $accountId = $user->accountId ?? null;
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    public function getShareNotes() {
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId ?? null;
-=======
     public function getShareNotes($user) {
         $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
-=======
-    public function getShareNotes($user) {
-        $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
->>>>>>> Stashed changes
+
         if (empty($accountId)) {
             echo json_encode([
                 'status' => false,
@@ -268,20 +180,8 @@ class NoteController {
     public function createNote_POST($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-<<<<<<< Updated upstream
-        $accountId = $user->accountId ?? null;
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId ?? null;
-=======
+
         $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
-=======
-        $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 
         if (!empty($accountId) && !empty($data['title']) && !empty($data['content'])) {
             $noteService = new NoteService();
@@ -318,20 +218,8 @@ class NoteController {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
 
-<<<<<<< Updated upstream
-        $accountId = $user->accountId ?? null;
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId;
-=======
         $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
-=======
-        $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
->>>>>>> Stashed changes
+
         $noteId = $data['noteId'] ?? null;
         $title = $data['title'] ?? null;
         $content = $data['content'] ?? null;
@@ -370,20 +258,7 @@ class NoteController {
         $input = trim(file_get_contents("php://input"));
         $data = json_decode($input, true);
 
-<<<<<<< Updated upstream
-        $accountId = $user->accountId ?? null;
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId ?? null;
-=======
         $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
-=======
-        $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
->>>>>>> Stashed changes
         $noteId = $data['noteId'] ?? null;
 
         if (empty($accountId) || empty($noteId)) {
@@ -425,20 +300,7 @@ class NoteController {
             return;
         }
 
-<<<<<<< Updated upstream
-        $accountId = $user->accountId ?? null;
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId ?? null;
-=======
         $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
-=======
-        $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 
         if (!$accountId) {
             http_response_code(401);
@@ -460,20 +322,8 @@ class NoteController {
     public function pinNote_POST($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-<<<<<<< Updated upstream
-        $accountId = $user->accountId ?? null;
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId ?? null;
-=======
+
         $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
-=======
-        $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
->>>>>>> Stashed changes
         $noteId = $data['noteId'] ?? null;
         if (empty($accountId) || empty($noteId)) {
             echo json_encode([
@@ -502,20 +352,8 @@ class NoteController {
     public function unpinNote_POST($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-<<<<<<< Updated upstream
-        $accountId = $user->accountId ?? null;
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId ?? null;
-=======
+
         $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
-=======
-        $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
->>>>>>> Stashed changes
         $noteId = $data['noteId'] ?? null;
         if (empty($accountId) || empty($noteId)) {
             echo json_encode([
@@ -544,20 +382,8 @@ class NoteController {
     public function restoreNote_POST($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-<<<<<<< Updated upstream
-        $accountId = $user->accountId ?? null;
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId ?? null;
-=======
+
         $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
-=======
-        $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
->>>>>>> Stashed changes
         $noteId = $data['noteId'] ?? null;
         if (empty($accountId) || empty($noteId)) {
             echo json_encode([
@@ -586,20 +412,8 @@ class NoteController {
     public function hardDeleteNote_POST($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-<<<<<<< Updated upstream
-        $accountId = $user->accountId ?? null;
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId ?? null;
-=======
+
         $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
-=======
-        $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
->>>>>>> Stashed changes
         $noteId = $data['noteId'] ?? null;
         if (empty($accountId) || empty($noteId)) {
             echo json_encode([
@@ -625,24 +439,8 @@ class NoteController {
         }
     }
 
-<<<<<<< Updated upstream
-    public function getLabelNote($user, $labelName) {
-        $accountId = $user->accountId;
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    public function getLabelNote($labelName) {
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId;
-=======
     public function getLabelNote($user, $labelName) {
         $accountId = $user['accountId'];
->>>>>>> Stashed changes
-=======
-    public function getLabelNote($user, $labelName) {
-        $accountId = $user['accountId'];
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 
         $result = $this->noteService->getLabelNoteByLabelName($labelName, $accountId);
         if ($result) {
@@ -663,20 +461,7 @@ class NoteController {
     public function createLabel_POST($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-<<<<<<< Updated upstream
-        $accountId = $user->accountId ?? null;
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId ?? null;
-=======
         $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
-=======
-        $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
->>>>>>> Stashed changes
         $labelName = $data['labelName'] ?? null;
         if (empty($accountId) || empty($labelName)) {
             echo json_encode([
@@ -705,20 +490,7 @@ class NoteController {
     public function updateLabel_POST($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-<<<<<<< Updated upstream
-        $accountId = $user->accountId ?? null;
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId ?? null;
-=======
         $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
-=======
-        $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
->>>>>>> Stashed changes
         $oldLabelName = $data['oldLabel'] ?? null;
         $newLabelName = $data['newLabel'] ?? null;
         if (empty($accountId) || empty($newLabelName || empty($oldLabelName))) {
@@ -748,20 +520,7 @@ class NoteController {
     public function deleteLabel_POST($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-<<<<<<< Updated upstream
-        $accountId = $user->accountId ?? null;
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId ?? null;
-=======
         $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
-=======
-        $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
->>>>>>> Stashed changes
         $labelName = $data['labelName'] ?? null;
         if (empty($accountId) || empty($labelName)) {
             echo json_encode([
@@ -790,20 +549,7 @@ class NoteController {
     public function createNoteLabel_POST($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-<<<<<<< Updated upstream
-        $accountId = $user->accountId ?? null;
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId ?? null;
-=======
         $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
-=======
-        $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
->>>>>>> Stashed changes
         $labelName = $data['labelName'] ?? null;
         $noteId = $data['noteId'] ?? null;
         if (empty($accountId) || empty($labelName) || empty($noteId)) {
@@ -833,20 +579,7 @@ class NoteController {
     public function deleteNoteLabel_POST($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-<<<<<<< Updated upstream
-        $accountId = $user->accountId ?? null;
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId ?? null;
-=======
         $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
-=======
-        $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
->>>>>>> Stashed changes
         $labelName = $data['labelName'] ?? null;
         $noteId = $data['noteId'] ?? null;
         if (empty($accountId) || empty($labelName) || empty($noteId)) {
@@ -872,24 +605,8 @@ class NoteController {
         }
     }
 
-<<<<<<< Updated upstream
-    public function createImageForNoteByImageUploadAndNoteId($user) {
-        $accountId = $user->accountId ?? null;
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    public function createImageForNoteByImageUploadAndNoteId() {
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId ?? null;
-=======
     public function createImageForNoteByImageUploadAndNoteId($user) {
         $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
-=======
-    public function createImageForNoteByImageUploadAndNoteId($user) {
-        $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
->>>>>>> Stashed changes
         $noteId = $_POST['noteId'] ?? null;
         $imageUpload = $_FILES['image'] ?? null;
 
@@ -937,24 +654,8 @@ class NoteController {
         }
     }
 
-<<<<<<< Updated upstream
-    public function deleteImageForNoteByImageUrlAndNoteId($user) {
-        $accountId = $user->accountId ?? null;
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    public function deleteImageForNoteByImageUrlAndNoteId() {
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId ?? null;
-=======
     public function deleteImageForNoteByImageUrlAndNoteId($user) {
         $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
-=======
-    public function deleteImageForNoteByImageUrlAndNoteId($user) {
-        $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
->>>>>>> Stashed changes
         $noteId = $_POST['noteId'] ?? null;
         $imageUrl = $_POST['imageUrl'] ?? null;
 

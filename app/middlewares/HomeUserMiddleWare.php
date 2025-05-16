@@ -12,7 +12,6 @@ class HomeUserMiddleWare {
     public function index()
     {
         $checkToken = $this->authMiddleware->checkSession();
-
         if ($checkToken['status'] === false) {
             header('location:/log/login');
             exit();

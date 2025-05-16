@@ -16,11 +16,11 @@ class HomeUserController extends BaseController{
     }
     public function index($user)
     {
-        $accountId = $user->accountId;
+        $accountId = $user['accountId'];
         $intPage = isset($_GET['page']) ? $_GET['page'] : 1;
         $perPage = isset($_GET['limit']) ? $_GET['limit'] : 10;
 
-        if (!isset($user) || empty($accountId)) {
+        if (!isset($user) || empty($user['accountId'])) {
             http_response_code(401);
             echo json_encode([
                 'status' => false,
@@ -75,13 +75,13 @@ class HomeUserController extends BaseController{
         ]);
     }
     public function getUserLabel($user) {
-        $accountId = $user->accountId;
+        $accountId = $user['accountId'];
         $labelNotes = $this->homeUserService->getLabelByAccountId($accountId);
 
         return $labelNotes;
     }
     public function homeLabel_POST($user, $labelName) {
-        $accountId = $user->accountId;
+        $accountId = $user['accountId'];
 
         if (!$accountId) {
             http_response_code(400);
@@ -100,7 +100,7 @@ class HomeUserController extends BaseController{
         ]);
     }
     public function homeShare($user) {
-        $email = $user->email;
+        $email = $user['email'];
 
         $result = $this->noteService->getNotesSharedByEmail($email);
 
@@ -111,7 +111,7 @@ class HomeUserController extends BaseController{
         ]);
     }
     public function homeTrash($user) {
-        $accountId = $user->accountId;
+        $accountId = $user['accountId'];
 
         // Basic validation
         if (!$accountId) {
@@ -137,8 +137,8 @@ class HomeUserController extends BaseController{
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['avatar'])) {
             $fileTmpPath = $_FILES['avatar']['tmp_name'];
-            $accountId = $user->accountId ?? null;
-            $email = $user->email ?? null;
+            $accountId = $user['accountId'] ?? null;
+            $email = $user['email'] ?? null;
             $oldImage = $user->profilePicture ?? null;
 
             if ($oldImage) {
@@ -151,14 +151,7 @@ class HomeUserController extends BaseController{
                 $result = $this->accountService->updateProfilePictureByAccountIdAndEmail($accountId, $email, $uploadResponse['url']);
                 if ($result['status'] === true) {
 
-                    setcookie('access_token', $result['token'], [
-                        'expires' => time() + 3600, // 1 hour (match your JWT expiry)
-                        'path' => '/',
-//                        'domain' => 'pernote.id.vn',
-                        'secure' => true, // Set to true if using HTTPS
-                        'httponly' => true,
-                        'samesite' => 'None'
-                    ]);
+                    $_SESSION['profilePicture'] = $uploadResponse['url'];
 
                     echo json_encode([
                         'status' => true,
@@ -188,7 +181,7 @@ class HomeUserController extends BaseController{
     public function getPreferencesByAccountId($user) {
         header('Content-Type: application/json');
 
-        $accountId = $user->accountId ?? null;
+        $accountId = $user['accountId'] ?? null;
         $result = $this->accountService->getPreferencesByAccountId($accountId);
         if(!$result['status'] === true) {
             http_response_code(400);
@@ -208,7 +201,7 @@ class HomeUserController extends BaseController{
 
     public function updatePreference($user) {
         header('Content-Type: application/json');
-        $accountId = $user->accountId;
+        $accountId = $user['accountId'];
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
 
@@ -218,19 +211,15 @@ class HomeUserController extends BaseController{
             if ($result['status'] === true) {
                 http_response_code(200);
 
-                setcookie('access_token', $result['token'], [
-                    'expires' => time() + 3600, // 1 hour (match your JWT expiry)
-                    'path' => '/',
-//                    'domain' => 'pernote.id.vn',
-                    'secure' => true, // Set to true if using HTTPS
-                    'httponly' => true,
-                    'samesite' => 'None'
-                ]);
+                $_SESSION['isDarkTheme'] = $data['theme'] == 'dark' ? 1 : 0;
+                $_SESSION['userName'] = $data['userName'];
+                $_SESSION['noteFont'] = $data['noteFont'];
+                $_SESSION['noteColor'] = $data['noteColor'];
 
                 echo json_encode([
                     'status' => true,
                     'userName' => $data['userName'],
-                    'data' => $result['token'],
+                    'data' => $data,
                     'message' => $result['message']
                 ]);
             } else {
@@ -255,7 +244,7 @@ class HomeUserController extends BaseController{
 
         $noteId = $data['noteId'] ?? null;
         $newEmail = $data['newSharedEmail'] ?? null;
-        $email = $user->email;
+        $email = $user['email'];
         if (empty($noteId) || empty($newEmail) || empty($email)) {
             echo json_encode([
                 'status' => false,
@@ -351,7 +340,7 @@ class HomeUserController extends BaseController{
         $data = json_decode($content, true);
 
         $noteId = $data['noteId'] ?? null;
-        $email = $user->email;
+        $email = $user['email'];
 
         if (!empty($noteId) || !empty($email)) {
             $result = $this->homeUserService->getSharedEmailByNoteIdAndEmail($noteId, $email);

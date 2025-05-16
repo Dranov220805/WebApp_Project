@@ -1,11 +1,6 @@
 <?php
 
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
-
-class AuthMiddleware
-{
-    private string $jwtSecret = 'your_secret_key';
+class AuthMiddleware {
     private AuthController $authController;
     private AuthService $authService;
 
@@ -38,41 +33,9 @@ class AuthMiddleware
         $this->authController->login_POST();
     }
 
-<<<<<<< Updated upstream
-    public function checkSession(): array
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    // Session-based auth check for protected routes
-    public function checkSession()
->>>>>>> Stashed changes
-    {
-        $jwt = $_COOKIE['access_token'] ?? null;
-
-        if (!$jwt) {
-            return $this->tryRefresh();
-        }
-
-        try {
-            $decoded = JWT::decode($jwt, new Key($this->jwtSecret, 'HS256'));
-
-            if (isset($decoded->exp) && $decoded->exp < time()) {
-                // Token expired, try refresh
-                return $this->tryRefresh();
-            }
-<<<<<<< Updated upstream
-=======
-=======
-
     public function checkSession() {
         if (isset($_SESSION['accountId'])) {
 
-=======
-
-    public function checkSession() {
-        if (isset($_SESSION['accountId'])) {
-
->>>>>>> Stashed changes
             $user = [
                 'accountId' => $_SESSION['accountId'],
                 'userName' => $_SESSION['userName'],
@@ -84,83 +47,16 @@ class AuthMiddleware
                 'isDarkTheme' => $_SESSION['isDarkTheme'],
                 'isVerified' => $_SESSION['isVerified']
             ];
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-
-            $GLOBALS['user'] = $decoded->data;
->>>>>>> Stashed changes
-
-            return [
-                'status' => true,
-                'user' => $decoded->data,
-                'message' => null
-            ];
-        } catch (Exception $e) {
-            // Token invalid or decode error, try refresh
-            return $this->tryRefresh();
-        }
-    }
-
-    private function tryRefresh(): array
-    {
-        $refreshToken = $_COOKIE['refresh_token'] ?? null;
-
-        if (!$refreshToken) {
-            return [
-                'status' => false,
-                'user' => null,
-                'message' => 'No refresh token'
-            ];
-        }
-
-        $authService = new AuthService();
-        $newTokenResult = $authService->refreshAccessToken($refreshToken);
-
-        if (!$newTokenResult['status']) {
-            return [
-                'status' => false,
-                'user' => null,
-                'message' => 'Invalid refresh token'
-            ];
-        }
-
-        $newAccessToken = $newTokenResult['access_token'];
-
-        setcookie('access_token', $newAccessToken, [
-            'expires' => time() + 3600,
-            'path' => '/',
-            'secure' => true,
-            'httponly' => true,
-            'samesite' => 'None'
-        ]);
-
-        try {
-            $decoded = JWT::decode($newAccessToken, new Key($this->jwtSecret, 'HS256'));
-
-            return [
-                'status' => true,
-                'user' => $decoded->data,
-                'message' => null
-            ];
-        } catch (Exception $e) {
-            return [
-                'status' => false,
-                'user' => null,
-                'message' => 'Failed to decode refreshed token'
-<<<<<<< Updated upstream
-=======
-=======
-                'user' => $user,
-                'message' => 'Session found'
->>>>>>> Stashed changes
-=======
 
             return [
                 'status' => true,
                 'user' => $user,
                 'message' => 'Session found'
->>>>>>> Stashed changes
->>>>>>> Stashed changes
+            ];
+        } else {
+            return [
+                'status' => false,
+                'message' => 'No session found'
             ];
         }
     }
@@ -280,4 +176,6 @@ class AuthMiddleware
         }
         $this->authController->checkVerification($check['user']);
     }
-}
+    }
+
+?>

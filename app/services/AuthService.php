@@ -1,10 +1,7 @@
 <?php
 
-use Firebase\JWT\JWT;
-
 class AuthService
 {
-    private string $jwtSecret = 'your_secret_key';
     private int $jwtExpiry = 3600; // Token expiry in seconds (1 hour)
     private AccountRepository $accountRepository;
     private AccountService $accountService;
@@ -41,72 +38,20 @@ class AuthService
 
         $this->accountRepository->saveRefreshToken($accountId, $refreshToken, $refreshTokenExpiry);
 
-        // Generate JWT
-        $payload = [
-            'iat' => time(), // Issued at
-            'exp' => time() + $this->jwtExpiry, // Expiry
-            'data' => [
-                'accountId' => $user->getAccountId(),
-                'userName' => $user->getUsername(),
-                'email' => $user->getEmail(),
-                'profilePicture' => $user->getProfilePicture(),
-                'refreshToken' => $user->getRefreshToken(),
-                'expiredTime' => $user->getExpiredTime(),
-                'roleId' => $user->getRoleId(),
-                'isDarkTheme' => $userPreference->isDarkTheme(),
-                'isVerified' => $user->getIsVerified()
-            ]
-        ];
-
-        $jwt = JWT::encode($payload, $this->jwtSecret, 'HS256');
-
         return [
             'status' => true,
-            'access_token' => $jwt,
-            'refresh_token' => $refreshToken,
-            'refresh_token_expiry' => $refreshTokenExpiry,
+            'accountId' => $user->getAccountId(),
+            'userName' => $user->getUsername(),
+            'email' => $user->getEmail(),
+            'profilePicture' => $user->getProfilePicture(),
+            'refreshToken' => $user->getRefreshToken(),
+            'expiredTime' => $user->getExpiredTime(),
+            'roleId' => $user->getRoleId(),
+            'isDarkTheme' => $userPreference->isDarkTheme(),
+            'isVerified' => $user->getIsVerified(),
             'message' => 'Login successfully'
         ];
-    }
-    
-    // Called to renew session if user is active
-    public function refreshAccessToken($refreshToken)
-    {
-        $user = $this->accountRepository->getAccountByRefreshToken($refreshToken);
-        if (!$user) {
-            error_log("No user found for refreshToken: " . $refreshToken);
-            return ['status' => false];
-        }
 
-        $userPreference = $this->accountRepository->getPreferencesByAccountId($user->getAccountId());
-        if (!$user || time() > $user->getExpiredTime()) {
-            return ['status' => false];
-        }
-
-        // Generate new access token
-        $payload = [
-            'iat' => time(),
-            'exp' => time() + 3600,
-            'data' => [
-                'accountId' => $user->getAccountId(),
-                'userName' => $user->getUsername(),
-                'email' => $user->getEmail(),
-                'profilePicture' => $user->getProfilePicture(),
-                'refreshToken' => $user->getRefreshToken(),
-                'expiredTime' => $user->getExpiredTime(),
-                'roleId' => $user->getRoleId(),
-                'isDarkTheme' => $userPreference->isDarkTheme(),
-                'isVerified' => $user->getIsVerified()
-            ]
-        ];
-
-        $newJwt = JWT::encode($payload, $this->jwtSecret, 'HS256');
-
-        return [
-            'status' => true,
-            'access_token' => $newJwt,
-            'data' => $payload['data']
-        ];
     }
 
     public function accountActivate($activation_token) {

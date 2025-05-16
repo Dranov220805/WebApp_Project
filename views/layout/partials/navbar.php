@@ -45,23 +45,8 @@ $userData = $user['user'];
             <div class="btn icon-btn">
                 <button data-bs-toggle="modal" class="info-modal" data-bs-target="#infoModal" data-bs-backdrop="false" data-bs-scroll="true" style="display: flex; justify-content: center; align-items: center; height: 40px">
                     <!--                <i class="navbar__item--icon fa-regular fa-circle-user"></i>-->
-<<<<<<< Updated upstream
                     <?php if (!empty($userData['profilePicture'])): ?>
                         <img id="navbar--image__icon" src="<?= $userData['profilePicture'] ?>" style="width: 30px; border-radius: 50px">
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-                    <?php if (!empty($user['profilePicture'])): ?>
-                        <img id="navbar--image__icon" src="<?= $user['profilePicture'] ?>" style="width: 30px; border-radius: 50px">
-=======
-                    <?php if (!empty($userData['profilePicture'])): ?>
-                        <img id="navbar--image__icon" src="<?= $userData['profilePicture'] ?>" style="width: 30px; border-radius: 50px">
->>>>>>> Stashed changes
-=======
-                    <?php if (!empty($userData['profilePicture'])): ?>
-                        <img id="navbar--image__icon" src="<?= $userData['profilePicture'] ?>" style="width: 30px; border-radius: 50px">
->>>>>>> Stashed changes
->>>>>>> Stashed changes
                     <?php else: ?>
                         <i class="fa-regular fa-circle-user" style="font-size: 25px"></i>
                     <?php endif; ?>
@@ -78,31 +63,10 @@ $userData = $user['user'];
         <div class="modal-content" style="width: 100%">
 
             <div class="modal-header">
-<<<<<<< Updated upstream
-                <h4 class="modal-title username--title__modal" style="flex-grow: 1">Hello, <?= $userData->userName ?></h4>
-                <span style="display: flex; justify-content: center; align-items: center; width: 40px; height: 40px">
-                    <?php if (!empty($userData->profilePicture)): ?>
-                        <img id="modal--image__icon" src="<?= $userData->profilePicture ?>" style="width: 30px; border-radius: 50px">
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-                <h4 class="modal-title username--title__modal" style="flex-grow: 1">Hello, <?= $GLOBALS['user']->userName ?></h4>
-                <span style="display: flex; justify-content: center; align-items: center; width: 40px; height: 40px">
-                    <?php if (!empty($GLOBALS['user']->profilePicture)): ?>
-                        <img id="modal--image__icon" src="<?= $GLOBALS['user']->profilePicture ?>" style="width: 30px; border-radius: 50px">
-=======
                 <h4 class="modal-title username--title__modal" style="flex-grow: 1">Hello, <?= $userData['userName'] ?></h4>
                 <span style="display: flex; justify-content: center; align-items: center; width: 40px; height: 40px">
                     <?php if (!empty($userData['profilePicture'])): ?>
                         <img id="modal--image__icon" src="<?= $userData['profilePicture'] ?>" style="width: 30px; border-radius: 50px">
->>>>>>> Stashed changes
-=======
-                <h4 class="modal-title username--title__modal" style="flex-grow: 1">Hello, <?= $userData['userName'] ?></h4>
-                <span style="display: flex; justify-content: center; align-items: center; width: 40px; height: 40px">
-                    <?php if (!empty($userData['profilePicture'])): ?>
-                        <img id="modal--image__icon" src="<?= $userData['profilePicture'] ?>" style="width: 30px; border-radius: 50px">
->>>>>>> Stashed changes
->>>>>>> Stashed changes
                     <?php else: ?>
                         <i class="fa-regular fa-circle-user" style="font-size: 25px"></i>
                     <?php endif; ?>
@@ -112,24 +76,6 @@ $userData = $user['user'];
             </div>
 
             <div class="modal-body">
-<<<<<<< Updated upstream
-                <strong style="margin-bottom: 0px;">Username: <span class="username--title__modal-2" style="font-weight: 500"><?= $userData->userName ?></span></strong>
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-                <strong style="margin-bottom: 0px;">Username: <span class="username--title__modal-2" style="font-weight: 500"><?= $GLOBALS['user']->userName ?></span></strong>
->>>>>>> Stashed changes
-                <br>
-                <strong>Email: </strong> <?= $userData->email ?>
-                <br>
-                <strong>Verify status: </strong>
-                <?php if ($userData->isVerified == true) {
-                    echo 'Verified';
-<<<<<<< Updated upstream
-                } else if ($userData->isVerified == false) {
-=======
-                } else if ($GLOBALS['user']->isVerified == false) {
-=======
                 <strong style="margin-bottom: 0px;">Username: <span class="username--title__modal-2" style="font-weight: 500"><?= $userData['userName'] ?></span></strong>
                 <br>
                 <strong>Email: </strong> <?= $userData['email'] ?>
@@ -138,18 +84,6 @@ $userData = $user['user'];
                 <?php if ($userData['isVerified'] == true) {
                     echo 'Verified';
                 } else if ($userData['isVerified'] == false) {
->>>>>>> Stashed changes
-=======
-                <strong style="margin-bottom: 0px;">Username: <span class="username--title__modal-2" style="font-weight: 500"><?= $userData['userName'] ?></span></strong>
-                <br>
-                <strong>Email: </strong> <?= $userData['email'] ?>
-                <br>
-                <strong>Verify status: </strong>
-                <?php if ($userData['isVerified'] == true) {
-                    echo 'Verified';
-                } else if ($userData['isVerified'] == false) {
->>>>>>> Stashed changes
->>>>>>> Stashed changes
                     echo 'Not Verified';
                 } else {
                     echo 'Unknown';

@@ -1,10 +1,6 @@
 <?php
 
-use Firebase\JWT\JWT;
-
 class AccountService{
-    private string $jwtSecret = 'your_secret_key';
-    private int $jwtExpiry = 3600;
     private AccountRepository $accountRepository;
     public function __construct(){
         $this->accountRepository = new AccountRepository();
@@ -28,36 +24,9 @@ class AccountService{
     public function updateProfilePictureByAccountIdAndEmail($account_id, $email, $uploadImage) {
         $result = $this->accountRepository->updateProfilePictureByAccountId($account_id, $uploadImage);
         if (!$result['status'] === false) {
-            $userData = $GLOBALS['user'];
-            $email = $userData->email;
-            $user = $this->accountRepository->getAccountByEmail($email);
-            $accountId = $user->getAccountId();
-            $userPreference = $this->accountRepository->getPreferencesByAccountId($accountId);
-
-            // Generate JWT
-            $payload = [
-                'iss' => 'your_issuer', // Issuer
-                'aud' => 'your_audience', // Audience
-                'iat' => time(), // Issued at
-                'exp' => time() + $this->jwtExpiry, // Expiry
-                'data' => [
-                    'accountId' => $user->getAccountId(),
-                    'userName' => $user->getUsername(),
-                    'email' => $user->getEmail(),
-                    'profilePicture' => $user->getProfilePicture(),
-                    'refreshToken' => $user->getRefreshToken(),
-                    'expiredTime' => $user->getExpiredTime(),
-                    'roleId' => $user->getRoleId(),
-                    'isDarkTheme' => $userPreference->isDarkTheme(),
-                    'isVerified' => $user->getIsVerified()
-                ]
-            ];
-
-            $jwt = JWT::encode($payload, $this->jwtSecret, 'HS256');
-
             return [
                 'status' => true,
-                'token' => $jwt,
+                'token' => $result,
                 'message' => 'Profile picture updated successfully'
             ];
         } else {
@@ -76,42 +45,9 @@ class AccountService{
         $result = $this->accountRepository->updatePreferenceByAccountId($accountId, $userName, $theme, $fontSize, $noteColor);
 
         if ($result ) {
-            try {
-                $user = $this->accountRepository->getAccountByAccountId($accountId);
-                $userPreference = $this->accountRepository->getPreferencesByAccountId($accountId);
-            }
-            catch (\Exception $e) {
-                return [
-                    'status' => false,
-                    'data' => $result,
-                    'message' => 'Update user preference failed'
-                ];
-            }
-
-            // Generate JWT
-            $payload = [
-                'iss' => 'your_issuer', // Issuer
-                'aud' => 'your_audience', // Audience
-                'iat' => time(), // Issued at
-                'exp' => time() + $this->jwtExpiry, // Expiry
-                'data' => [
-                    'accountId' => $user->getAccountId(),
-                    'userName' => $user->getUsername(),
-                    'email' => $user->getEmail(),
-                    'profilePicture' => $user->getProfilePicture(),
-                    'refreshToken' => $user->getRefreshToken(),
-                    'expiredTime' => $user->getExpiredTime(),
-                    'roleId' => $user->getRoleId(),
-                    'isDarkTheme' => $userPreference->isDarkTheme(),
-                    'isVerified' => $user->getIsVerified()
-                ]
-            ];
-
-            $jwt = JWT::encode($payload, $this->jwtSecret, 'HS256');
-
             return [
                 'status' => true,
-                'token' => $jwt,
+                'data' => $result,
                 'message' => 'Update user preference successfully'
             ];
         } else {

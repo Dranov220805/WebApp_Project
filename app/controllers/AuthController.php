@@ -21,37 +21,7 @@ class AuthController extends BaseController {
             $result = $authService->login($data['email'], $data['password']);
 
             if ($result['status'] === true) {
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-                // Access token -> 1 hour
-                setcookie('access_token', $result['access_token'], [
-                    'expires' => time() + 3600, // 1 hour
-                    'path' => '/',
-//                    'domain' => 'pernote.id.vn',
-                    'secure' => true,
-                    'httponly' => true,
-                    'samesite' => 'None'
-                ]);
 
-                // Refresh token (long-lived) -> 7 days
-                setcookie('refresh_token', $result['refresh_token'], [
-                    'expires' => time() + (7 * 24 * 60 * 60),
-                    'path' => '/',
-//                    'domain' => 'pernote.id.vn',
-                    'secure' => true,
-                    'httponly' => true,
-                    'samesite' => 'None'
-                ]);
-<<<<<<< Updated upstream
-=======
-=======
-
-=======
-
->>>>>>> Stashed changes
                 $_SESSION['accountId'] = $result['accountId'];
                 $_SESSION['userName'] = $result['userName'];
                 $_SESSION['email'] = $result['email'];
@@ -62,29 +32,9 @@ class AuthController extends BaseController {
                 $_SESSION['isDarkTheme'] = $result['isDarkTheme'];
                 $_SESSION['isVerified'] = $result['isVerified'];
 
-//                setcookie('access_token', $result['access_token'], [
-//                    'expires' => time() + 3600, // 1 hour
-//                    'path' => '/',
-//                    'secure' => true,
-//                    'httponly' => true,
-//                    'samesite' => 'None'
-//                ]);
-//
-//                setcookie('refresh_token', $result['refresh_token'], [
-//                    'expires' => time() + (7 * 24 * 60 * 60),
-//                    'path' => '/',
-//                    'secure' => true,
-//                    'httponly' => true,
-//                    'samesite' => 'None'
-//                ]);
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
->>>>>>> Stashed changes
-
                 echo json_encode([
                     'status' => true,
+                    'data' => $result,
                     'message' => $result['message']
                 ]);
             } else {
@@ -195,48 +145,11 @@ class AuthController extends BaseController {
         }
     }
 
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-    public function logout()
-    {
-        // Clear the JWT cookie
-        setcookie('access_token', '', [
-            'expires' => time() - 3600,
-            'path' => '/',
-//            'domain' => 'pernote.id.vn',
-            'secure' => true,
-            'httponly' => true,
-            'samesite' => 'None'
-        ]);
-
-        setcookie('refresh_token', '', [
-            'expires' => time() - (7 * 24 * 60 * 60),
-            'path' => '/',
-//            'domain' => 'pernote.id.vn',
-            'secure' => true,
-            'httponly' => true,
-            'samesite' => 'None'
-        ]);
-<<<<<<< Updated upstream
-=======
-=======
     public function logout() {
 
         $_SESSION = [];
 
         session_destroy();
->>>>>>> Stashed changes
-=======
-    public function logout() {
-
-        $_SESSION = [];
-
-        session_destroy();
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 
         // Perform the redirect
         header('Location: /home');
