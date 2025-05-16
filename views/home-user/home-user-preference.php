@@ -53,7 +53,7 @@ $userData = $user['user'];
 
                 <div class="setting-row">
                     <div class="setting-label">Theme</div>
-                    <select id="theme-selector" class="form-select dropdown-select" style="width: 20%">
+                    <select id="theme-selector" class="form-select dropdown-select" style="width: 30%; justify-content: center">
                         <option value="light">Light</option>
                         <option value="dark">Dark</option>
                         <option value="system" selected>System default</option>
