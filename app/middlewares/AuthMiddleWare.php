@@ -40,6 +40,7 @@ class AuthMiddleware
         $this->authController->login_POST();
     }
 
+<<<<<<< Updated upstream
     // Session-based auth check for protected routes
     public function checkSession()
     {
@@ -56,11 +57,29 @@ class AuthMiddleware
             if (isset($decoded->exp) && $decoded->exp < time()) {
                 return $this->tryRefresh(); // Attempt refresh
             }
+=======
+
+    public function checkSession() {
+        if (isset($_SESSION['accountId'])) {
+
+            $user = [
+                'accountId' => $_SESSION['accountId'],
+                'userName' => $_SESSION['userName'],
+                'email' => $_SESSION['email'],
+                'profilePicture' => $_SESSION['profilePicture'],
+                'refreshToken' => $_SESSION['refreshToken'],
+                'expiredTime' => $_SESSION['expiredTime'],
+                'roleId' => $_SESSION['roleId'],
+                'isDarkTheme' => $_SESSION['isDarkTheme'],
+                'isVerified' => $_SESSION['isVerified']
+            ];
+>>>>>>> Stashed changes
 
             $GLOBALS['user'] = $decoded->data;
 
             return [
                 'status' => true,
+<<<<<<< Updated upstream
                 'token_data' => $decoded
             ];
 
@@ -115,10 +134,19 @@ class AuthMiddleware
             return [
                 'status' => false,
                 'message' => 'Failed to decode refreshed token'
+=======
+                'user' => $user,
+                'message' => 'Session found'
+>>>>>>> Stashed changes
             ];
         }
+        return [
+            'status' => false,
+            'message' => 'No session found'
+        ];
     }
 
+<<<<<<< Updated upstream
     public function getUrlActivationLink()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
@@ -127,6 +155,88 @@ class AuthMiddleware
                 'status' => false,
                 'message' => 'Method not allowed'
             ]);
+=======
+//    public function checkSession() {
+//        $jwt = $_COOKIE['access_token'] ?? null;
+//
+//        if (!$jwt) {
+//            return $this->tryRefresh();
+//        }
+//
+//        try {
+//            $decoded = JWT::decode($jwt, new Key($this->jwtSecret, 'HS256'));
+//
+//            if (isset($decoded->exp) && $decoded->exp < time()) {
+//                return $this->tryRefresh();
+//            }
+//
+//            return [
+//                'status' => true,
+//                'user' => $decoded->data,
+//                'message' => null,
+//            ];
+//        } catch (Exception $e) {
+//            return $this->tryRefresh();
+//        }
+//    }
+//
+//    private function tryRefresh() {
+//        $refreshToken = $_COOKIE['refresh_token'] ?? null;
+//        if (!$refreshToken) {
+//            return [
+//                'status' => false,
+//                'user' => null,
+//                'message' => 'No refresh token'
+//            ];
+//        }
+//
+//        $newTokenResult = $this->authService->refreshAccessToken($refreshToken);
+//
+//        if (!$newTokenResult['status']) {
+//            return [
+//                'status' => false,
+//                'user' => null,
+//                'message' => 'Invalid refresh token'
+//            ];
+//        }
+//
+//        $newAccessToken = $newTokenResult['access_token'];
+//
+//        $this->setAccessTokenCookie($newAccessToken);
+//
+//        try {
+//            $decoded = JWT::decode($newAccessToken, new Key($this->jwtSecret, 'HS256'));
+//
+//            return [
+//                'status' => true,
+//                'user' => $decoded->data,
+//                'message' => null
+//            ];
+//        } catch (Exception $e) {
+//            return [
+//                'status' => false,
+//                'user' => null,
+//                'message' => 'Failed to decode refreshed token'
+//            ];
+//        }
+//    }
+//
+//    private function setAccessTokenCookie(string $token) {
+//        setcookie('access_token', $token, [
+//            'expires' => time() + 3600,
+//            'path' => '/',
+//            'secure' => true,
+//            'httponly' => true,
+//            'samesite' => 'None',
+//        ]);
+//    }
+
+    public function getUrlActivationLink() {
+        $token = $_GET['token'] ?? null;
+        if (empty($token)) {
+            http_response_code(400);
+            echo json_encode(['status' => false, 'message' => 'Token not provided']);
+>>>>>>> Stashed changes
             exit();
         }
 

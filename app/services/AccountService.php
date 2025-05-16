@@ -1,9 +1,6 @@
 <?php
 
-use Firebase\JWT\JWT;
-
 class AccountService{
-    private string $jwtSecret = 'your_secret_key';
     private int $jwtExpiry = 3600;
     private AccountRepository $accountRepository;
     public function __construct(){
@@ -28,6 +25,7 @@ class AccountService{
     public function updateProfilePictureByAccountId($account_id, $uploadImage) {
         $result = $this->accountRepository->updateProfilePictureByAccountId($account_id, $uploadImage);
         if (!$result['status'] === false) {
+<<<<<<< Updated upstream
             $userData = $GLOBALS['user'];
             $email = $userData->email;
             $user = $this->accountRepository->getAccountByEmail($email);
@@ -55,9 +53,10 @@ class AccountService{
 
             $jwt = JWT::encode($payload, $this->jwtSecret, 'HS256');
 
+=======
+>>>>>>> Stashed changes
             return [
                 'status' => true,
-                'token' => $jwt,
                 'message' => 'Profile picture updated successfully'
             ];
         } else {
@@ -88,30 +87,8 @@ class AccountService{
                 ];
             }
 
-            // Generate JWT
-            $payload = [
-                'iss' => 'your_issuer', // Issuer
-                'aud' => 'your_audience', // Audience
-                'iat' => time(), // Issued at
-                'exp' => time() + $this->jwtExpiry, // Expiry
-                'data' => [
-                    'accountId' => $user->getAccountId(),
-                    'userName' => $user->getUsername(),
-                    'email' => $user->getEmail(),
-                    'profilePicture' => $user->getProfilePicture(),
-                    'refreshToken' => $user->getRefreshToken(),
-                    'expiredTime' => $user->getExpiredTime(),
-                    'roleId' => $user->getRoleId(),
-                    'isDarkTheme' => $userPreference->isDarkTheme(),
-                    'isVerified' => $user->getIsVerified()
-                ]
-            ];
-
-            $jwt = JWT::encode($payload, $this->jwtSecret, 'HS256');
-
             return [
                 'status' => true,
-                'token' => $jwt,
                 'message' => 'Update user preference successfully'
             ];
         } else {

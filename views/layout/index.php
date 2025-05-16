@@ -9,7 +9,11 @@
         include "./views/layout/partials/header.php";
     ?>
 <body class="<?php
+<<<<<<< Updated upstream
 if (isset($GLOBALS['user']) && !empty($GLOBALS['user']->isDarkTheme) && $GLOBALS['user']->isDarkTheme == true) {
+=======
+if (isset($userData) && !empty($userData['isDarkTheme']) && $userData['isDarkTheme'] == true) {
+>>>>>>> Stashed changes
     echo 'dark-mode';
 }
 ?>">

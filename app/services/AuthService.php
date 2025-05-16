@@ -1,10 +1,7 @@
 <?php
 
-use Firebase\JWT\JWT;
-
 class AuthService
 {
-    private string $jwtSecret = 'your_secret_key';
     private int $jwtExpiry = 3600; // Token expiry in seconds (1 hour)
     private AccountRepository $accountRepository;
     private AccountService $accountService;
@@ -41,30 +38,17 @@ class AuthService
 
         $this->accountRepository->saveRefreshToken($accountId, $refreshToken, $refreshTokenExpiry);
 
-        // Generate JWT
-        $payload = [
-            'iat' => time(), // Issued at
-            'exp' => time() + $this->jwtExpiry, // Expiry
-            'data' => [
-                'accountId' => $user->getAccountId(),
-                'userName' => $user->getUsername(),
-                'email' => $user->getEmail(),
-                'profilePicture' => $user->getProfilePicture(),
-                'refreshToken' => $user->getRefreshToken(),
-                'expiredTime' => $user->getExpiredTime(),
-                'roleId' => $user->getRoleId(),
-                'isDarkTheme' => $userPreference->isDarkTheme(),
-                'isVerified' => $user->getIsVerified()
-            ]
-        ];
-
-        $jwt = JWT::encode($payload, $this->jwtSecret, 'HS256');
-
         return [
             'status' => true,
-            'access_token' => $jwt,
-            'refresh_token' => $refreshToken,
-            'refresh_token_expiry' => $refreshTokenExpiry,
+            'accountId' => $user->getAccountId(),
+            'userName' => $user->getUsername(),
+            'email' => $user->getEmail(),
+            'profilePicture' => $user->getProfilePicture(),
+            'refreshToken' => $user->getRefreshToken(),
+            'expiredTime' => $user->getExpiredTime(),
+            'roleId' => $user->getRoleId(),
+            'isDarkTheme' => $userPreference->isDarkTheme(),
+            'isVerified' => $user->getIsVerified(),
             'message' => 'Login successfully'
         ];
     }

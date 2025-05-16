@@ -4,7 +4,6 @@
     "cloudinary/cloudinary_php": "^3.1",
     "ramsey/uuid": "^4.7",
     "phpmailer/phpmailer": "^6.9",
-    "firebase/php-jwt": "^6.11",
     "cboden/ratchet": "^0.4.4"
   }
 }
