@@ -21,25 +21,6 @@ class AuthController extends BaseController {
             $result = $authService->login($data['email'], $data['password']);
 
             if ($result['status'] === true) {
-<<<<<<< Updated upstream
-                // Access token -> 1 hour
-                setcookie('access_token', $result['access_token'], [
-                    'expires' => time() + 3600, // 1 hour
-                    'path' => '/',
-                    'secure' => true,
-                    'httponly' => true,
-                    'samesite' => 'Lax'
-                ]);
-
-                // Refresh token (long-lived) -> 7 days
-                setcookie('refresh_token', $result['refresh_token'], [
-                    'expires' => time() + (7 * 24 * 60 * 60),
-                    'path' => '/',
-                    'secure' => true,
-                    'httponly' => true,
-                    'samesite' => 'Lax'
-                ]);
-=======
 
                 $_SESSION['accountId'] = $result['accountId'];
                 $_SESSION['userName'] = $result['userName'];
@@ -51,25 +32,9 @@ class AuthController extends BaseController {
                 $_SESSION['isDarkTheme'] = $result['isDarkTheme'];
                 $_SESSION['isVerified'] = $result['isVerified'];
 
-//                setcookie('access_token', $result['access_token'], [
-//                    'expires' => time() + 3600, // 1 hour
-//                    'path' => '/',
-//                    'secure' => true,
-//                    'httponly' => true,
-//                    'samesite' => 'None'
-//                ]);
-//
-//                setcookie('refresh_token', $result['refresh_token'], [
-//                    'expires' => time() + (7 * 24 * 60 * 60),
-//                    'path' => '/',
-//                    'secure' => true,
-//                    'httponly' => true,
-//                    'samesite' => 'None'
-//                ]);
->>>>>>> Stashed changes
-
                 echo json_encode([
                     'status' => true,
+                    'data' => $result,
                     'message' => $result['message']
                 ]);
             } else {
@@ -135,10 +100,9 @@ class AuthController extends BaseController {
         }
     }
 
-    public function changePassword() {
+    public function changePassword($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-        $user = $GLOBALS['user'];
         $email = $user->email;
         $currPassword = $data['currentPassword'];
         $password = $data['newPassword'];
@@ -181,40 +145,18 @@ class AuthController extends BaseController {
         }
     }
 
-<<<<<<< Updated upstream
-    public function logout()
-    {
-        // Clear the JWT cookie
-        setcookie('access_token', '', [
-            'expires' => time() - 3600,
-            'path' => '/',
-            'secure' => false,
-            'httponly' => true,
-            'samesite' => 'Lax'
-        ]);
-
-        setcookie('refresh_token', '', [
-            'expires' => time() - (7 * 24 * 60 * 60),
-            'path' => '/',
-            'secure' => true,
-            'httponly' => true,
-            'samesite' => 'Lax'
-        ]);
-=======
     public function logout() {
 
         $_SESSION = [];
 
         session_destroy();
->>>>>>> Stashed changes
 
         // Perform the redirect
         header('Location: /home');
         exit();
     }
 
-    public function checkVerification() {
-        $user = $GLOBALS['user'];
+    public function checkVerification($user) {
         $email = $user->email;
 
         $result = $this->authService->checkVerification($email);

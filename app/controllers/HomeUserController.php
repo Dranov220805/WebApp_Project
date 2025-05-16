@@ -2,28 +2,25 @@
 include_once "./app/controllers/Base/BaseController.php";
 include_once "./app/core/uploadImage/cloudinary_upload.php";
 class HomeUserController extends BaseController{
+    private AuthMiddleware $authMiddleware;
     private HomeUserService $homeUserService;
     private AccountService $accountService;
     private NoteService $noteService;
 
     public function __construct(){
         parent::__construct();
+        $this->authMiddleware = new AuthMiddleware();
         $this->homeUserService = new HomeUserService();
         $this->noteService = new NoteService();
         $this->accountService = new AccountService();
     }
-    public function index()
+    public function index($user)
     {
-<<<<<<< Updated upstream
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId;
-=======
         $accountId = $user['accountId'];
->>>>>>> Stashed changes
         $intPage = isset($_GET['page']) ? $_GET['page'] : 1;
         $perPage = isset($_GET['limit']) ? $_GET['limit'] : 10;
 
-        if (!isset($GLOBALS['user']) || empty($GLOBALS['user']->accountId)) {
+        if (!isset($user) || empty($user['accountId'])) {
             http_response_code(401);
             echo json_encode([
                 'status' => false,
@@ -56,6 +53,9 @@ class HomeUserController extends BaseController{
             ]);
         }
     }
+    public function getUserInfo() {
+        return $this->authMiddleware->checkSession();
+    }
     public function redirectToIndex() {
         $content = 'home';
         $footer = 'home';
@@ -69,31 +69,19 @@ class HomeUserController extends BaseController{
         $footer = 'home';
         include "./views/layout/index.php";
     }
-    public function homeLabel() {
-        $content = 'home-user-label';
-        $footer = 'home';
-        include "./views/layout/index.php";
+    public function homeLabel($user) {
+        $this->Views('home-user-label', [
+            'user' => $user
+        ]);
     }
-<<<<<<< Updated upstream
-    public function getUserLabel() {
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId;
-=======
     public function getUserLabel($user) {
         $accountId = $user['accountId'];
->>>>>>> Stashed changes
         $labelNotes = $this->homeUserService->getLabelByAccountId($accountId);
 
         return $labelNotes;
     }
-<<<<<<< Updated upstream
-    public function homeLabel_POST($labelName) {
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId;
-=======
     public function homeLabel_POST($user, $labelName) {
         $accountId = $user['accountId'];
->>>>>>> Stashed changes
 
         if (!$accountId) {
             http_response_code(400);
@@ -111,14 +99,8 @@ class HomeUserController extends BaseController{
             'message' => 'Get label view for this account successfully'
         ]);
     }
-<<<<<<< Updated upstream
-    public function homeShare() {
-        $user = $GLOBALS['user'];
-        $email = $user->email;
-=======
     public function homeShare($user) {
         $email = $user['email'];
->>>>>>> Stashed changes
 
         $result = $this->noteService->getNotesSharedByEmail($email);
 
@@ -128,23 +110,20 @@ class HomeUserController extends BaseController{
             'message' => 'Get shared view for this account successfully'
         ]);
     }
-<<<<<<< Updated upstream
-    public function homeTrash() {
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId;
-=======
     public function homeTrash($user) {
         $accountId = $user['accountId'];
->>>>>>> Stashed changes
 
+        // Basic validation
         if (!$accountId) {
             http_response_code(400);
             echo json_encode(['status' => false, 'message' => 'Missing accountId']);
             return;
         }
 
+        // Fetch trash notes
         $trashNotes = $this->noteService->getTrashedNotesByAccountId($accountId);
 
+        // Pass data to the view
         $this->Views('home-user-trash', [
             'status' => true,
             'trashNotes' => $trashNotes,
@@ -153,19 +132,14 @@ class HomeUserController extends BaseController{
 
     }
 
-    public function uploadAvatar() {
+    public function uploadAvatar($user) {
         header('Content-Type: application/json');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['avatar'])) {
             $fileTmpPath = $_FILES['avatar']['tmp_name'];
-<<<<<<< Updated upstream
-            $accountId = $GLOBALS['user']->accountId ?? null;
-            $oldImage = $GLOBALS['user']->profilePicture ?? null;
-=======
             $accountId = $user['accountId'] ?? null;
             $email = $user['email'] ?? null;
             $oldImage = $user->profilePicture ?? null;
->>>>>>> Stashed changes
 
             if ($oldImage) {
                 deleteImageByImageUrl($oldImage);
@@ -174,20 +148,10 @@ class HomeUserController extends BaseController{
             $uploadResponse = uploadAvatarToCloudinary($fileTmpPath);
 
             if ($uploadResponse['status'] === true) {
-                $result = $this->accountService->updateProfilePictureByAccountId($accountId, $uploadResponse['url']);
+                $result = $this->accountService->updateProfilePictureByAccountIdAndEmail($accountId, $email, $uploadResponse['url']);
                 if ($result['status'] === true) {
 
-<<<<<<< Updated upstream
-                    setcookie('access_token', $result['token'], [
-                        'expires' => time() + 3600, // 1 hour (match your JWT expiry)
-                        'path' => '/',
-                        'secure' => true, // Set to true if using HTTPS
-                        'httponly' => true,
-                        'samesite' => 'Lax'
-                    ]);
-=======
                     $_SESSION['profilePicture'] = $uploadResponse['url'];
->>>>>>> Stashed changes
 
                     echo json_encode([
                         'status' => true,
@@ -214,14 +178,10 @@ class HomeUserController extends BaseController{
         }
     }
 
-    public function getPreferencesByAccountId() {
+    public function getPreferencesByAccountId($user) {
         header('Content-Type: application/json');
 
-<<<<<<< Updated upstream
-        $accountId = $_SESSION['accountId'] ?? null;
-=======
         $accountId = $user['accountId'] ?? null;
->>>>>>> Stashed changes
         $result = $this->accountService->getPreferencesByAccountId($accountId);
         if(!$result['status'] === true) {
             http_response_code(400);
@@ -239,14 +199,9 @@ class HomeUserController extends BaseController{
         }
     }
 
-    public function updatePreference() {
+    public function updatePreference($user) {
         header('Content-Type: application/json');
-<<<<<<< Updated upstream
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId;
-=======
         $accountId = $user['accountId'];
->>>>>>> Stashed changes
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
 
@@ -256,25 +211,10 @@ class HomeUserController extends BaseController{
             if ($result['status'] === true) {
                 http_response_code(200);
 
-<<<<<<< Updated upstream
-                setcookie('access_token', $result['token'], [
-                    'expires' => time() + 3600, // 1 hour (match your JWT expiry)
-                    'path' => '/',
-                    'secure' => true, // Set to true if using HTTPS
-                    'httponly' => true,
-                    'samesite' => 'Lax'
-                ]);
-=======
-                $_SESSION['isDarkTheme'] = $data['theme'] == 'dark' ? true : false;
+                $_SESSION['isDarkTheme'] = $data['theme'] == 'dark' ? 1 : 0;
                 $_SESSION['userName'] = $data['userName'];
-
-                $data = [
-                    'theme' => $data['theme'],
-                    'userName' => $data['userName'],
-                    'noteFont' => $data['noteFont'],
-                    'noteColor' => $data['noteColor']
-                ];
->>>>>>> Stashed changes
+                $_SESSION['noteFont'] = $data['noteFont'];
+                $_SESSION['noteColor'] = $data['noteColor'];
 
                 echo json_encode([
                     'status' => true,
@@ -298,18 +238,13 @@ class HomeUserController extends BaseController{
         }
     }
 
-    public function addNewSharedEmail_POST() {
+    public function addNewSharedEmail_POST($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
 
         $noteId = $data['noteId'] ?? null;
         $newEmail = $data['newSharedEmail'] ?? null;
-<<<<<<< Updated upstream
-        $user = $GLOBALS['user'];
-        $email = $user->email;
-=======
         $email = $user['email'];
->>>>>>> Stashed changes
         if (empty($noteId) || empty($newEmail) || empty($email)) {
             echo json_encode([
                 'status' => false,
@@ -400,17 +335,12 @@ class HomeUserController extends BaseController{
         }
     }
 
-    public function sharedEmailList() {
+    public function sharedEmailList($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
 
         $noteId = $data['noteId'] ?? null;
-<<<<<<< Updated upstream
-        $user = $GLOBALS['user'];
-        $email = $user->email;
-=======
         $email = $user['email'];
->>>>>>> Stashed changes
 
         if (!empty($noteId) || !empty($email)) {
             $result = $this->homeUserService->getSharedEmailByNoteIdAndEmail($noteId, $email);
