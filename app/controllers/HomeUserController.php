@@ -20,7 +20,7 @@ class HomeUserController extends BaseController{
         $intPage = isset($_GET['page']) ? $_GET['page'] : 1;
         $perPage = isset($_GET['limit']) ? $_GET['limit'] : 10;
 
-        if (!isset($GLOBALS['user']) || empty($GLOBALS['user']->accountId)) {
+        if (!isset($user) || empty($accountId)) {
             http_response_code(401);
             echo json_encode([
                 'status' => false,

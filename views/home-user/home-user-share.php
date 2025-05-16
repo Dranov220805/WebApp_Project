@@ -18,7 +18,7 @@
             <div class="label-note">
                 <h6 class="note-layout__title" id="note-layout__title">Shared with me</h6>
                 <div class="note-grid d-flex justify-content-center">
-                    <div class="share-note__load load-grid" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center">
+                    <div class="share-note__load load-grid" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; width: 100%">
                         <?php if (!empty($data['data'])): ?>
                             <?php
                             // Group notes by noteId and aggregate labels

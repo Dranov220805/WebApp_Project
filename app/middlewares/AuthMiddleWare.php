@@ -38,7 +38,8 @@ class AuthMiddleware
         $this->authController->login_POST();
     }
 
-    public function checkSession() {
+    public function checkSession(): array
+    {
         $jwt = $_COOKIE['access_token'] ?? null;
 
         if (!$jwt) {
@@ -49,46 +50,135 @@ class AuthMiddleware
             $decoded = JWT::decode($jwt, new Key($this->jwtSecret, 'HS256'));
 
             if (isset($decoded->exp) && $decoded->exp < time()) {
+                // Token expired, try refresh
                 return $this->tryRefresh();
             }
-
-            $GLOBALS['user'] = $decoded->data;
 
             return [
                 'status' => true,
                 'user' => $decoded->data,
-                'message' => null,
+                'message' => null
             ];
         } catch (Exception $e) {
+            // Token invalid or decode error, try refresh
             return $this->tryRefresh();
         }
     }
 
-    private function tryRefresh() {
+    private function tryRefresh(): array
+    {
         $refreshToken = $_COOKIE['refresh_token'] ?? null;
+
         if (!$refreshToken) {
-            return ['status' => false, 'user' => null, 'message' => 'No refresh token'];
+            return [
+                'status' => false,
+                'user' => null,
+                'message' => 'No refresh token'
+            ];
         }
 
-        $newTokenResult = $this->authService->refreshAccessToken($refreshToken);
+        $authService = new AuthService();
+        $newTokenResult = $authService->refreshAccessToken($refreshToken);
 
         if (!$newTokenResult['status']) {
-            return ['status' => false, 'user' => null, 'message' => 'Invalid refresh token'];
+            return [
+                'status' => false,
+                'user' => null,
+                'message' => 'Invalid refresh token'
+            ];
         }
 
         $newAccessToken = $newTokenResult['access_token'];
 
-        $this->setAccessTokenCookie($newAccessToken);
+        setcookie('access_token', $newAccessToken, [
+            'expires' => time() + 3600,
+            'path' => '/',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'None'
+        ]);
 
         try {
             $decoded = JWT::decode($newAccessToken, new Key($this->jwtSecret, 'HS256'));
-            $GLOBALS['user'] = $decoded->data;
 
-            return ['status' => true, 'user' => $decoded->data, 'message' => null];
+            return [
+                'status' => true,
+                'user' => $decoded->data,
+                'message' => null
+            ];
         } catch (Exception $e) {
-            return ['status' => false, 'user' => null, 'message' => 'Failed to decode refreshed token'];
+            return [
+                'status' => false,
+                'user' => null,
+                'message' => 'Failed to decode refreshed token'
+            ];
         }
     }
+
+//    public function checkSession() {
+//        $jwt = $_COOKIE['access_token'] ?? null;
+//
+//        if (!$jwt) {
+//            return $this->tryRefresh();
+//        }
+//
+//        try {
+//            $decoded = JWT::decode($jwt, new Key($this->jwtSecret, 'HS256'));
+//
+//            if (isset($decoded->exp) && $decoded->exp < time()) {
+//                return $this->tryRefresh();
+//            }
+//
+//            return [
+//                'status' => true,
+//                'user' => $decoded->data,
+//                'message' => null,
+//            ];
+//        } catch (Exception $e) {
+//            return $this->tryRefresh();
+//        }
+//    }
+//
+//    private function tryRefresh() {
+//        $refreshToken = $_COOKIE['refresh_token'] ?? null;
+//        if (!$refreshToken) {
+//            return [
+//                'status' => false,
+//                'user' => null,
+//                'message' => 'No refresh token'
+//            ];
+//        }
+//
+//        $newTokenResult = $this->authService->refreshAccessToken($refreshToken);
+//
+//        if (!$newTokenResult['status']) {
+//            return [
+//                'status' => false,
+//                'user' => null,
+//                'message' => 'Invalid refresh token'
+//            ];
+//        }
+//
+//        $newAccessToken = $newTokenResult['access_token'];
+//
+//        $this->setAccessTokenCookie($newAccessToken);
+//
+//        try {
+//            $decoded = JWT::decode($newAccessToken, new Key($this->jwtSecret, 'HS256'));
+//
+//            return [
+//                'status' => true,
+//                'user' => $decoded->data,
+//                'message' => null
+//            ];
+//        } catch (Exception $e) {
+//            return [
+//                'status' => false,
+//                'user' => null,
+//                'message' => 'Failed to decode refreshed token'
+//            ];
+//        }
+//    }
 
     private function setAccessTokenCookie(string $token) {
         setcookie('access_token', $token, [
