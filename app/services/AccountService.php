@@ -28,6 +28,13 @@ class AccountService{
     public function updateProfilePictureByAccountIdAndEmail($account_id, $email, $uploadImage) {
         $result = $this->accountRepository->updateProfilePictureByAccountId($account_id, $uploadImage);
         if (!$result['status'] === false) {
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+            $userData = $GLOBALS['user'];
+            $email = $userData->email;
+>>>>>>> Stashed changes
             $user = $this->accountRepository->getAccountByEmail($email);
             $accountId = $user->getAccountId();
             $userPreference = $this->accountRepository->getPreferencesByAccountId($accountId);
@@ -53,6 +60,13 @@ class AccountService{
 
             $jwt = JWT::encode($payload, $this->jwtSecret, 'HS256');
 
+<<<<<<< Updated upstream
+=======
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
             return [
                 'status' => true,
                 'token' => $jwt,

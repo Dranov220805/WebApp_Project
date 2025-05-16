@@ -38,7 +38,14 @@ class AuthMiddleware
         $this->authController->login_POST();
     }
 
+<<<<<<< Updated upstream
     public function checkSession(): array
+=======
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+    // Session-based auth check for protected routes
+    public function checkSession()
+>>>>>>> Stashed changes
     {
         $jwt = $_COOKIE['access_token'] ?? null;
 
@@ -53,6 +60,35 @@ class AuthMiddleware
                 // Token expired, try refresh
                 return $this->tryRefresh();
             }
+<<<<<<< Updated upstream
+=======
+=======
+
+    public function checkSession() {
+        if (isset($_SESSION['accountId'])) {
+
+=======
+
+    public function checkSession() {
+        if (isset($_SESSION['accountId'])) {
+
+>>>>>>> Stashed changes
+            $user = [
+                'accountId' => $_SESSION['accountId'],
+                'userName' => $_SESSION['userName'],
+                'email' => $_SESSION['email'],
+                'profilePicture' => $_SESSION['profilePicture'],
+                'refreshToken' => $_SESSION['refreshToken'],
+                'expiredTime' => $_SESSION['expiredTime'],
+                'roleId' => $_SESSION['roleId'],
+                'isDarkTheme' => $_SESSION['isDarkTheme'],
+                'isVerified' => $_SESSION['isVerified']
+            ];
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+
+            $GLOBALS['user'] = $decoded->data;
+>>>>>>> Stashed changes
 
             return [
                 'status' => true,
@@ -111,6 +147,20 @@ class AuthMiddleware
                 'status' => false,
                 'user' => null,
                 'message' => 'Failed to decode refreshed token'
+<<<<<<< Updated upstream
+=======
+=======
+                'user' => $user,
+                'message' => 'Session found'
+>>>>>>> Stashed changes
+=======
+
+            return [
+                'status' => true,
+                'user' => $user,
+                'message' => 'Session found'
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
             ];
         }
     }

@@ -21,6 +21,11 @@ class AuthController extends BaseController {
             $result = $authService->login($data['email'], $data['password']);
 
             if ($result['status'] === true) {
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
                 // Access token -> 1 hour
                 setcookie('access_token', $result['access_token'], [
                     'expires' => time() + 3600, // 1 hour
@@ -40,6 +45,43 @@ class AuthController extends BaseController {
                     'httponly' => true,
                     'samesite' => 'None'
                 ]);
+<<<<<<< Updated upstream
+=======
+=======
+
+=======
+
+>>>>>>> Stashed changes
+                $_SESSION['accountId'] = $result['accountId'];
+                $_SESSION['userName'] = $result['userName'];
+                $_SESSION['email'] = $result['email'];
+                $_SESSION['profilePicture'] = $result['profilePicture'];
+                $_SESSION['refreshToken'] = $result['refreshToken'];
+                $_SESSION['expiredTime'] = $result['expiredTime'];
+                $_SESSION['roleId'] = $result['roleId'];
+                $_SESSION['isDarkTheme'] = $result['isDarkTheme'];
+                $_SESSION['isVerified'] = $result['isVerified'];
+
+//                setcookie('access_token', $result['access_token'], [
+//                    'expires' => time() + 3600, // 1 hour
+//                    'path' => '/',
+//                    'secure' => true,
+//                    'httponly' => true,
+//                    'samesite' => 'None'
+//                ]);
+//
+//                setcookie('refresh_token', $result['refresh_token'], [
+//                    'expires' => time() + (7 * 24 * 60 * 60),
+//                    'path' => '/',
+//                    'secure' => true,
+//                    'httponly' => true,
+//                    'samesite' => 'None'
+//                ]);
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
                 echo json_encode([
                     'status' => true,
@@ -153,6 +195,11 @@ class AuthController extends BaseController {
         }
     }
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
     public function logout()
     {
         // Clear the JWT cookie
@@ -173,6 +220,23 @@ class AuthController extends BaseController {
             'httponly' => true,
             'samesite' => 'None'
         ]);
+<<<<<<< Updated upstream
+=======
+=======
+    public function logout() {
+
+        $_SESSION = [];
+
+        session_destroy();
+>>>>>>> Stashed changes
+=======
+    public function logout() {
+
+        $_SESSION = [];
+
+        session_destroy();
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
         // Perform the redirect
         header('Location: /home');
