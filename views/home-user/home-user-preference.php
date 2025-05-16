@@ -1,3 +1,12 @@
+<?php
+
+include_once "./app/controllers/HomeUserController.php";
+$homeUserController = new HomeUserController();
+$user = $homeUserController->getUserInfo();
+$userData = $user['user'];
+
+?>
+
 <!-- Main container with sidebar and content -->
 <div class="container main-container d-flex" style="margin-top: 56px;">
 
@@ -14,8 +23,8 @@
                 <div class="section-title">Avatar</div>
                 <div class="setting-row setting-row-avatar">
                     <div class="setting-label setting-avatar" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center">
-                        <?php if (!empty($GLOBALS['user']->profilePicture)): ?>
-                            <img id="preference--image__icon" src="<?= $GLOBALS['user']->profilePicture ?>" style="width: 70px; height: 70px;">
+                        <?php if (!empty($userData->profilePicture)): ?>
+                            <img id="preference--image__icon" src="<?= $userData->profilePicture ?>" style="width: 70px; height: 70px;">
                         <?php else: ?>
                             <i class="fa-regular fa-circle-user"></i>
                         <?php endif; ?>
@@ -34,7 +43,7 @@
 
                 <div class="setting-row">
                     <div class="setting-label">Username</div>
-                    <input class="form-control username--rename__input" style="width: 200px" placeholder="<?= $GLOBALS['user']->userName?>" value="<?= $GLOBALS['user']->userName?>">
+                    <input class="form-control username--rename__input" style="width: 200px" placeholder="<?= $userData->userName?>" value="<?= $userData->userName?>">
                 </div>
 
                 <div class="section-divider"></div>

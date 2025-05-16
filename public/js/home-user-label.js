@@ -887,7 +887,7 @@ class LabelNote {
 
     removeNoteFromLabel_POST(noteId, labelName) {
         fetch(`/label/note-delete`, {
-            method: 'POST',
+            method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 noteId,

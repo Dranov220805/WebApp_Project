@@ -7,175 +7,137 @@ class AuthMiddleware
 {
     private string $jwtSecret = 'your_secret_key';
     private AuthController $authController;
+    private AuthService $authService;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->authController = new AuthController();
+        $this->authService = new AuthService();
     }
 
-    // Redirect to home if already logged in
-    public function index()
-    {
-        $checkToken = $this->checkSession();
+    public function index() {
+        $check = $this->checkSession();
 
-        if ($checkToken['status'] === true) {
-            header('location:/');
+        if ($check['status']) {
+            header('Location: /');
             exit();
         }
+
         $this->authController->index();
     }
 
-    public function redirect()
-    {
+    public function redirect() {
         header('Location: /home');
+        exit();
     }
 
-    public function logout()
-    {
+    public function logout() {
         $this->authController->logout();
     }
 
-    public function login_POST()
-    {
+    public function login_POST() {
         $this->authController->login_POST();
     }
 
-    // Session-based auth check for protected routes
-    public function checkSession()
-    {
+    public function checkSession() {
         $jwt = $_COOKIE['access_token'] ?? null;
 
         if (!$jwt) {
-            return $this->tryRefresh(); // No token, try to refresh
+            return $this->tryRefresh();
         }
 
         try {
             $decoded = JWT::decode($jwt, new Key($this->jwtSecret, 'HS256'));
 
-            // Token is expired
             if (isset($decoded->exp) && $decoded->exp < time()) {
-                return $this->tryRefresh(); // Attempt refresh
+                return $this->tryRefresh();
             }
 
             $GLOBALS['user'] = $decoded->data;
 
             return [
                 'status' => true,
-                'token_data' => $decoded
+                'user' => $decoded->data,
+                'message' => null,
             ];
-
         } catch (Exception $e) {
-            // Token is invalid → try refresh
             return $this->tryRefresh();
         }
     }
 
-    private function tryRefresh()
-    {
+    private function tryRefresh() {
         $refreshToken = $_COOKIE['refresh_token'] ?? null;
-
         if (!$refreshToken) {
-            return [
-                'status' => false,
-                'message' => 'No refresh token'
-            ];
+            return ['status' => false, 'user' => null, 'message' => 'No refresh token'];
         }
 
-        $authService = new AuthService();
-        $newTokenResult = $authService->refreshAccessToken($refreshToken);
+        $newTokenResult = $this->authService->refreshAccessToken($refreshToken);
 
         if (!$newTokenResult['status']) {
-            return [
-                'status' => false,
-                'message' => 'Invalid refresh token'
-            ];
+            return ['status' => false, 'user' => null, 'message' => 'Invalid refresh token'];
         }
 
         $newAccessToken = $newTokenResult['access_token'];
 
-        // Set new access token for next requests
-        setcookie('access_token', $newAccessToken, [
-            'expires' => time() + 3600,
-            'path' => '/',
-//            'domain' => 'pernote.id.vn',
-            'secure' => true,
-            'httponly' => true,
-            'samesite' => 'None'
-        ]);
+        $this->setAccessTokenCookie($newAccessToken);
 
-        // Decode token right away so current request has access
         try {
             $decoded = JWT::decode($newAccessToken, new Key($this->jwtSecret, 'HS256'));
             $GLOBALS['user'] = $decoded->data;
 
-            return [
-                'status' => true,
-                'token_data' => $decoded
-            ];
+            return ['status' => true, 'user' => $decoded->data, 'message' => null];
         } catch (Exception $e) {
-            return [
-                'status' => false,
-                'message' => 'Failed to decode refreshed token'
-            ];
+            return ['status' => false, 'user' => null, 'message' => 'Failed to decode refreshed token'];
         }
     }
 
-    public function getUrlActivationLink()
-    {
-        if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-            http_response_code(405);
-            echo json_encode([
-                'status' => false,
-                'message' => 'Method not allowed'
-            ]);
-            exit();
-        }
+    private function setAccessTokenCookie(string $token) {
+        setcookie('access_token', $token, [
+            'expires' => time() + 3600,
+            'path' => '/',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'None',
+        ]);
+    }
 
-        if (!isset($_GET['token']) || empty($_GET['token'])) {
+    public function getUrlActivationLink() {
+        $token = $_GET['token'] ?? null;
+        if (empty($token)) {
             http_response_code(400);
-            echo json_encode([
-                'status' => false,
-                'message' => 'Token not provided'
-            ]);
+            echo json_encode(['status' => false, 'message' => 'Token not provided']);
             exit();
         }
 
-        $token = $_GET['token'];
         $this->authController->accountActivate($token);
     }
 
-     public function accountActivate()
-     {
-         $this->authController->accountActivate();
-     }
+    public function accountActivate() {
+        $this->authController->accountActivate();
+    }
 
-    public function forgotPassword()
-    {
+    public function forgotPassword() {
         $this->authController->forgotPassword();
     }
 
-    public function resetPassword()
-    {
+    public function resetPassword() {
         $this->authController->resetPassword();
     }
 
-    public function changePassword()
-    {
-        $checkToken = $this->checkSession();
-
-        if ($checkToken['status'] === false) {
-            header('location:/log/login');
+    public function changePassword() {
+        $check = $this->checkSession();
+        if (!$check['status']) {
+            header('Location: /log/login');
             exit();
         }
-        $this->authController->changePassword();
+
+        $this->authController->changePassword($check['user']);
     }
 
     public function checkVerification() {
-        $checkToken = $this->checkSession();
-
-        if ($checkToken['status'] === false) {
+        $check = $this->checkSession();
+        if (!$check['status']) {
             exit();
         }
-        $this->authController->checkVerification();
+        $this->authController->checkVerification($check['user']);
     }
 }

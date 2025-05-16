@@ -123,8 +123,10 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
 
                 case 'label':
-                    if ($_GET['param_2'] == 'note-delete') {
+                    if ($_GET['param_2'] == 'delete') {
                         $noteMiddleWare->deleteLabel_POST();
+                    } else if ($_GET['param_2'] == 'note-delete') {
+                        $noteMiddleWare->deleteNoteLabel_POST();
                     }
                     break;
         }

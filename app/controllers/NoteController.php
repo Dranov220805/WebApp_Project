@@ -6,8 +6,7 @@ class NoteController {
         $this->noteService = new NoteService();
     }
 
-    public function getNotes() {
-        $user = $GLOBALS['user'];
+    public function getNotes($user) {
         $accountId = $user->accountId ?? null;
 
         if (!$accountId) {
@@ -24,8 +23,7 @@ class NoteController {
         }
     }
 
-    public function getNotesPaginated() {
-        $user = $GLOBALS['user'];
+    public function getNotesPaginated($user) {
         $accountId = $user->accountId;
         $intPage = isset($_GET['page']) ? $_GET['page'] : 1;
         $perPage = isset($_GET['limit']) ? $_GET['limit'] : 10;
@@ -59,8 +57,7 @@ class NoteController {
         ]);
     }
 
-    public function getPinnedNotesPaginated() {
-        $user = $GLOBALS['user'];
+    public function getPinnedNotesPaginated($user) {
         $accountId = $user->accountId;
         $intPage = isset($_GET['page']) ? $_GET['page'] : 1;
         $perPage = isset($_GET['limit']) ? $_GET['limit'] : 100;
@@ -91,8 +88,7 @@ class NoteController {
         ]);
     }
 
-    public function getTrashNotePaginated() {
-        $user = $GLOBALS['user'];
+    public function getTrashNotePaginated($user) {
         $accountId = $user->accountId ?? null;
         $intPage = isset($_GET['page']) ? $_GET['page'] : 1;
         $perPage = isset($_GET['limit']) ? $_GET['limit'] : 100;
@@ -124,8 +120,7 @@ class NoteController {
         ]);
     }
 
-    public function getPinnedNotes() {
-        $user = $GLOBALS['user'];
+    public function getPinnedNotes($user) {
         $accountId = $user->accountId ?? null;
         if (empty($accountId)) {
             echo json_encode([
@@ -150,8 +145,7 @@ class NoteController {
         }
     }
 
-    public function getShareNotes() {
-        $user = $GLOBALS['user'];
+    public function getShareNotes($user) {
         $accountId = $user->accountId ?? null;
         if (empty($accountId)) {
             echo json_encode([
@@ -175,10 +169,9 @@ class NoteController {
         }
     }
 
-    public function createNote_POST() {
+    public function createNote_POST($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-        $user = $GLOBALS['user'];
         $accountId = $user->accountId ?? null;
 
         if (!empty($accountId) && !empty($data['title']) && !empty($data['content'])) {
@@ -212,12 +205,11 @@ class NoteController {
         }
     }
 
-    public function updateNote_POST() {
+    public function updateNote_POST($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
 
-        $user = $GLOBALS['user'];
-        $accountId = $user->accountId;
+        $accountId = $user->accountId ?? null;
         $noteId = $data['noteId'] ?? null;
         $title = $data['title'] ?? null;
         $content = $data['content'] ?? null;
@@ -252,11 +244,10 @@ class NoteController {
         }
     }
 
-    public function deleteNote_POST() {
+    public function deleteNote_POST($user) {
         $input = trim(file_get_contents("php://input"));
         $data = json_decode($input, true);
 
-        $user = $GLOBALS['user'];
         $accountId = $user->accountId ?? null;
         $noteId = $data['noteId'] ?? null;
 
@@ -287,7 +278,7 @@ class NoteController {
         }
     }
 
-    public function searchNotes()
+    public function searchNotes($user)
     {
         $searchTerm = $_GET['query'] ?? '';
 
@@ -299,7 +290,6 @@ class NoteController {
             return;
         }
 
-        $user = $GLOBALS['user'];
         $accountId = $user->accountId ?? null;
 
         if (!$accountId) {
@@ -319,10 +309,9 @@ class NoteController {
         ]);
     }
 
-    public function pinNote_POST() {
+    public function pinNote_POST($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-        $user = $GLOBALS['user'];
         $accountId = $user->accountId ?? null;
         $noteId = $data['noteId'] ?? null;
         if (empty($accountId) || empty($noteId)) {
@@ -349,10 +338,9 @@ class NoteController {
         }
     }
 
-    public function unpinNote_POST() {
+    public function unpinNote_POST($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-        $user = $GLOBALS['user'];
         $accountId = $user->accountId ?? null;
         $noteId = $data['noteId'] ?? null;
         if (empty($accountId) || empty($noteId)) {
@@ -379,10 +367,9 @@ class NoteController {
         }
     }
 
-    public function restoreNote_POST() {
+    public function restoreNote_POST($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-        $user = $GLOBALS['user'];
         $accountId = $user->accountId ?? null;
         $noteId = $data['noteId'] ?? null;
         if (empty($accountId) || empty($noteId)) {
@@ -409,10 +396,9 @@ class NoteController {
         }
     }
 
-    public function hardDeleteNote_POST() {
+    public function hardDeleteNote_POST($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-        $user = $GLOBALS['user'];
         $accountId = $user->accountId ?? null;
         $noteId = $data['noteId'] ?? null;
         if (empty($accountId) || empty($noteId)) {
@@ -439,8 +425,7 @@ class NoteController {
         }
     }
 
-    public function getLabelNote($labelName) {
-        $user = $GLOBALS['user'];
+    public function getLabelNote($user, $labelName) {
         $accountId = $user->accountId;
 
         $result = $this->noteService->getLabelNoteByLabelName($labelName, $accountId);
@@ -459,10 +444,9 @@ class NoteController {
         }
     }
 
-    public function createLabel_POST() {
+    public function createLabel_POST($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-        $user = $GLOBALS['user'];
         $accountId = $user->accountId ?? null;
         $labelName = $data['labelName'] ?? null;
         if (empty($accountId) || empty($labelName)) {
@@ -489,10 +473,9 @@ class NoteController {
         }
     }
 
-    public function updateLabel_POST() {
+    public function updateLabel_POST($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-        $user = $GLOBALS['user'];
         $accountId = $user->accountId ?? null;
         $oldLabelName = $data['oldLabel'] ?? null;
         $newLabelName = $data['newLabel'] ?? null;
@@ -520,10 +503,9 @@ class NoteController {
         }
     }
 
-    public function deleteLabel_POST() {
+    public function deleteLabel_POST($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-        $user = $GLOBALS['user'];
         $accountId = $user->accountId ?? null;
         $labelName = $data['labelName'] ?? null;
         if (empty($accountId) || empty($labelName)) {
@@ -550,10 +532,9 @@ class NoteController {
         }
     }
 
-    public function createNoteLabel_POST() {
+    public function createNoteLabel_POST($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-        $user = $GLOBALS['user'];
         $accountId = $user->accountId ?? null;
         $labelName = $data['labelName'] ?? null;
         $noteId = $data['noteId'] ?? null;
@@ -581,10 +562,9 @@ class NoteController {
 
     }
 
-    public function deleteNoteLabel_POST() {
+    public function deleteNoteLabel_POST($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-        $user = $GLOBALS['user'];
         $accountId = $user->accountId ?? null;
         $labelName = $data['labelName'] ?? null;
         $noteId = $data['noteId'] ?? null;
@@ -611,8 +591,7 @@ class NoteController {
         }
     }
 
-    public function createImageForNoteByImageUploadAndNoteId() {
-        $user = $GLOBALS['user'];
+    public function createImageForNoteByImageUploadAndNoteId($user) {
         $accountId = $user->accountId ?? null;
         $noteId = $_POST['noteId'] ?? null;
         $imageUpload = $_FILES['image'] ?? null;
@@ -661,8 +640,7 @@ class NoteController {
         }
     }
 
-    public function deleteImageForNoteByImageUrlAndNoteId() {
-        $user = $GLOBALS['user'];
+    public function deleteImageForNoteByImageUrlAndNoteId($user) {
         $accountId = $user->accountId ?? null;
         $noteId = $_POST['noteId'] ?? null;
         $imageUrl = $_POST['imageUrl'] ?? null;

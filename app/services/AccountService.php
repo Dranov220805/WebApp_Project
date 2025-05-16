@@ -25,11 +25,9 @@ class AccountService{
         return $this->accountRepository->getRoleByUsernameAndPassword($account_username, $account_password);
     }
 
-    public function updateProfilePictureByAccountId($account_id, $uploadImage) {
+    public function updateProfilePictureByAccountIdAndEmail($account_id, $email, $uploadImage) {
         $result = $this->accountRepository->updateProfilePictureByAccountId($account_id, $uploadImage);
         if (!$result['status'] === false) {
-            $userData = $GLOBALS['user'];
-            $email = $userData->email;
             $user = $this->accountRepository->getAccountByEmail($email);
             $accountId = $user->getAccountId();
             $userPreference = $this->accountRepository->getPreferencesByAccountId($accountId);

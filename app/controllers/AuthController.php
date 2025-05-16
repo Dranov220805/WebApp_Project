@@ -108,10 +108,9 @@ class AuthController extends BaseController {
         }
     }
 
-    public function changePassword() {
+    public function changePassword($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-        $user = $GLOBALS['user'];
         $email = $user->email;
         $currPassword = $data['currentPassword'];
         $password = $data['newPassword'];
@@ -180,8 +179,7 @@ class AuthController extends BaseController {
         exit();
     }
 
-    public function checkVerification() {
-        $user = $GLOBALS['user'];
+    public function checkVerification($user) {
         $email = $user->email;
 
         $result = $this->authService->checkVerification($email);

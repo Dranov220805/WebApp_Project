@@ -15,7 +15,7 @@ class NoteMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->noteController->getNotesPaginated();
+        $this->noteController->getNotesPaginated($checkToken['user']);
     }
 
     public function getPinnedNotes() {
@@ -24,7 +24,7 @@ class NoteMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->noteController->getPinnedNotesPaginated();
+        $this->noteController->getPinnedNotesPaginated($checkToken['user']);
     }
 
     public function getTrashNote() {
@@ -34,7 +34,7 @@ class NoteMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->noteController->getTrashNotePaginated();
+        $this->noteController->getTrashNotePaginated($checkToken['user']);
     }
 
     public function SearchNotes() {
@@ -44,7 +44,7 @@ class NoteMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->noteController->SearchNotes();
+        $this->noteController->SearchNotes($checkToken['user']);
     }
 
     public function ShareNotes() {
@@ -54,7 +54,7 @@ class NoteMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->noteController->getShareNotes();
+        $this->noteController->getShareNotes($checkToken['user']);
     }
 
     public function createNote_POST() {
@@ -64,7 +64,7 @@ class NoteMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->noteController->createNote_POST();
+        $this->noteController->createNote_POST($checkToken['user']);
     }
 
     public function updateNote_POST() {
@@ -74,7 +74,7 @@ class NoteMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->noteController->updateNote_POST();
+        $this->noteController->updateNote_POST($checkToken['user']);
     }
 
     public function deleteNote_POST() {
@@ -84,7 +84,7 @@ class NoteMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->noteController->deleteNote_POST();
+        $this->noteController->deleteNote_POST($checkToken['user']);
     }
 
     public function pinNote_POST() {
@@ -94,7 +94,7 @@ class NoteMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->noteController->pinNote_POST();
+        $this->noteController->pinNote_POST($checkToken['user']);
     }
 
     public function unpinNote_POST() {
@@ -104,7 +104,7 @@ class NoteMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->noteController->unpinNote_POST();
+        $this->noteController->unpinNote_POST($checkToken['user']);
     }
 
     public function restoreNote_POST() {
@@ -114,7 +114,7 @@ class NoteMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->noteController->restoreNote_POST();
+        $this->noteController->restoreNote_POST($checkToken['user']);
     }
 
     public function hardDeleteNote_POST() {
@@ -124,7 +124,7 @@ class NoteMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->noteController->hardDeleteNote_POST();
+        $this->noteController->hardDeleteNote_POST($checkToken['user']);
     }
 
     public function createLabel_POST() {
@@ -134,7 +134,7 @@ class NoteMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->noteController->createLabel_POST();
+        $this->noteController->createLabel_POST($checkToken['user']);
     }
 
     public function updateLabel_POST() {
@@ -144,7 +144,7 @@ class NoteMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->noteController->updateLabel_POST();
+        $this->noteController->updateLabel_POST($checkToken['user']);
     }
 
     public function deleteLabel_POST() {
@@ -154,7 +154,7 @@ class NoteMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->noteController->deleteLabel_POST();
+        $this->noteController->deleteLabel_POST($checkToken['user']);
     }
 
     public function getLabelNote($labelName) {
@@ -164,7 +164,7 @@ class NoteMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->noteController->getLabelNote($labelName);
+        $this->noteController->getLabelNote($checkToken['user'], $labelName);
     }
 
     public function createNoteLabel_POST() {
@@ -174,7 +174,7 @@ class NoteMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->noteController->createNoteLabel_POST();
+        $this->noteController->createNoteLabel_POST($checkToken['user']);
     }
 
     public function deleteNoteLabel_POST() {
@@ -184,7 +184,7 @@ class NoteMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->noteController->deleteNoteLabel_POST();
+        $this->noteController->deleteNoteLabel_POST($checkToken['user']);
     }
 
     public function createImageNote_POST() {
@@ -194,7 +194,7 @@ class NoteMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->noteController->createImageForNoteByImageUploadAndNoteId();
+        $this->noteController->createImageForNoteByImageUploadAndNoteId($checkToken['user']);
     }
 
     public function deleteImageNote_POST() {
@@ -204,7 +204,7 @@ class NoteMiddleWare {
             header('location:/log/login');
             exit();
         }
-            $this->noteController->deleteImageForNoteByImageUrlAndNoteId();
+            $this->noteController->deleteImageForNoteByImageUrlAndNoteId($checkToken['user']);
     }
 
 }

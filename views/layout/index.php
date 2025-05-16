@@ -1,4 +1,10 @@
 <?php
+
+    include_once "./app/controllers/HomeUserController.php";
+    $homeUserController = new HomeUserController();
+    $user = $homeUserController->getUserInfo();
+    $userData = $user['user'];
+
     /**
      * @var $content
     */
@@ -9,7 +15,7 @@
         include "./views/layout/partials/header.php";
     ?>
 <body class="<?php
-if (isset($GLOBALS['user']) && !empty($GLOBALS['user']->isDarkTheme) && $GLOBALS['user']->isDarkTheme == true) {
+if (isset($userData) && !empty($userData->isDarkTheme) && $userData->isDarkTheme == true) {
     echo 'dark-mode';
 }
 ?>">
