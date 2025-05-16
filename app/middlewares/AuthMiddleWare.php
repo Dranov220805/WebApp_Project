@@ -169,6 +169,14 @@ class AuthMiddleware {
         $this->authController->changePassword($check['user']);
     }
 
+    public function sendVerificationLink_POST() {
+        $check = $this->checkSession();
+        if (!$check['status']) {
+            exit();
+        }
+        $this->authController->sendVerificationLink_POST();
+    }
+
     public function checkVerification() {
         $check = $this->checkSession();
         if (!$check['status']) {
@@ -176,6 +184,6 @@ class AuthMiddleware {
         }
         $this->authController->checkVerification($check['user']);
     }
-    }
+}
 
 ?>

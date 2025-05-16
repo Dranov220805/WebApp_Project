@@ -61,6 +61,8 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
                     $authMiddleware->checkSession();
                 } else if($_GET['param_2'] == 'forgot'){
                     $authMiddleware->resetPassword();
+                } else if ($_GET['param_2'] == 'send-verification'){
+                    $authMiddleware->sendVerificationLink_POST();
                 }
                 break;
         }

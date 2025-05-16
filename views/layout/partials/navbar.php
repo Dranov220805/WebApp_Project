@@ -91,7 +91,10 @@ $userData = $user['user'];
                 ?>
             </div>
 
-            <div class="modal-footer">
+            <div class="modal-footer f-flex justify-content-space-between">
+                <?php if ($userData['isVerified'] == false) { ?>
+                    <button id="btn-send-verification">Send Verification Link</button>
+                <?php } ?>
                 <a href="/log/logout" type="button" class="btn btn-danger">Log out</a>
             </div>
 

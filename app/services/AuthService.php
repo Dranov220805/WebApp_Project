@@ -100,6 +100,18 @@ class AuthService
         }
     }
 
+    public function sendVerificationLink($email) {
+        $user = $this->accountRepository->getAccountByEmail($email);
+        if (!$user) {
+            return [
+                'status' => false,
+                'message' => 'Email not found'
+            ];
+        } else {
+            return $user->getActivationToken();
+        }
+    }
+
     public function checkVerification($email) {
         $result = $this->accountRepository->getAccountByEmail($email);
 

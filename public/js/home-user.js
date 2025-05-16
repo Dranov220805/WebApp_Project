@@ -22,6 +22,7 @@ class HomeUser {
         // this.loadUserPreference();
         this.attachEventListeners();
         this.checkVerification();
+        this.handleSendVerificationLink();
         this.handleAvatarUpload();
         this.attachPreferenceSaveHandler();
     }
@@ -55,6 +56,38 @@ class HomeUser {
         });
 
         toast.show();
+    }
+
+    handleSendVerificationLink() {
+        const sendBtn = document.getElementById('btn-send-verification');
+        if (sendBtn) {
+            sendBtn.addEventListener('click', async (e) => {
+                const overlay = document.getElementById('overlay-loading');
+                if (overlay) overlay.classList.remove('d-none'); // Show loading overlay
+
+                try {
+                    const response = await fetch(`/auth/send-verification`, {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.status === true || data.success === true) {
+                        this.showToast('Verification successfully sent', 'success');
+                    } else {
+                        this.showToast(data.message || 'Failed to send verification', 'danger');
+                    }
+                } catch (err) {
+                    console.error('Error sending verification link:', err);
+                    this.showToast('Something went wrong while sending verification link', 'danger');
+                } finally {
+                    if (overlay) overlay.classList.add('d-none'); // Hide overlay
+                }
+            });
+        }
     }
 
     attachPreferenceSaveHandler() {

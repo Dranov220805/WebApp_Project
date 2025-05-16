@@ -53,6 +53,20 @@ class AuthController extends BaseController {
         }
     }
 
+    public function sendVerificationLink_POST() {
+        if (isset($_SESSION['email'])) {
+            $email = $_SESSION['email'];
+            $activation_token = $this->authService->sendVerificationLink($_SESSION['email']);
+            if (sendActivationEmail($email, $activation_token)) {
+                http_response_code(200);
+                echo json_encode([
+                    'status' => true,
+                    'message' => 'Send email verification successfully'
+                ]);
+            }
+        }
+    }
+
     public function accountActivate($activation_token) {
         $result = $this->authService->accountActivate($activation_token);
         if ($result) {
@@ -103,7 +117,7 @@ class AuthController extends BaseController {
     public function changePassword($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);
-        $email = $user->email;
+        $email = $user['email'];
         $currPassword = $data['currentPassword'];
         $password = $data['newPassword'];
 
@@ -157,7 +171,7 @@ class AuthController extends BaseController {
     }
 
     public function checkVerification($user) {
-        $email = $user->email;
+        $email = $user['email'];
 
         $result = $this->authService->checkVerification($email);
 
