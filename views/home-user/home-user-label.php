@@ -133,7 +133,7 @@
                     <!-- Note Details -->
                     <div class="mb-3">
                         <h6 class="fw-bold mb-1">Note Details</h6>
-                        <div class="p-2 border rounded bg-light-subtle dark-mode:bg-dark text-muted" style="height: 90px; overflow: hidden">
+                        <div class="share-note__detail p-2" style="height: 90px; overflow: hidden">
                             <strong class="shared-note--title">Nothing</strong><br>
                             <small class="shared-note--content" style="max-height: 100px; height: 100%">Nothing in here...</small>
                         </div>

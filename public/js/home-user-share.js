@@ -1,3 +1,5 @@
+import { NoteCollaborator } from './noteCollaborator.js';
+
 class ShareNotes {
     static instance = null;
 
@@ -15,6 +17,10 @@ class ShareNotes {
         this.isLoadingTrash = false;
         this.lastScrollTop = 0;
         this.scrollThrottle = false;
+
+        this.noteCollaborator = null;
+        this.currentNoteId = null;
+        this.imageLinkRef = null;
 
         this.setupEvents();
     }
@@ -50,16 +56,20 @@ class ShareNotes {
         // window.addEventListener('scroll', this.handleScroll.bind(this));
         // console.log('Attached scroll listener');
 
-        const autoResizeTextarea = (textarea) => {
-            textarea.style.height = '100%';
-            textarea.style.minHeight = '300px';
-            textarea.style.height = textarea.scrollHeight + 'px'; // Set to scroll height
-        };
+
 
         const myTextarea = document.querySelector('.note-content-input-autosave');
-        myTextarea.addEventListener('input', () => autoResizeTextarea(myTextarea));
+        if (myTextarea) {
+            const autoResizeTextarea = (textarea) => {
+                textarea.style.height = '100%';
+                textarea.style.minHeight = '300px';
+                textarea.style.height = textarea.scrollHeight + 'px'; // Set to scroll height
+            };
 
-        autoResizeTextarea(myTextarea);
+            myTextarea.addEventListener('input', () => autoResizeTextarea(myTextarea));
+
+            autoResizeTextarea(myTextarea);
+        }
     }
 
     handleScroll() {
@@ -125,61 +135,75 @@ class ShareNotes {
         const container = document.querySelector(".share-note__load");
         if (!container) return;
 
+        // Group notes by noteId and aggregate labels (just like in PHP)
+        const groupedNotes = {};
         notes.forEach(note => {
-            if (document.querySelector(`.note-sheet[data-note-id="${note.noteId}"]`)) {
+            const noteId = note.noteId;
+            if (!groupedNotes[noteId]) {
+                groupedNotes[noteId] = { ...note, labels: [] };
+            }
+            if (note.labelName && !groupedNotes[noteId].labels.includes(note.labelName)) {
+                groupedNotes[noteId].labels.push(note.labelName);
+            }
+        });
+
+        Object.values(groupedNotes).forEach(note => {
+            if (document.querySelector(`.shared-note-card[data-note-id="${note.noteId}"]`)) {
                 console.log(`Skipping duplicate note: ${note.noteId}`);
                 return;
             }
 
-            const div = document.createElement("div");
-            div.className = "note-sheet d-flex flex-column";
-            div.dataset.noteId = note.noteId;
-            div.dataset.noteTitle = note.title;
-            div.dataset.noteContent = note.content;
+            const noteDiv = document.createElement("div");
+            noteDiv.className = "col-12";
 
-            if (note.imageLink && note.imageLink.trim() !== '') {
-                div.dataset.imageLink = note.imageLink;
-            }
+            const canEditText = note.canEdit ? "Can edit" : "Read-only";
+            const accessClass = note.canEdit ? "access-edit" : "access-readonly";
 
-            if (note.labels && note.labels.length > 0) {
-                div.dataset.labels = JSON.stringify(note.labels);
-            }
-
-            let labels = [];
-            if (div.dataset.labels) {
-                try {
-                    labels = JSON.parse(div.dataset.labels);
-                } catch (e) {
-                    console.error("Failed to parse labels:", e);
-                }
-            }
+            const labelsHTML = (note.labels || []).map(label =>
+                label ? `<span class="badge bg-secondary me-1">${label}</span>` : ''
+            ).join("");
 
             const imageHTML = note.imageLink && note.imageLink.trim() !== ''
-                ? `<div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
-                   <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
+                ? `<div class="note--share__image">
+                    <img src="${note.imageLink}" class="rounded" alt="User Avatar" style="margin-top: 0px; height: 100%; width: auto">
                </div>`
                 : '';
 
-            div.innerHTML = `
-            ${imageHTML}
-            <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
-                <h3 class="note-sheet__title">${note.title}</h3>
-                <div class="note-sheet__content" style="overflow-x: hidden">
-                    ${note.content.replace(/\n/g, '<br>')}
-                </div>
-            </div>
-            <div class="note-sheet__menu">
-                <div>
-                    <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack-slash"></i></button>
-                    <button title="Add Label" data-bs-target="listLabelNoteModal" id="note-label-list-btn" class="note-label-list-btn"><i class="fa-solid fa-tags"></i></button>
-                    <button class="note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
-                    <button class="note-share-btn" title="Share this Note"><i class="fa-solid fa-users"></i></button>
-                    <button class="note-lock-btn" title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
+            const labelAttr = JSON.stringify(note.labels || []);
+
+            noteDiv.innerHTML = `
+            <div class="card shared-note-card" style="max-height: 230px"
+                data-note-id="${note.noteId}"
+                data-note-title="${note.title || ''}"
+                data-note-content="${note.content || ''}"
+                ${note.imageLink ? `data-note-image="${note.imageLink}"` : ''}
+                ${note.labels.length > 0 ? `data-note-labels='${labelAttr}'` : ''}
+                data-note-edit="${note.canEdit ? 'true' : 'false'}">
+                <div class="card-body">
+                    <div class="d-flex justify-content-start" style="width: 100%; max-width: 100%;">
+                        <div style="width: 100%">
+                            <div class="small mb-1 note--share__by">
+                                Shared by <strong>${note.sharedEmail}</strong>
+                            </div>
+                            <div class="small mb-2 note--share__time">
+                                Shared on ${new Date(note.timeShared).toLocaleDateString('en-US', {
+                month: 'short', day: '2-digit', year: 'numeric'
+            })}
+                            </div>
+                            ${note.title ? `<h6 class="fw-bold note--share__title">${note.title}</h6>` : ''}
+                            ${note.content ? `<p class="mb-1 note--share__content" style="overflow-y: hidden; max-height: 48px; padding-right: 20%">${note.content}</p>` : ''}
+                            ${labelsHTML ? `<div class="mt-2">${labelsHTML}</div>` : ''}
+                        </div>
+                        <div class="text-end" style="display: flex; flex-direction: column; width: 120px; justify-content: space-between; align-items: end">
+                            <span class="access-label ${accessClass}" style="width: fit-content">${canEditText}</span>
+                            ${imageHTML}
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
 
-            container.appendChild(div);
+            container.appendChild(noteDiv);
         });
     }
 
@@ -201,39 +225,129 @@ class ShareNotes {
         icon.className = 'fa-solid fa-check-circle text-success';
         iconText.innerHTML = 'Saved';
 
-        modal.show();
-
         // Store noteId and image DOM ref on class instance
         this.currentNoteId = noteId;
         this.imageLinkRef = imageLink;
 
-        const triggerUploadBtn = modalEl.querySelector('#triggerImageUpload');
-        const triggerDeleteBtn = modalEl.querySelector('#triggerImageDelete');
-        const imageInput = modalEl.querySelector('#imageInput');
-        const noteIdInput = modalEl.querySelector('#noteIdInput');
         const inputTextarea = modalEl.querySelector('.note-content-input-autosave');
-
         inputTextarea.style.height = '100%';
-        imageInput.dataset.noteId = noteId;
-        noteIdInput.value = noteId;
-        noteIdInput.dataset.imageUrl = note.imageLink || '';
 
         // Block editing if user doesn't have permission
         const canEdit = note.canEdit === 'true' || note.canEdit === true;
 
         titleInput.readOnly = !canEdit;
         contentInput.readOnly = !canEdit;
-        triggerUploadBtn.disabled = !canEdit;
-        triggerDeleteBtn.disabled = !canEdit;
 
-        // Optionally style fields differently if not editable
-        if (!canEdit) {
-            // titleInput.classList.add('bg-light');
-            // contentInput.classList.add('bg-light');
-        } else {
-            // titleInput.classList.remove('bg-light');
-            // contentInput.classList.remove('bg-light');
+        // Setup auto-save mechanism if editable
+        if (canEdit) {
+            this.setupAutoSaveModal(noteId, titleInput, contentInput, icon, iconText);
         }
+
+        // Setup collaboration regardless of edit permission (for viewing changes)
+        // Disconnect previous instance if exists
+        if (this.noteCollaborator) {
+            this.noteCollaborator.disconnect();
+        }
+
+        // Create new collaborator instance
+        this.noteCollaborator = new NoteCollaborator(noteId, titleInput, contentInput);
+
+        // Connect to WebSocket server
+        this.noteCollaborator.connect();
+
+        // Add event listener to disconnect WebSocket when modal is closed
+        modalEl.addEventListener('hidden.bs.modal', () => {
+            if (this.noteCollaborator) {
+                this.noteCollaborator.disconnect();
+            }
+        }, { once: true });
+
+        modal.show();
+    }
+    
+    setupAutoSaveModal(noteId, titleInput, contentInput, icon, iconText) {
+        let timeout = null;
+        let isSaving = false;
+
+        const showSavingIcon = () => {
+            icon.className = 'fa-solid fa-spinner fa-spin text-warning';
+            iconText.innerHTML = 'Saving...';
+            iconText.className = 'text-warning';
+        };
+
+        const showSavedIcon = () => {
+            icon.className = 'fa-solid fa-check-circle text-success';
+            iconText.innerHTML = 'Saved';
+            iconText.className = 'text-success';
+        };
+
+        const showErrorIcon = () => {
+            icon.className = 'fa-solid fa-exclamation-circle text-danger';
+            iconText.innerHTML = 'Error';
+            iconText.className = 'text-danger';
+        };
+
+        const autoSave = () => {
+            if (isSaving) return;
+            isSaving = true;
+            showSavingIcon();
+
+            fetch('/note/update', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+                body: JSON.stringify({
+                    noteId,
+                    title: titleInput.value,
+                    content: contentInput.value
+                })
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+                    return res.json();
+                })
+                .then(data => {
+                    if (data.status === true) {
+                        showSavedIcon();
+                        const noteCard = document.querySelector(`[data-note-id="${noteId}"]`);
+                        if (noteCard) {
+                            noteCard.dataset.noteTitle = titleInput.value;
+                            noteCard.dataset.noteContent = contentInput.value;
+
+                            const titleEl = noteCard.querySelector('.note--share__title');
+                            const contentEl = noteCard.querySelector('.note--share__content');
+                            if (titleEl) titleEl.textContent = titleInput.value;
+                            if (contentEl) contentEl.textContent = contentInput.value;
+                        }
+                    } else {
+                        showErrorIcon();
+                        this.showToast('Failed to save note.', 'warning');
+                    }
+                })
+                .catch(() => {
+                    showErrorIcon();
+                    this.showToast('Failed to save note.', 'warning');
+                })
+                .finally(() => {
+                    isSaving = false;
+                });
+        };
+
+        const handleTyping = () => {
+            clearTimeout(timeout);
+            showSavingIcon();
+            timeout = setTimeout(autoSave, 300);
+        };
+
+        // Prevent duplicate listeners
+        titleInput.removeEventListener('input', this.handleTyping);
+        contentInput.removeEventListener('input', this.handleTyping);
+        this.handleTyping = handleTyping;
+
+        titleInput.addEventListener('input', handleTyping);
+        contentInput.addEventListener('input', handleTyping);
     }
 
 }

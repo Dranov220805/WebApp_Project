@@ -51,42 +51,7 @@ class AuthService
             'isVerified' => $user->getIsVerified(),
             'message' => 'Login successfully'
         ];
-    }
-    
-    // Called to renew session if user is active
-    public function refreshAccessToken($refreshToken)
-    {
-        $user = $this->accountRepository->getAccountByRefreshToken($refreshToken);
-        $userPreference = $this->accountRepository->getPreferencesByAccountId($user->getAccountId());
 
-        if (!$user || time() > $user->getExpiredTime()) {
-            return ['status' => false];
-        }
-
-        // Generate new access token
-        $payload = [
-            'iat' => time(),
-            'exp' => time() + 3600,
-            'data' => [
-                'accountId' => $user->getAccountId(),
-                'userName' => $user->getUsername(),
-                'email' => $user->getEmail(),
-                'profilePicture' => $user->getProfilePicture(),
-                'refreshToken' => $user->getRefreshToken(),
-                'expiredTime' => $user->getExpiredTime(),
-                'roleId' => $user->getRoleId(),
-                'isDarkTheme' => $userPreference->isDarkTheme(),
-                'isVerified' => $user->getIsVerified()
-            ]
-        ];
-
-        $newJwt = JWT::encode($payload, $this->jwtSecret, 'HS256');
-
-        return [
-            'status' => true,
-            'access_token' => $newJwt,
-            'data' => $payload['data']
-        ];
     }
 
     public function accountActivate($activation_token) {

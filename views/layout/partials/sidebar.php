@@ -2,8 +2,8 @@
 
 include_once "./app/controllers/HomeUserController.php";
 $homeUserController = new HomeUserController();
-
-$labelList = $homeUserController->getUserLabel();
+$user = $homeUserController->getUserInfo();
+$labelList = $homeUserController->getUserLabel($user['user']);
 
 ?>
 

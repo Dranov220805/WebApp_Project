@@ -883,8 +883,19 @@ body {
 }
 
 .sidebar__item--input {
-    color: white;
+    color: black;
     background-color: #f9f9f9;
+}
+
+.share-note__detail {
+    background-color: inherit;
+    color: black;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+}
+
+#share--email__input::placeholder {
+        color: black;
 }
 
 /* ─────── DARK MODE SUPPORT ─────── */
@@ -1068,6 +1079,10 @@ body.dark-mode .btn-close {
     color: white;
 }
 
+body.dark-mode #share--email__input::placeholder {
+    color: white;
+}
+
 .body.dark-mode .create-note-btn {
     background-color: #5771ff;
     color: white;
@@ -1189,6 +1204,12 @@ body.dark-mode .note--share__image {
 
 body.dark-mode .modal-dialog {
     background-color: rgba(0, 0, 0, 0);
+}
+
+body.dark-mode .share-note__detail {
+    background-color: #2b2b2b;
+    color: white;
+    border: none;
 }
 
 .shared-note-card {

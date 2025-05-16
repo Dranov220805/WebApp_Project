@@ -1,0 +1,12 @@
+FROM php:8.2-cli
+
+RUN docker-php-ext-install mysqli
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+WORKDIR /app
+COPY . /app
+
+RUN composer install
+
+CMD ["php", "bin/note_editor_server.php"]

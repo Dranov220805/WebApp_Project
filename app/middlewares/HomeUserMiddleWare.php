@@ -12,12 +12,11 @@ class HomeUserMiddleWare {
     public function index()
     {
         $checkToken = $this->authMiddleware->checkSession();
-
         if ($checkToken['status'] === false) {
             header('location:/log/login');
             exit();
         }
-        $this->homeUserController->index();
+        $this->homeUserController->index($checkToken['user']);
     }
     public function redirectToIndex() {
         header('location:/home');
@@ -33,7 +32,7 @@ class HomeUserMiddleWare {
             header('location:/log/login');
             exit();
         } 
-        $this->homeUserController->homeReference();
+        $this->homeUserController->homeReference($checkToken['user']);
     }
     public function homeLabel() {
         $checkToken = $this->authMiddleware->checkSession();
@@ -42,7 +41,7 @@ class HomeUserMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->homeUserController->homeLabel();
+        $this->homeUserController->homeLabel($checkToken['user']);
     }
     public function homeLabel_POST($labelName) {
         $checkToken = $this->authMiddleware->checkSession();
@@ -51,7 +50,7 @@ class HomeUserMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->homeUserController->homeLabel_POST($labelName);
+        $this->homeUserController->homeLabel_POST($checkToken['user'], $labelName);
     }
     public function homeShare() {
         $checkToken = $this->authMiddleware->checkSession();
@@ -60,7 +59,7 @@ class HomeUserMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->homeUserController->homeShare();
+        $this->homeUserController->homeShare($checkToken['user']);
     }
     public function homeTrash() {
         $checkToken = $this->authMiddleware->checkSession();
@@ -69,7 +68,7 @@ class HomeUserMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->homeUserController->homeTrash();
+        $this->homeUserController->homeTrash($checkToken['user']);
     }
     public function userPreference() {
         $checkToken = $this->authMiddleware->checkSession();
@@ -78,7 +77,7 @@ class HomeUserMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->homeUserController->getPreferencesByAccountId();
+        $this->homeUserController->getPreferencesByAccountId($checkToken['user']);
     }
     public function uploadAvatar() {
         $checkToken = $this->authMiddleware->checkSession();
@@ -87,7 +86,7 @@ class HomeUserMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->homeUserController->uploadAvatar();
+        $this->homeUserController->uploadAvatar($checkToken['user']);
     }
 
     public function updatePreference() {
@@ -97,7 +96,7 @@ class HomeUserMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->homeUserController->updatePreference();
+        $this->homeUserController->updatePreference($checkToken['user']);
     }
 
     public function addNewSharedEmail_POST() {
@@ -107,7 +106,7 @@ class HomeUserMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->homeUserController->addNewSharedEmail_POST();
+        $this->homeUserController->addNewSharedEmail_POST($checkToken['user']);
     }
 
     public function deleteSharedEmail_DELETE() {
@@ -137,6 +136,6 @@ class HomeUserMiddleWare {
             header('location:/log/login');
             exit();
         }
-        $this->homeUserController->sharedEmailList();
+        $this->homeUserController->sharedEmailList($checkToken['user']);
     }
 }

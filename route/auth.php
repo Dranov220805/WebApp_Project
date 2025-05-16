@@ -1,7 +1,7 @@
 <?php
 
 include "./app/controllers/AuthController.php";
-include "./app/middlewares/AuthMiddleWare.php";
+include_once "./app/middlewares/AuthMiddleWare.php";
 $authController = new AuthController();
 $authMiddleware = new AuthMiddleware();
 
