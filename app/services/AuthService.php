@@ -73,8 +73,12 @@ class AuthService
     public function refreshAccessToken($refreshToken)
     {
         $user = $this->accountRepository->getAccountByRefreshToken($refreshToken);
-        $userPreference = $this->accountRepository->getPreferencesByAccountId($user->getAccountId());
+        if (!$user) {
+            error_log("No user found for refreshToken: " . $refreshToken);
+            return ['status' => false];
+        }
 
+        $userPreference = $this->accountRepository->getPreferencesByAccountId($user->getAccountId());
         if (!$user || time() > $user->getExpiredTime()) {
             return ['status' => false];
         }
