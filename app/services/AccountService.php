@@ -1,6 +1,7 @@
 <?php
 
 class AccountService{
+    private int $jwtExpiry = 3600;
     private AccountRepository $accountRepository;
     public function __construct(){
         $this->accountRepository = new AccountRepository();
@@ -21,12 +22,41 @@ class AccountService{
         return $this->accountRepository->getRoleByUsernameAndPassword($account_username, $account_password);
     }
 
-    public function updateProfilePictureByAccountIdAndEmail($account_id, $email, $uploadImage) {
+    public function updateProfilePictureByAccountId($account_id, $uploadImage) {
         $result = $this->accountRepository->updateProfilePictureByAccountId($account_id, $uploadImage);
         if (!$result['status'] === false) {
+<<<<<<< Updated upstream
+            $userData = $GLOBALS['user'];
+            $email = $userData->email;
+            $user = $this->accountRepository->getAccountByEmail($email);
+            $accountId = $user->getAccountId();
+            $userPreference = $this->accountRepository->getPreferencesByAccountId($accountId);
+
+            // Generate JWT
+            $payload = [
+                'iss' => 'your_issuer', // Issuer
+                'aud' => 'your_audience', // Audience
+                'iat' => time(), // Issued at
+                'exp' => time() + $this->jwtExpiry, // Expiry
+                'data' => [
+                    'accountId' => $user->getAccountId(),
+                    'userName' => $user->getUsername(),
+                    'email' => $user->getEmail(),
+                    'profilePicture' => $user->getProfilePicture(),
+                    'refreshToken' => $user->getRefreshToken(),
+                    'expiredTime' => $user->getExpiredTime(),
+                    'roleId' => $user->getRoleId(),
+                    'isDarkTheme' => $userPreference->isDarkTheme(),
+                    'isVerified' => $user->getIsVerified()
+                ]
+            ];
+
+            $jwt = JWT::encode($payload, $this->jwtSecret, 'HS256');
+
+=======
+>>>>>>> Stashed changes
             return [
                 'status' => true,
-                'token' => $result,
                 'message' => 'Profile picture updated successfully'
             ];
         } else {
@@ -44,10 +74,21 @@ class AccountService{
     public function updatePreferenceByAccountId($accountId, $userName, $theme, $fontSize, $noteColor) {
         $result = $this->accountRepository->updatePreferenceByAccountId($accountId, $userName, $theme, $fontSize, $noteColor);
 
-        if ($result ) {
+        if ($result ) { // assuming $result is a Preference object on success
+            try {
+                $user = $this->accountRepository->getAccountByAccountId($accountId);
+                $userPreference = $this->accountRepository->getPreferencesByAccountId($accountId);
+            }
+            catch (\Exception $e) {
+                return [
+                    'status' => false,
+                    'data' => $result,
+                    'message' => 'Update user preference failed'
+                ];
+            }
+
             return [
                 'status' => true,
-                'data' => $result,
                 'message' => 'Update user preference successfully'
             ];
         } else {
