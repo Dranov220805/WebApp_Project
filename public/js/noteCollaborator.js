@@ -23,11 +23,20 @@ export class NoteCollaborator {
         }
 
         try {
-            // Use consistent port 8082 for WebSocket server
-            this.socket = new WebSocket('ws://127.0.0.1:8082');
+            // --- CORRECTED VERSION FOR LIGHTSAIL DEPLOYMENT ---
+            const hostname = window.location.hostname;
+            // On Lightsail, it will always be HTTPS for the public endpoint
+            const protocol = 'ws:';
+            // '/ws/' is the path you configured in your Apache reverse proxy
+            const wsUrl = `${protocol}//${hostname}:8082`;
+
+            console.log(`Attempting to connect to WebSocket at: ${wsUrl}`);
+            this.socket = new WebSocket(wsUrl);
+            // --- END CORRECTION ---
+
 
             this.socket.onopen = () => {
-                console.log(`WebSocket connected for note: ${this.noteId}`);
+                console.log(`WebSocket connected for note: ${this.noteId} via ${wsUrl}`);
                 this.isConnected = true;
 
                 // Subscribe to note updates
