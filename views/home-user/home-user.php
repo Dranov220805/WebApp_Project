@@ -37,7 +37,7 @@ $showDiv = (count($segments) === 1 && $segments[0] === 'home');
 
             <?php if ($showDiv) {?>
                 <!-- Middle: Search bar -->
-                <div class="search-main-container mt-4">
+                <div class="search-main-container mt-4 d-flex">
                     <div class="search-bar-container">
                         <div id="search-container" class="search-expanded">
                             <button id="search-icon" class="search-icon-btn">
