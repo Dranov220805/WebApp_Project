@@ -1,5 +1,10 @@
 <?php
 
+$currentPage = $_SERVER['REQUEST_URI'];
+$segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
+
+$showDiv = (count($segments) === 1 && $segments[0] === 'home');
+
     /*
      * @var $data
      * */
@@ -29,6 +34,20 @@
                     </div>
                 </form>
             </div>
+
+            <?php if ($showDiv) {?>
+                <!-- Middle: Search bar -->
+                <div class="search-main-container mt-4">
+                    <div class="search-bar-container">
+                        <div id="search-container" class="search-expanded">
+                            <button id="search-icon" class="search-icon-btn">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </button>
+                            <input id="search-input" type="text" placeholder="Search notes" class="search-input">
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
 
 <!--            Search Note grid-->
             <div class="pinned-note">

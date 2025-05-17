@@ -30,20 +30,6 @@ $showGrid = (
             </a>
         </div>
 
-        <?php if ($showDiv) {?>
-        <!-- Middle: Search bar -->
-        <div class="search-main-container">
-            <div class="search-bar-container">
-                <div id="search-container" class="search-expanded">
-                    <button id="search-icon" class="search-icon-btn">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </button>
-                    <input id="search-input" type="text" placeholder="Search notes" class="search-input">
-                </div>
-            </div>
-        </div>
-        <?php } ?>
-
         <!-- Right side: Icons -->
         <div class="d-flex align-items-center">
             <?php if (!$showGrid) {?>
