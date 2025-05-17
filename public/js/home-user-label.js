@@ -1,3 +1,5 @@
+import { NoteCollaborator } from './noteCollaborator.js';
+
 class LabelNote {
     static instance = null;
 
@@ -43,6 +45,7 @@ class LabelNote {
                 content: noteEl.dataset.noteContent || noteEl.dataset.content,
                 imageLink: noteEl.dataset.noteImage || noteEl.dataset.imageLink,
                 labels: noteEl.dataset.noteLabels || noteEl.dataset.labels,
+                isProtected: noteEl.dataset.isProtected || noteEl.dataset.isProtected,
             };
 
             if (labelNote) {
@@ -70,14 +73,26 @@ class LabelNote {
 
             if (lockBtn) {
                 console.log('Clicked lock button:', note);
-                this.expandLockLabelNote(note);
+                if (note.isProtected === "1" || note.isProtected === 1 || note.isProtected === true) {
+                    console.log("Note is protected.");
+                    this.expandUpdateLockNote(note);
+                    return;
+                } else {
+                    this.expandCreateLockNote(note);
+                }
             }
 
             // Prevent expanding the note when clicking buttons inside .note-sheet__menu
             if (event.target.closest('.note-sheet__menu button')) return;
 
             console.log('Clicked note:', note);
-            this.expandLabelNote(note);
+            if (note.isProtected === "1" || note.isProtected === 1 || note.isProtected === true) {
+                console.log("Note is protected.");
+                this.expandCheckNotePassword(note);
+                return;
+            } else {
+                this.expandLabelNote(note);
+            }
         };
 
         if (document.querySelector('#email--shared__list')) {
@@ -251,6 +266,7 @@ class LabelNote {
             div.dataset.noteId = note.noteId;
             div.dataset.noteTitle = note.title;
             div.dataset.noteContent = note.content;
+            div.dataset.isProtected = note.isProtected;
 
             if (note.imageLink && note.imageLink.trim() !== '') {
                 div.dataset.imageLink = note.imageLink;
@@ -277,6 +293,12 @@ class LabelNote {
                </div>`
                 : '';
 
+            const isProtected = note.isProtected && note.isProtected === true
+                ? `<button class="note-lock-btn" title="This note is locked"><i class="fa-solid fa-lock"></i>
+                </button>`
+                : `<button class="note-lock-btn" title="This note is unlocked"><i class="fa-solid fa-lock-open"></i>
+                </button>`;
+
             div.innerHTML = `
             ${imageHTML}
             <div class="note-sheet__title-content flex-grow-1" style="padding: 16px;">
@@ -290,7 +312,7 @@ class LabelNote {
                     <button title="Add Label" data-bs-target="listLabelNoteModal" id="note-label-list-btn" class="note-label-list-btn"><i class="fa-solid fa-tags"></i></button>
                     <button class="note-label-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
                     <button class="note-share-btn" title="Share this Note"><i class="fa-solid fa-users"></i></button>
-                    <button class="note-lock-btn" title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
+                    ${isProtected}
                 </div>
             </div>
         `;
@@ -640,47 +662,144 @@ class LabelNote {
             console.error('noteLabelModal not found!');
             return;
         }
+
+        const noteId = note.noteId;
+        this.checkIfNoteIsShared(noteId)
+            .then(isShared => {
+                const modal = new bootstrap.Modal(modalEl);
+
+                this.currentNoteId = noteId;
+                this.imageLinkRef = modalEl.querySelector('.note-sheet__image');
+
+                const titleInput = modalEl.querySelector('.note-label-title-input-autosave');
+                const contentInput = modalEl.querySelector('.note-label-content-input-autosave');
+                const icon = modalEl.querySelector('.save-status-icon i');
+                const iconText = modalEl.querySelector('.save-status-icon p');
+
+                if (this.imageLinkRef) {
+                    this.imageLinkRef.innerHTML = note.imageLink ? `<img src="${note.imageLink}" style="width: 100%; height: auto; display: block">` : '';
+                }
+
+                if (titleInput) titleInput.value = note.title || '';
+                if (contentInput) contentInput.value = note.content || '';
+                if (icon) icon.className = 'fa-solid fa-check-circle text-success';
+                if (iconText) iconText.innerHTML = 'Saved';
+
+                const triggerUploadBtn = modalEl.querySelector('#triggerImageUpload');
+                const triggerDeleteBtn = modalEl.querySelector('#triggerImageDelete');
+                const imageInput = modalEl.querySelector('#imageInput');
+                const noteIdInput = modalEl.querySelector('#noteIdInput');
+
+                if (noteIdInput) {
+                    noteIdInput.value = this.currentNoteId;
+                    noteIdInput.dataset.imageUrl = note.imageLink || '';
+                }
+
+                if (triggerUploadBtn) this.clearAndBindListener(triggerUploadBtn, 'click', this.boundTriggerInput);
+                if (imageInput) this.clearAndBindListener(imageInput, 'change', this.boundHandleUpload);
+                if (triggerDeleteBtn) this.clearAndBindListener(triggerDeleteBtn, 'click', this.boundHandleDelete);
+
+                this.setupLabelAutoSaveModal(this.currentNoteId, titleInput, contentInput, icon, iconText);
+
+                if (isShared === true) {
+                    console.log("LabelNote is shared, establishing WebSocket connection");
+                    this.noteCollaborator = new NoteCollaborator(noteId, titleInput, contentInput);
+                    this.noteCollaborator.connect();
+                } else {
+                    console.log("LabelNote is not shared.");
+                }
+
+                modalEl.addEventListener('hidden.bs.modal', () => {
+                    if (this.noteCollaborator) {
+                        this.noteCollaborator.disconnect();
+                        this.noteCollaborator = null;
+                    }
+                }, { once: true });
+
+                modal.show();
+            })
+            .catch(error => {
+                console.error("Error checking label note sharing status:", error);
+                this.setupNoteModal(modalEl, note); // fallback
+            });
+    }
+
+    expandCheckNotePassword(note) {
+        const modalEl = document.getElementById('passwordNoteModal');
         const modal = new bootstrap.Modal(modalEl);
+        const input = modalEl.querySelector('#note-password__input');
 
-        this.currentNoteId = note.noteId; // *** FIX: Set currentNoteId ***
-        this.imageLinkRef = modalEl.querySelector('.note-sheet__image'); // *** FIX: Set imageLinkRef ***
+        // Clear password field each time modal is opened
+        input.value = '';
 
-        const titleInput = modalEl.querySelector('.note-label-title-input-autosave');
-        const contentInput = modalEl.querySelector('.note-label-content-input-autosave');
-        const icon = modalEl.querySelector('.save-status-icon i');
-        const iconText = modalEl.querySelector('.save-status-icon p');
-
-        if (this.imageLinkRef) {
-            this.imageLinkRef.innerHTML = note.imageLink ? `<img src="${note.imageLink}" style="width: 100%; height: auto; display: block">` : '';
-        }
-        if (titleInput) titleInput.value = note.title || '';
-        if (contentInput) contentInput.value = note.content || '';
-        if (icon) icon.className = 'fa-solid fa-check-circle text-success';
-        if (iconText) iconText.innerHTML = 'Saved';
+        // Assign click listener once in a clean way
+        this.checkNotePassword_POST(note);
 
         modal.show();
-        this.setupLabelAutoSaveModal(this.currentNoteId, titleInput, contentInput, icon, iconText);
+    }
 
-        const triggerUploadBtn = modalEl.querySelector('#triggerImageUpload');
-        const triggerDeleteBtn = modalEl.querySelector('#triggerImageDelete');
-        const imageInput = modalEl.querySelector('#imageInput');
-        const noteIdInput = modalEl.querySelector('#noteIdInput');
-        const inputTextarea = modalEl.querySelector('.note-label-content-input-autosave');
+    checkNotePassword_POST(note) {
+        const passwordInput = document.getElementById('note-password__input');
+        const confirmBtn = document.getElementById('confirmPasswordNoteBtn');
 
-        if (inputTextarea) { // Assuming inputTextarea is defined elsewhere or meant to be contentInput
-            // inputTextarea.style.height = '100%'; // This was here, ensure inputTextarea is defined
-        }
-        if (imageInput) {
-            // imageInput.dataset.noteId = this.currentNoteId; // Not strictly needed if using this.currentNoteId
-        }
-        if (noteIdInput) {
-            noteIdInput.value = this.currentNoteId;
-            noteIdInput.dataset.imageUrl = note.imageLink || '';
-        }
+        // Clear any previous listener
+        confirmBtn.onclick = null;
 
-        if (triggerUploadBtn) this.clearAndBindListener(triggerUploadBtn, 'click', this.boundTriggerInput);
-        if (imageInput) this.clearAndBindListener(imageInput, 'change', this.boundHandleUpload);
-        if (triggerDeleteBtn) this.clearAndBindListener(triggerDeleteBtn, 'click', this.boundHandleDelete);
+        confirmBtn.onclick = async () => {
+            const password = passwordInput.value.trim();
+
+            if (!password) {
+                this.showToast('Password is required.', 'danger');
+                return;
+            }
+
+            try {
+                const response = await fetch('/note/check-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        noteId: note.noteId,
+                        password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status === true) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('passwordNoteModal'));
+                    modal.hide();
+                    this.expandLabelNote(note);
+                } else {
+                    this.showToast(data.message || 'Incorrect password.', 'danger');
+                }
+            } catch (error) {
+                console.error('Error verifying password:', error);
+                this.showToast('An error occurred while verifying password.', 'danger');
+            }
+        };
+    }
+
+    // Function to check if the note is shared with other users
+    checkIfNoteIsShared(noteId) {
+        return fetch(`/share-list`, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer '
+            },
+            body: JSON.stringify({ noteId })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === true) {
+                    return true;
+                }
+            })
+            .catch(error => {
+                console.error("Failed to check note sharing status", error);
+                return false;
+            });
     }
 
     setupLabelAutoSaveModal(noteId, titleInput, contentInput, icon, iconText) {
@@ -728,18 +847,6 @@ class LabelNote {
                     if (status === true) {
                         showSavedIcon();
                         console.log(data);
-                        const noteElement = document.querySelector(`.note-sheet-label[data-note-id="${noteId}"]`);
-                        if (noteElement) {
-                            noteElement.querySelector('.note-sheet__title').textContent = title;
-                            noteElement.querySelector('.note-sheet__content').innerHTML = content.replace(/\n/g, '<br>');
-                            noteElement.dataset.noteTitle = title;
-                            noteElement.dataset.noteContent = content;
-                            noteElement.dataset.imageLink = imageLink;
-                        } else {
-                            if (!document.querySelector(`.note-sheet-label[data-note-id="${noteId}"]`)) {
-                                const newNote = this.noteLabelSheetModel(noteId, title, content, imageLink);
-                            }
-                        }
                         const labelNoteGrid = document.querySelector('.label-note__load');
                         labelNoteGrid.innerHTML = '';
                         this.loadNewLabelNote();
@@ -768,51 +875,6 @@ class LabelNote {
         this.handleTyping = handleTyping;
         titleInput.addEventListener('input', handleTyping);
         contentInput.addEventListener('input', handleTyping);
-    }
-
-    noteLabelSheetModel(noteId, title, content, imageLink) {
-        const otherNoteGrid = document.querySelector('.label-note__load');
-        if (!otherNoteGrid) return;
-
-        const div = document.createElement("div");
-        div.className = "note-sheet d-flex";
-        div.dataset.noteId = noteId;
-        div.dataset.title = title ?? "";
-        div.dataset.content = content ?? "";
-        div.dataset.imageLink = imageLink ?? "";
-
-        const safeTitle = title?.trim() || "(No Title)";
-        const safeContent = (content ?? "").replace(/\n/g, "<br>");
-
-        if (imageLink && imageLink.trim() !== '') {
-            div.dataset.imageLink = imageLink;
-        }
-
-        const imageHTML = imageLink && imageLink.trim() !== ''
-            ? `<div class="note-sheet__image" style="overflow-y: visible">
-                   <img src="${imageLink}" style="display: block">
-               </div>`
-            : '';
-
-        div.innerHTML = `
-        ${imageHTML}
-        <div class="note-sheet__title-content flex-grow-1" style="padding: 16px;">
-            <h3 class="note-sheet__title">${safeTitle}</h3>
-            <div class="note-sheet__content">
-                ${safeContent}
-            </div>
-        </div>
-        <div class="note-sheet__menu">
-            <div class="note-sheet__menu--item">
-                <button title="Add Label" data-bs-target="listLabelNoteModal" id="note-label-list-btn" class="note-label-list-btn"><i class="fa-solid fa-tags"></i></button>
-                <button class="note-delete-btn" title="Delete This Note" data-note-id="${noteId}"><i class="fa-solid fa-trash"></i></button>
-                <button class="note-share-btn" title="Share this Note"><i class="fa-solid fa-users"></i></button>
-                <button class="note-lock-btn" title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
-            </div>
-        </div>
-    `;
-
-        otherNoteGrid.prepend(div);
     }
 
     expandListLabelNote(note) {
@@ -1116,8 +1178,277 @@ class LabelNote {
             });
     }
 
-    expandLockNote(note) {
+    expandCheckLabelNotePassword(note) {
+        const modalEl = document.getElementById('passwordNoteModal');
+        const modal = new bootstrap.Modal(modalEl);
+        const input = modalEl.querySelector('#note-password__input');
+        input.value = ''; // reset each time
+        this.checkLabelNotePassword_POST(note);
+        modal.show();
+    }
 
+    checkLabelNotePassword_POST(note) {
+        const passwordInput = document.getElementById('note-password__input');
+        const confirmBtn = document.getElementById('confirmPasswordNoteBtn');
+
+        confirmBtn.onclick = null; // remove old
+        confirmBtn.onclick = async () => {
+            const password = passwordInput.value.trim();
+
+            if (!password) {
+                this.showToast('Password is required.', 'danger');
+                return;
+            }
+
+            try {
+                const res = await fetch('/note/check-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ noteId: note.noteId, password })
+                });
+
+                if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+                const result = await res.json();
+
+                if (result.status === true) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('passwordNoteModal'));
+                    modal.hide();
+                    this.expandLabelNote(result.note); // open with decrypted content
+                } else {
+                    this.showToast('Incorrect password.', 'danger');
+                }
+            } catch (e) {
+                console.error(e);
+                this.showToast('Failed to check password.', 'danger');
+            }
+        };
+    }
+
+    checkIfNoteIsShared(noteId) {
+        return fetch(`/share-list`, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer '
+            },
+            body: JSON.stringify({ noteId })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === true) {
+                    return true;
+                }
+            })
+            .catch(error => {
+                console.error("Failed to check note sharing status", error);
+                return false;
+            });
+    }
+
+    expandUpdateLockNote(note) {
+        console.log('open update password');
+        const modalEl = document.getElementById('updatePasswordNoteModal');
+        const modal = new bootstrap.Modal(modalEl);
+
+        const oldPasswordInput = modalEl.querySelector('#note-password--old__input');
+        const passwordInput = modalEl.querySelector('#note-password--update__input');
+        const confirmPasswordInput = modalEl.querySelector('#note-password--update-confirm__input');
+
+        const confirmBtn = modalEl.querySelector('#confirmPasswordUpdateNoteBtn');
+        const deleteBtn = modalEl.querySelector('#passwordDeleteNoteBtn');
+
+        deleteBtn.onclick = () => {
+            modal.hide();
+            this.expandDeleteLockNote(note);
+        };
+
+        confirmBtn.onclick = async () => {
+            const oldPassword = oldPasswordInput.value.trim();
+            const newPassword = passwordInput.value.trim();
+            const confirmPassword = confirmPasswordInput.value.trim();
+
+            if (!oldPassword || !newPassword || !confirmPassword) {
+                this.showToast('All fields are required.', 'danger');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                this.showToast('New passwords do not match.', 'danger');
+                return;
+            }
+
+            const overlay = document.getElementById('overlay-loading');
+            if (overlay) overlay.classList.remove('d-none');
+
+            try {
+                const response = await fetch('/note/update-password', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        noteId: note.noteId,
+                        password: oldPassword,
+                        newPassword: newPassword
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status === true) {
+                    oldPasswordInput.value = '';
+                    passwordInput.value = '';
+                    confirmPasswordInput.value = '';
+                    this.showToast('Password updated successfully.', 'success');
+                    modal.hide();
+                } else {
+                    this.showToast(data.message || 'Failed to update password.', 'danger');
+                }
+            } catch (error) {
+                console.error('Error updating password:', error);
+                this.showToast('An error occurred while updating the password.', 'danger');
+            } finally {
+                if (overlay) overlay.classList.add('d-none');
+            }
+        };
+
+        modal.show();
+    }
+
+    expandCreateLockNote(note) {
+        console.log('open create password');
+        const modalEl = document.getElementById('createPasswordNoteModal');
+        const modal = new bootstrap.Modal(modalEl);
+
+        const passwordInput = modalEl.querySelector('#note-password--create__input');
+        const confirmPasswordInput = modalEl.querySelector('#note-password--create-confirm__input');
+        const confirmBtn = modalEl.querySelector('#confirmPasswordCreateNoteBtn');
+
+        // Clear inputs each time modal is shown
+        passwordInput.value = '';
+        confirmPasswordInput.value = '';
+
+        // Remove previous click listener to prevent duplicates
+        confirmBtn.onclick = null;
+
+        confirmBtn.onclick = async () => {
+            const password = passwordInput.value.trim();
+            const confirmPassword = confirmPasswordInput.value.trim();
+
+            if (!password || !confirmPassword) {
+                this.showToast('Both fields are required.', 'danger');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                this.showToast('Passwords do not match.', 'danger');
+                return;
+            }
+
+            const overlay = document.getElementById('overlay-loading');
+            if (overlay) overlay.classList.remove('d-none');
+
+            try {
+                const response = await fetch('/note/create-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        noteId: note.noteId,
+                        password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status === true) {
+                    this.showToast('Password created successfully!', 'success');
+                    const noteSheet = document.querySelector(`.note-sheet[data-note-id="${note.noteId}"]`);
+                    if (noteSheet) {
+                        noteSheet.dataset.isProtected = 1;
+
+                        const lockBtn = noteSheet.querySelector('.note-lock-btn i');
+                        if (lockBtn && lockBtn.classList.contains('fa-lock-open')) {
+                            lockBtn.classList.remove('fa-lock-open');
+                            lockBtn.classList.add('fa-lock');
+                            lockBtn.parentElement.setAttribute('title', 'This note is locked');
+                        }
+                    }
+                    modal.hide();
+                } else {
+                    this.showToast(data.message || 'Failed to create password.', 'danger');
+                }
+            } catch (error) {
+                console.error('Error creating password:', error);
+                this.showToast('An error occurred while creating the password.', 'danger');
+            } finally {
+                if (overlay) overlay.classList.add('d-none');
+            }
+        };
+
+        modal.show();
+    }
+
+    expandDeleteLockNote(note) {
+        console.log('open delete password');
+        const modalEl = document.getElementById('deletePasswordNoteModal');
+        const modal = new bootstrap.Modal(modalEl);
+
+        const passwordInput = modalEl.querySelector('#note-password-delete__input');
+        const confirmBtn = modalEl.querySelector('#confirmDeletePasswordNoteBtn');
+
+        confirmBtn.onclick = async () => {
+            const password = passwordInput.value.trim();
+
+            if (!password) {
+                this.showToast('Password is required.', 'danger');
+                return;
+            }
+
+            const overlay = document.getElementById('overlay-loading');
+            if (overlay) overlay.classList.remove('d-none');
+
+            try {
+                const response = await fetch('/note/delete-password', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        noteId: note.noteId,
+                        password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status === true) {
+                    passwordInput.value = '';
+                    this.showToast('Password deleted successfully.', 'success');
+                    const noteSheet = document.querySelector(`.note-sheet[data-note-id="${note.noteId}"]`);
+                    if (noteSheet) {
+                        noteSheet.dataset.isProtected = 0;
+
+                        const lockBtn = noteSheet.querySelector('.note-lock-btn i');
+                        if (lockBtn && lockBtn.classList.contains('fa-lock')) {
+                            lockBtn.classList.remove('fa-lock');
+                            lockBtn.classList.add('fa-lock-open');
+                            lockBtn.parentElement.setAttribute('title', 'This note is unlocked');
+                        }
+                    }
+                    modal.hide();
+                } else {
+                    this.showToast(data.message || 'Incorrect password or failed to delete.', 'danger');
+                }
+            } catch (error) {
+                console.error('Error deleting password:', error);
+                this.showToast('An error occurred while deleting the password.', 'danger');
+            } finally {
+                if (overlay) overlay.classList.add('d-none');
+            }
+        };
+
+        modal.show();
     }
 
 }

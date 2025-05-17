@@ -154,8 +154,6 @@ class Notes {
             noteInput.addEventListener("input", this.autoResizeInput);
         }
 
-        // this.initNotePostTrigger();
-
         const modalEl = document.getElementById('noteModal');
         if (modalEl) {
             modalEl.addEventListener('hidden.bs.modal', () => {
@@ -1660,6 +1658,17 @@ class Notes {
 
                 if (data.status === true) {
                     this.showToast('Password created successfully!', 'success');
+                    const noteSheet = document.querySelector(`.note-sheet[data-note-id="${note.noteId}"]`);
+                    if (noteSheet) {
+                        noteSheet.dataset.isProtected = 1;
+
+                        const lockBtn = noteSheet.querySelector('.note-lock-btn i');
+                        if (lockBtn && lockBtn.classList.contains('fa-lock-open')) {
+                            lockBtn.classList.remove('fa-lock-open');
+                            lockBtn.classList.add('fa-lock');
+                            lockBtn.parentElement.setAttribute('title', 'This note is locked');
+                        }
+                    }
                     modal.hide();
                 } else {
                     this.showToast(data.message || 'Failed to create password.', 'danger');
@@ -1711,6 +1720,17 @@ class Notes {
                 if (data.status === true) {
                     passwordInput.value = '';
                     this.showToast('Password deleted successfully.', 'success');
+                    const noteSheet = document.querySelector(`.note-sheet[data-note-id="${note.noteId}"]`);
+                    if (noteSheet) {
+                        noteSheet.dataset.isProtected = 0;
+
+                        const lockBtn = noteSheet.querySelector('.note-lock-btn i');
+                        if (lockBtn && lockBtn.classList.contains('fa-lock')) {
+                            lockBtn.classList.remove('fa-lock');
+                            lockBtn.classList.add('fa-lock-open');
+                            lockBtn.parentElement.setAttribute('title', 'This note is unlocked');
+                        }
+                    }
                     modal.hide();
                 } else {
                     this.showToast(data.message || 'Incorrect password or failed to delete.', 'danger');

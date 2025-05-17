@@ -176,7 +176,10 @@ class AuthController extends BaseController {
         $result = $this->authService->checkVerification($email);
 
         if($result['status'] === true) {
-            include "./views/log/verify-email.php";
+            echo json_encode([
+                'status' => true,
+                'message' => $result['message']
+            ]);
         } else {
             echo json_encode([
                 'status' => false,
