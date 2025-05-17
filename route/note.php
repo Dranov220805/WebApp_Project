@@ -72,6 +72,10 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $noteMiddleWare->createImageNote_POST();
                 } else if ($_GET['param_2'] == 'delete-image') {
                     $noteMiddleWare->deleteImageNote_POST();
+                } else if ($_GET['param_2'] == 'check-password') {
+                    $noteMiddleWare->checkNotePassword_POST();
+                } else if ($_GET['param_2'] == 'create-password') {
+                    $noteMiddleWare->createNotePassword_POST();
                 }
                 break;
 
@@ -99,6 +103,8 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $noteMiddleWare->restoreNote_POST();
                 } else if ($_GET['param_2'] == 'update') {
                     $noteMiddleWare->updateNote_POST();
+                } else if ($_GET['param_2'] == 'update-password') {
+                    $noteMiddleWare->changeNotePassword_PUT();
                 }
                 break;
 
@@ -119,6 +125,8 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $noteMiddleWare->deleteNote_POST();
                 } else if ($_GET['param_2'] == 'hard-delete') {
                     $noteMiddleWare->hardDeleteNote_POST();
+                } else if ($_GET['param_2'] == 'delete-password') {
+                    $noteMiddleWare->deleteNotePassword_DELETE();
                 }
                 break;
 

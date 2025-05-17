@@ -702,6 +702,34 @@ class NoteController {
         }
     }
 
+    public function checkNotePassword_POST($user) {
+        $content = trim(file_get_contents("php://input"));
+        $data = json_decode($content, true);
+
+        $accountId = $user['accountId'] ?? null;
+        $noteId = $data['noteId'] ?? null;
+        $password = $data['password'] ?? null;
+        if (empty($accountId) || empty($noteId) || empty($password)) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'AccountId or Password is missing'
+            ]);
+        } else {
+            $result = $this->noteService->checkNotePasswordByNoteIdAndPassword($noteId, $accountId, $password);
+            if ($result['status'] === false) {
+                echo json_encode([
+                    'status' => false,
+                    'message' => $result['message']
+                ]);
+            } else {
+                echo json_encode ([
+                    'status' => true,
+                    'message' => $result['message']
+                ]);
+            }
+        }
+    }
+
     public function createNotePassword_POST($user) {
         $content = trim(file_get_contents("php://input"));
         $data = json_decode($content, true);

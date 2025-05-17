@@ -187,6 +187,14 @@ class NoteMiddleWare {
             $this->noteController->deleteImageForNoteByImageUrlAndNoteId($checkToken['user']);
     }
 
+    public function checkNotePassword_POST() {
+        $checkToken = $this->authMiddleware->checkSession();
+        if ($checkToken['status'] === false) {
+            exit();
+        }
+        $this->noteController->checkNotePassword_POST($checkToken['user']);
+    }
+
     public function createNotePassword_POST() {
         $checkToken = $this->authMiddleware->checkSession();
         if ($checkToken['status'] === false) {

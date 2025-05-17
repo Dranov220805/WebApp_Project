@@ -182,5 +182,116 @@
     </div>
 </div>
 
+<!-- CreateNote Password Modal -->
+<div class="modal fade" id="createPasswordNoteModal" tabindex="-1" aria-labelledby="createPasswordNoteModalLabel" aria-hidden="true" style="height: 100%; max-height: 100%">
+    <div class="modal-dialog modal-dialog-centered" style="margin-left: auto; margin-right: auto;">
+        <div class="modal-content" style="width: 100%; height: 100%; max-height: fit-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createPasswordNoteModalLabel">Set up new password</h5>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="password-input" class="form-label">Enter your new note password:</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control login-section-2__form--input-box" id="note-password--create__input" placeholder="Password">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="password-input" class="form-label">Confirm new note password:</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control login-section-2__form--input-box" id="note-password--create-confirm__input" placeholder="Password">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="confirmPasswordCreateNoteBtn" type="button" class="btn btn-success">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Password Modal -->
+<div class="modal fade" id="updatePasswordNoteModal" tabindex="-1" aria-labelledby="updatePasswordNoteModalLabel" aria-hidden="true" style="height: 100%; max-height: 100%">
+    <div class="modal-dialog modal-dialog-centered" style="margin-left: auto; margin-right: auto;">
+        <div class="modal-content" style="width: 100%; height: 100%; max-height: fit-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updatePasswordNoteModalLabel">Update note password</h5>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="password-input" class="form-label">Enter your old note password:</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control login-section-2__form--input-box" id="note-password--old__input" placeholder="Password">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="password-input" class="form-label">Enter your new note password:</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control login-section-2__form--input-box" id="note-password--update__input" placeholder="Password">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="password-input" class="form-label">Confirm your new note password:</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control login-section-2__form--input-box" id="note-password--update-confirm__input" placeholder="Password">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="passwordDeleteNoteBtn" type="button" class="btn btn-danger">Delete password</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="confirmPasswordUpdateNoteBtn" type="button" class="btn btn-success">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Note Password Modal -->
+<div class="modal fade" id="passwordNoteModal" tabindex="-1" aria-labelledby="passwordNoteModalLabel" aria-hidden="true" style="height: 100%; max-height: 100%">
+    <div class="modal-dialog modal-dialog-centered" style="margin-left: auto; margin-right: auto;">
+        <div class="modal-content" style="width: 100%; height: 100%; max-height: fit-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="passwordNoteModalLabel">This note is locked</h5>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="password-input" class="form-label">Enter your note password:</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control login-section-2__form--input-box" id="note-password__input" placeholder="Password">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="confirmPasswordNoteBtn" type="button" class="btn btn-success">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Note Password Modal -->
+<div class="modal fade" id="deletePasswordNoteModal" tabindex="-1" aria-labelledby="deletePasswordNoteModalLabel" aria-hidden="true" style="height: 100%; max-height: 100%">
+    <div class="modal-dialog modal-dialog-centered" style="margin-left: auto; margin-right: auto;">
+        <div class="modal-content" style="width: 100%; height: 100%; max-height: fit-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deletePasswordNoteModalLabel">This note is locked</h5>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="password-input" class="form-label">Enter your note password:</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control login-section-2__form--input-box" id="note-password-delete__input" placeholder="Password">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="confirmDeletePasswordNoteBtn" type="button" class="btn btn-success">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- JavaScript for loading note content -->
 <script src="/public/js/note.js" type="module"></script>

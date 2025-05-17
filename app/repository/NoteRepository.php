@@ -867,6 +867,26 @@ class NoteRepository
         }
     }
 
+    public function checkNotePasswordByNoteIdAndPassword(string $noteId, string $accountId, string $password): bool
+    {
+        // Get the note's protection data
+        $checkProtectSql = "SELECT password FROM `NoteProtect` WHERE noteId = ? AND isEnabled = TRUE AND isDeleted = FALSE";
+        $stmt = $this->conn->prepare($checkProtectSql);
+        $stmt->bind_param("s", $noteId);
+        $stmt->execute();
+        $protectResult = $stmt->get_result();
+
+        if ($protectResult->num_rows === 0) {
+            return false; // No protection record found
+        }
+
+        $row = $protectResult->fetch_assoc();
+        $hashedPassword = $row['password'];
+
+        // Verify the provided password
+        return password_verify($password, $hashedPassword);
+    }
+
     public function protectedNoteByNoteIdAndAccountId(string $noteId, string $accountId, string $password): bool {
         // Check if the note exists and belongs to the account
         $checkSql = "SELECT * FROM `Note` WHERE noteId = ? AND accountId = ? AND isDeleted = FALSE";
@@ -1023,7 +1043,7 @@ class NoteRepository
         }
 
         // Hash the new password
-        $newHashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        $newHashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
 
         // Update the password in NoteProtect
         $updateSql = "UPDATE `NoteProtect` SET password = ? WHERE noteProtectId = ?";

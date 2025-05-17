@@ -214,6 +214,21 @@ class NoteService {
         return $this->noteRepository->deleteImageForNoteByImageUrlAndNoteId($imageUrl, $noteId);
     }
 
+    public function checkNotePasswordByNoteIdAndPassword($noteId, $accountId, $password) {
+        $result = $this->noteRepository->checkNotePasswordByNoteIdAndPassword($noteId, $accountId, $password);
+        if (!$result) {
+            return [
+                'status' => false,
+                'message' => 'Wrong password'
+            ];
+        } else {
+            return [
+                'status' => true,
+                'message' => 'Password is correct'
+            ];
+        }
+    }
+
     public function protectedNoteByNoteIdAndAccountId($noteId, $accountId, $password) {
         $result = $this->noteRepository->protectedNoteByNoteIdAndAccountId($noteId, $accountId, $password);
         if (!$result) {
