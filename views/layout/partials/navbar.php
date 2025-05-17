@@ -5,10 +5,20 @@ $homeUserController = new HomeUserController();
 $user = $homeUserController->getUserInfo();
 $userData = $user['user'];
 
+$currentPage = $_SERVER['REQUEST_URI'];
+$segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
+
+$showDiv = (count($segments) === 1 && $segments[0] === 'home');
+$showGrid = (
+    isset($segments[0], $segments[1]) &&
+    $segments[0] === 'home' &&
+    ($segments[1] === 'account' || $segments[1] === 'share')
+);
+
 ?>
 
 <nav class="navbar fixed-top">
-    <div class="d-flex align-items-center w-100 navbar__content">
+    <div class="d-flex align-items-center w-100 navbar__content" style="justify-content: space-between">
         <!-- Left side: Menu icon (sidebar toggle) and Logo -->
         <div class="d-flex align-items-center" style="padding-right: 10px">
             <button id="sidebar-toggle" class="sidebar-toggle">
@@ -20,6 +30,7 @@ $userData = $user['user'];
             </a>
         </div>
 
+        <?php if ($showDiv) {?>
         <!-- Middle: Search bar -->
         <div class="search-main-container">
             <div class="search-bar-container">
@@ -31,13 +42,15 @@ $userData = $user['user'];
                 </div>
             </div>
         </div>
+        <?php } ?>
 
         <!-- Right side: Icons -->
         <div class="d-flex align-items-center">
+            <?php if (!$showGrid) {?>
             <button type="button" class="btn toggle-grid icon-btn">
                 <i class="navbar__item--icon fa-solid fa-border-all"></i>
             </button>
-
+            <?php } ?>
             <a href="/home/account" type="button" class="btn icon-btn">
                 <i class="navbar__item--icon fa-solid fa-gear"></i>
             </a>

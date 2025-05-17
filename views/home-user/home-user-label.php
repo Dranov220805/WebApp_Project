@@ -1,5 +1,4 @@
 <?php
-
 ?>
 
 <!-- Main container with sidebar and content -->
@@ -12,7 +11,6 @@
     <!-- Main content area -->
     <div id="content" class="content" style="margin-left: 80px;">
         <div class="small-container">
-
             <!-- Label Notes grid -->
             <div class="label-note">
                 <h6 class="note-layout__title" id="note-layout__title"><?= htmlspecialchars($data['labelName']) ?></h6>

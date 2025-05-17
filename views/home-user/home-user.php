@@ -1,5 +1,6 @@
 <!-- Main container with sidebar and content -->
 <?php
+
     /*
      * @var $data
      * */

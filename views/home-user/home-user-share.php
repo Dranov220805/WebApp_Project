@@ -38,7 +38,7 @@
                                 $labelAttr = htmlspecialchars(json_encode($note['labels'] ?? []));
                                 ?>
                                 <div class="col-12">
-                                    <div class="card shared-note-card" style="max-height: 230px"
+                                    <div class="card shared-note-card" style="max-height: 300px"
                                         data-note-id="<?= htmlspecialchars($note['noteId']) ?>"
                                         data-note-title="<?= htmlspecialchars($note['title']) ?>"
                                         data-note-content="<?= htmlspecialchars($note['content']) ?>"
@@ -53,9 +53,9 @@
                                         <?php else: ?>
                                         data-note-edit="false"
                                         <?php endif; ?>>
-                                        <div class="card-body">
+                                        <div class="card-body" style="max-height: 300px">
                                             <div class="d-flex justify-content-start" style="width: 100%; max-width: 100%;">
-                                                <div class="" style="width: 100%">
+                                                <div class="" style="width: 60%">
                                                     <div class="small mb-1 note--share__by">
                                                         Shared by <strong><?= htmlspecialchars($note['sharedEmail']) ?></strong>
                                                     </div>
@@ -68,7 +68,7 @@
                                                         <h6 class="fw-bold note--share__title"><?= htmlspecialchars($note['title']) ?></h6>
                                                     <?php endif; ?>
                                                     <?php if (!empty($note['content'])): ?>
-                                                        <p class="mb-1 note--share__content" style="overflow-y: hidden; max-height: 48px; padding-right: 20%"><?= htmlspecialchars($note['content']) ?></p>
+                                                        <p class="mb-1 note--share__content" style="overflow-y: hidden; max-height: 48px;"><?= htmlspecialchars($note['content']) ?></p>
                                                     <?php endif; ?>
 
                                                     <!-- Labels -->
@@ -83,7 +83,7 @@
                                                     <?php } ?>
                                                 </div>
 
-                                                <div class="text-end" style="display: flex; flex-direction: column; width: 120px; justify-content: space-between; align-items: end">
+                                                <div class="text-end" style="display: flex; flex-direction: column; width: 120px; justify-content: space-between; align-items: end; flex-grow: 1">
                                                     <?php if ($note['canEdit']): ?>
                                                         <span class="access-label access-edit" style="width: fit-content">Can edit</span>
                                                     <?php else: ?>

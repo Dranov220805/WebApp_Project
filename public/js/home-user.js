@@ -339,78 +339,123 @@ class HomeUser {
         }
 
         this.searchTimeout = setTimeout(() => {
+            // Always clear before a new request to avoid stale UI
+            this.clearSearchResults();
             this.performSearch(query);
-        }, 300); // Delay of 300ms
+        }, 300);
     }
 
     performSearch(query) {
         fetch(`/note/search?query=${encodeURIComponent(query)}`, {
             method: 'GET',
             headers: {
-                "Content-Type": "application/json" ,
-                'Authorization': 'Bearer '
+                "Content-Type": "application/json"
+                // Add 'Authorization' if needed
             },
         })
             .then(res => res.json())
             .then(data => {
-                if (data.status && data.data.length > 0) {
+                if (data.status && Array.isArray(data.data) && data.data.length > 0) {
                     this.displaySearchResults(data.data);
                 } else {
-                    this.clearSearchResults();
+                    this.clearSearchResults(); // Show nothing if no results
+                    const container = document.querySelector('.search-note__load');
+                    container.innerHTML = 'No notes found';
                 }
             })
-            .catch(err => console.error('Search failed:', err));
+            .catch(err => {
+                console.error('Search failed:', err);
+                this.clearSearchResults();
+            });
     }
 
     displaySearchResults(notes) {
         const container = document.querySelector('.search-note__load');
         if (!container) return;
 
+        // Clear existing search results
+        container.innerHTML = '';
+
+        const fragment = document.createDocumentFragment();
+
         notes.forEach(note => {
             const div = document.createElement("div");
-            div.className = "note-sheet d-flex flex-column";
+            div.className = "note-sheet d-flex";
             div.dataset.noteId = note.noteId;
             div.dataset.noteTitle = note.title;
             div.dataset.noteContent = note.content;
 
-            if (note.imageLink && note.imageLink.trim() !== '') {
-                div.dataset.imageLink = note.imageLink;
+            // Handle single image or array of images
+            let imageHTML = '';
+            if (Array.isArray(note.imageLinks)) {
+                note.imageLinks.forEach(link => {
+                    if (link && link.trim() !== '') {
+                        imageHTML += `
+                        <div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
+                            <img src="${link}" style="width: 100%; height: auto; display: block">
+                        </div>`;
+                    }
+                });
+            } else if (note.imageLink && note.imageLink.trim() !== '') {
+                imageHTML = `
+                <div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
+                    <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
+                </div>`;
             }
 
-            const imageHTML = note.imageLink && note.imageLink.trim() !== ''
-                ? `<div class="note-sheet__image" style="width: 100%; height: auto; overflow-y: visible">
-                   <img src="${note.imageLink}" style="width: 100%; height: auto; display: block">
-               </div>`
-                : '';
+            // Handle label storage
+            if (note.labels) {
+                try {
+                    const labelsArray = typeof note.labels === 'string' ? note.labels.split(',') : note.labels;
+                    div.dataset.labels = JSON.stringify(labelsArray);
+                } catch (e) {
+                    console.warn("Failed to parse or stringify labels:", e);
+                }
+            }
 
             div.innerHTML = `
             ${imageHTML}
             <div class="note-sheet__title-content flex-column flex-grow-1" style="padding: 16px;">
                 <h3 class="note-sheet__title">${note.title}</h3>
-                <div class="note-sheet__content">
+                <div class="note-sheet__content" style="overflow-x: hidden;">
                     ${note.content.replace(/\n/g, '<br>')}
                 </div>
             </div>
             <div class="note-sheet__menu">
-                <div>
-                    <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack"></i></button>
-                    <button title="Add Label" data-bs-target="listLabelNoteModal" id="note-label-list-btn" class="note-label-list-btn"><i class="fa-solid fa-tags"></i></button>
+                <div class="note-sheet__menu--item">
+                    <button class="note-pin-btn" title="Pin Note"><i class="fa-solid fa-thumbtack-slash"></i></button>
+                    <button title="Add Label" data-bs-target="listLabelNoteModal" class="note-label-list-btn"><i class="fa-solid fa-tags"></i></button>
                     <button class="note-delete-btn" title="Delete This Note" data-bs-target="deleteNoteModal" data-note-id="${note.noteId}"><i class="fa-solid fa-trash"></i></button>
                     <button class="note-share-btn" title="Share this Note"><i class="fa-solid fa-users"></i></button>
-                    <button title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
+                    <button class="note-lock-btn" title="This note is unlocked"><i class="fa-solid fa-unlock"></i></button>
                 </div>
             </div>
         `;
-            // Append to container
-            container.appendChild(div);
+
+            fragment.appendChild(div);
         });
+
+        container.appendChild(fragment);
     }
 
+    // Clear all results
     clearSearchResults() {
         const container = document.querySelector('.search-note__load');
-        container.innerHTML = '';
+        if (container) {
+            container.innerHTML = '';
+        }
     }
 
+    // Prevent script injection via HTML (basic protection)
+    escapeHTML(str) {
+        if (!str) return '';
+        return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
 
 }
 

@@ -498,13 +498,23 @@ class NoteRepository
 
     public function searchNotesByAccountId(string $accountId, string $searchTerm): array
     {
-        $sql = "SELECT n.*, i.imageLink 
-            FROM `Note` n
-            LEFT JOIN `Image` i on i.noteId = n.noteId
-            WHERE `accountId` = ? 
+        $sql = "
+            SELECT 
+                n.*,
+                GROUP_CONCAT(DISTINCT i.imageLink) AS imageLinks,
+                GROUP_CONCAT(DISTINCT l.labelName) AS labels
+            FROM `Account` a
+            LEFT JOIN `Note` n ON a.accountId = n.accountId
+            LEFT JOIN `Modification` m ON m.noteId = n.noteId
+            LEFT JOIN `Image` i ON i.noteId = n.noteId
+            LEFT JOIN `NoteLabel` nl ON nl.noteId = n.noteId
+            LEFT JOIN `Label` l ON l.labelId = nl.labelId
+            WHERE a.accountId = ? 
             AND n.isDeleted = FALSE 
             AND (n.title LIKE ? OR n.content LIKE ?)
-            ORDER BY n.createDate DESC";
+            GROUP BY n.noteId
+            ORDER BY n.createDate DESC
+        ";
 
         $stmt = $this->conn->prepare($sql);
         $likeTerm = '%' . $searchTerm . '%';
@@ -514,6 +524,13 @@ class NoteRepository
 
         $notes = [];
         while ($row = $result->fetch_assoc()) {
+            // Optional: explode comma-separated strings into arrays
+            if (isset($row['imageLinks'])) {
+                $row['imageLinks'] = explode(',', $row['imageLinks']);
+            }
+            if (isset($row['labels'])) {
+                $row['labels'] = explode(',', $row['labels']);
+            }
             $notes[] = $row;
         }
 
@@ -848,6 +865,172 @@ class NoteRepository
                 'message' => 'Failed to execute delete statement: ' . $deleteStmt->error
             ];
         }
+    }
+
+    public function protectedNoteByNoteIdAndAccountId(string $noteId, string $accountId, string $password): bool {
+        // Check if the note exists and belongs to the account
+        $checkSql = "SELECT * FROM `Note` WHERE noteId = ? AND accountId = ? AND isDeleted = FALSE";
+        $stmt = $this->conn->prepare($checkSql);
+        $stmt->bind_param("ss", $noteId, $accountId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows === 0) {
+            return false; // Note not found or doesn't belong to the user
+        }
+
+        // Hash the password
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
+        // Check if there's already a protection record
+        $checkProtectSql = "SELECT * FROM `NoteProtect` WHERE noteId = ? AND isDeleted = FALSE";
+        $stmt = $this->conn->prepare($checkProtectSql);
+        $stmt->bind_param("s", $noteId);
+        $stmt->execute();
+        $protectResult = $stmt->get_result();
+
+        if ($protectResult->num_rows > 0) {
+            // Update existing protection
+            $updateSql = "UPDATE `NoteProtect` SET password = ?, isEnabled = TRUE, isDeleted = FALSE WHERE noteId = ?";
+            $stmt = $this->conn->prepare($updateSql);
+            $stmt->bind_param("ss", $hashedPassword, $noteId);
+        } else {
+            // Insert new protection record
+            $noteProtectId = Uuid::uuid4()->toString();
+            $insertSql = "INSERT INTO `NoteProtect` (noteProtectId, noteId, password, isEnabled, isDeleted) VALUES (?, ?, ?, TRUE, FALSE)";
+            $stmt = $this->conn->prepare($insertSql);
+            $stmt->bind_param("sss", $noteProtectId, $noteId, $hashedPassword);
+        }
+
+        if (!$stmt->execute()) {
+            return false;
+        }
+
+        // Update the Note to mark it as protected
+        $updateNoteSql = "UPDATE `Note` SET isProtected = TRUE WHERE noteId = ?";
+        $stmt = $this->conn->prepare($updateNoteSql);
+        $stmt->bind_param("s", $noteId);
+
+        return $stmt->execute();
+    }
+
+    public function checkPasswordNoteByNoteIdAndAccountId(string $noteId, string $accountId, string $password): bool
+    {
+        // Make sure the note exists and belongs to the account
+        $noteSql = "SELECT * FROM `Note` WHERE noteId = ? AND accountId = ? AND isDeleted = FALSE AND isProtected = TRUE";
+        $stmt = $this->conn->prepare($noteSql);
+        $stmt->bind_param("ss", $noteId, $accountId);
+        $stmt->execute();
+        $noteResult = $stmt->get_result();
+
+        if ($noteResult->num_rows === 0) {
+            return false;
+        }
+
+        // Fetch the protected password
+        $protectSql = "SELECT password FROM `NoteProtect` WHERE noteId = ? AND isDeleted = FALSE AND isEnabled = TRUE";
+        $stmt = $this->conn->prepare($protectSql);
+        $stmt->bind_param("s", $noteId);
+        $stmt->execute();
+        $protectResult = $stmt->get_result();
+
+        if ($protectResult->num_rows === 0) {
+            return false;
+        }
+
+        $row = $protectResult->fetch_assoc();
+        return password_verify($password, $row['password']);
+    }
+
+    public function deletePasswordNoteByNoteIdAndAccountId(string $noteId, string $accountId, string $inputPassword): bool
+    {
+        // Confirm the note exists and belongs to the user
+        $checkNoteSql = "SELECT * FROM `Note` WHERE noteId = ? AND accountId = ? AND isDeleted = FALSE AND isProtected = TRUE";
+        $stmt = $this->conn->prepare($checkNoteSql);
+        $stmt->bind_param("ss", $noteId, $accountId);
+        $stmt->execute();
+        $noteResult = $stmt->get_result();
+
+        if ($noteResult->num_rows === 0) {
+            return false;
+        }
+
+        // Retrieve the stored password hash
+        $protectSql = "SELECT password FROM `NoteProtect` WHERE noteId = ? AND isDeleted = FALSE AND isEnabled = TRUE";
+        $stmt = $this->conn->prepare($protectSql);
+        $stmt->bind_param("s", $noteId);
+        $stmt->execute();
+        $protectResult = $stmt->get_result();
+
+        if ($protectResult->num_rows === 0) {
+            return false;
+        }
+
+        $row = $protectResult->fetch_assoc();
+        $hashedPassword = $row['password'];
+
+        // Verify the password
+        if (!password_verify($inputPassword, $hashedPassword)) {
+            return false; // Password does not match
+        }
+
+        // Disable and soft-delete the NoteProtect entry
+        $disableSql = "UPDATE `NoteProtect` SET isDeleted = TRUE, isEnabled = FALSE WHERE noteId = ?";
+        $stmt = $this->conn->prepare($disableSql);
+        $stmt->bind_param("s", $noteId);
+        if (!$stmt->execute()) {
+            return false;
+        }
+
+        //  Mark the note as not protected
+        $updateNoteSql = "UPDATE `Note` SET isProtected = FALSE WHERE noteId = ?";
+        $stmt = $this->conn->prepare($updateNoteSql);
+        $stmt->bind_param("s", $noteId);
+
+        return $stmt->execute();
+    }
+
+    public function changeNotePasswordByNoteIdAndAccountId(string $noteId, string $accountId, string $currentPassword, string $newPassword): bool {
+        // Validate note ownership and protection status
+        $checkNoteSql = "SELECT * FROM `Note` WHERE noteId = ? AND accountId = ? AND isDeleted = FALSE AND isProtected = TRUE";
+        $stmt = $this->conn->prepare($checkNoteSql);
+        $stmt->bind_param("ss", $noteId, $accountId);
+        $stmt->execute();
+        $noteResult = $stmt->get_result();
+
+        if ($noteResult->num_rows === 0) {
+            return false; // Note doesn't exist or not owned by user
+        }
+
+        // Retrieve the current password hash from NoteProtect
+        $protectSql = "SELECT noteProtectId, password FROM `NoteProtect` WHERE noteId = ? AND isDeleted = FALSE AND isEnabled = TRUE";
+        $stmt = $this->conn->prepare($protectSql);
+        $stmt->bind_param("s", $noteId);
+        $stmt->execute();
+        $protectResult = $stmt->get_result();
+
+        if ($protectResult->num_rows === 0) {
+            return false; // No protection record found
+        }
+
+        $row = $protectResult->fetch_assoc();
+        $storedHash = $row['password'];
+        $noteProtectId = $row['noteProtectId'];
+
+        // Verify the current password
+        if (!password_verify($currentPassword, $storedHash)) {
+            return false; // Password does not match
+        }
+
+        // Hash the new password
+        $newHashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
+        // Update the password in NoteProtect
+        $updateSql = "UPDATE `NoteProtect` SET password = ? WHERE noteProtectId = ?";
+        $stmt = $this->conn->prepare($updateSql);
+        $stmt->bind_param("ss", $newHashedPassword, $noteProtectId);
+
+        return $stmt->execute();
     }
 
 }

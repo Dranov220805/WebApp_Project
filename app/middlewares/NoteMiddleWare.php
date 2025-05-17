@@ -12,7 +12,6 @@ class NoteMiddleWare {
     public function getNotes() {
         $checkToken = $this->authMiddleware->checkSession();
         if ($checkToken['status'] === false) {
-            header('location:/log/login');
             exit();
         }
         $this->noteController->getNotesPaginated($checkToken['user']);
@@ -21,7 +20,6 @@ class NoteMiddleWare {
     public function getPinnedNotes() {
         $checkToken = $this->authMiddleware->checkSession();
         if ($checkToken['status'] === false) {
-            header('location:/log/login');
             exit();
         }
         $this->noteController->getPinnedNotesPaginated($checkToken['user']);
@@ -31,7 +29,6 @@ class NoteMiddleWare {
         $checkToken = $this->authMiddleware->checkSession();
 
         if ($checkToken['status'] === false) {
-            header('location:/log/login');
             exit();
         }
         $this->noteController->getTrashNotePaginated($checkToken['user']);
@@ -41,7 +38,6 @@ class NoteMiddleWare {
         $checkToken = $this->authMiddleware->checkSession();
 
         if ($checkToken['status'] === false) {
-            header('location:/log/login');
             exit();
         }
         $this->noteController->SearchNotes($checkToken['user']);
@@ -51,7 +47,6 @@ class NoteMiddleWare {
         $checkToken = $this->authMiddleware->checkSession();
 
         if ($checkToken['status'] === false) {
-            header('location:/log/login');
             exit();
         }
         $this->noteController->getShareNotes($checkToken['user']);
@@ -61,7 +56,6 @@ class NoteMiddleWare {
         $checkToken = $this->authMiddleware->checkSession();
 
         if ($checkToken['status'] === false) {
-            header('location:/log/login');
             exit();
         }
         $this->noteController->createNote_POST($checkToken['user']);
@@ -71,7 +65,6 @@ class NoteMiddleWare {
         $checkToken = $this->authMiddleware->checkSession();
 
         if ($checkToken['status'] === false) {
-            header('location:/log/login');
             exit();
         }
         $this->noteController->updateNote_POST($checkToken['user']);
@@ -81,7 +74,6 @@ class NoteMiddleWare {
         $checkToken = $this->authMiddleware->checkSession();
 
         if ($checkToken['status'] === false) {
-            header('location:/log/login');
             exit();
         }
         $this->noteController->deleteNote_POST($checkToken['user']);
@@ -91,7 +83,6 @@ class NoteMiddleWare {
         $checkToken = $this->authMiddleware->checkSession();
 
         if ($checkToken['status'] === false) {
-            header('location:/log/login');
             exit();
         }
         $this->noteController->pinNote_POST($checkToken['user']);
@@ -101,7 +92,6 @@ class NoteMiddleWare {
         $checkToken = $this->authMiddleware->checkSession();
 
         if ($checkToken['status'] === false) {
-            header('location:/log/login');
             exit();
         }
         $this->noteController->unpinNote_POST($checkToken['user']);
@@ -111,7 +101,6 @@ class NoteMiddleWare {
         $checkToken = $this->authMiddleware->checkSession();
 
         if ($checkToken['status'] === false) {
-            header('location:/log/login');
             exit();
         }
         $this->noteController->restoreNote_POST($checkToken['user']);
@@ -121,7 +110,6 @@ class NoteMiddleWare {
         $checkToken = $this->authMiddleware->checkSession();
 
         if ($checkToken['status'] === false) {
-            header('location:/log/login');
             exit();
         }
         $this->noteController->hardDeleteNote_POST($checkToken['user']);
@@ -131,7 +119,6 @@ class NoteMiddleWare {
         $checkToken = $this->authMiddleware->checkSession();
 
         if ($checkToken['status'] === false) {
-            header('location:/log/login');
             exit();
         }
         $this->noteController->createLabel_POST($checkToken['user']);
@@ -141,7 +128,6 @@ class NoteMiddleWare {
         $checkToken = $this->authMiddleware->checkSession();
 
         if ($checkToken['status'] === false) {
-            header('location:/log/login');
             exit();
         }
         $this->noteController->updateLabel_POST($checkToken['user']);
@@ -151,7 +137,6 @@ class NoteMiddleWare {
         $checkToken = $this->authMiddleware->checkSession();
 
         if ($checkToken['status'] === false) {
-            header('location:/log/login');
             exit();
         }
         $this->noteController->deleteLabel_POST($checkToken['user']);
@@ -161,7 +146,6 @@ class NoteMiddleWare {
         $checkToken = $this->authMiddleware->checkSession();
 
         if ($checkToken['status'] === false) {
-            header('location:/log/login');
             exit();
         }
         $this->noteController->getLabelNote($checkToken['user'], $labelName);
@@ -171,7 +155,6 @@ class NoteMiddleWare {
         $checkToken = $this->authMiddleware->checkSession();
 
         if ($checkToken['status'] === false) {
-            header('location:/log/login');
             exit();
         }
         $this->noteController->createNoteLabel_POST($checkToken['user']);
@@ -181,7 +164,6 @@ class NoteMiddleWare {
         $checkToken = $this->authMiddleware->checkSession();
 
         if ($checkToken['status'] === false) {
-            header('location:/log/login');
             exit();
         }
         $this->noteController->deleteNoteLabel_POST($checkToken['user']);
@@ -191,7 +173,6 @@ class NoteMiddleWare {
         $checkToken = $this->authMiddleware->checkSession();
 
         if ($checkToken['status'] === false) {
-            header('location:/log/login');
             exit();
         }
         $this->noteController->createImageForNoteByImageUploadAndNoteId($checkToken['user']);
@@ -201,10 +182,33 @@ class NoteMiddleWare {
         $checkToken = $this->authMiddleware->checkSession();
 
         if ($checkToken['status'] === false) {
-            header('location:/log/login');
             exit();
         }
             $this->noteController->deleteImageForNoteByImageUrlAndNoteId($checkToken['user']);
+    }
+
+    public function createNotePassword_POST() {
+        $checkToken = $this->authMiddleware->checkSession();
+        if ($checkToken['status'] === false) {
+            exit();
+        }
+        $this->noteController->createNotePassword_POST($checkToken['user']);
+    }
+
+    public function deleteNotePassword_DELETE() {
+        $checkToken = $this->authMiddleware->checkSession();
+        if ($checkToken['status'] === false) {
+            exit();
+        }
+        $this->noteController->deleteNotePassword_DELETE($checkToken['user']);
+    }
+
+    public function changeNotePassword_PUT() {
+        $checkToken = $this->authMiddleware->checkSession();
+        if ($checkToken['status'] === false) {
+            exit();
+        }
+        $this->noteController->changeNotePassword_PUT($checkToken['user']);
     }
 
 }

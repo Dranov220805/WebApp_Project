@@ -20,6 +20,7 @@ class NoteService {
     public function getPinnedNotesByAccountId(string $accountId) {
         return $this->noteRepository->getPinnedNotesByAccountId($accountId);
     }
+
     public function getPinnedNotesByAccountIdPaginated(string $accountId, int $limit, int $offset): array {
         return $this->noteRepository->getPinnedNotesByAccountIdPaginated($accountId, $limit, $offset);
     }
@@ -211,6 +212,65 @@ class NoteService {
 
     public function deleteImageForNoteByImageUrlAndNoteId($imageUrl, $noteId) {
         return $this->noteRepository->deleteImageForNoteByImageUrlAndNoteId($imageUrl, $noteId);
+    }
+
+    public function protectedNoteByNoteIdAndAccountId($noteId, $accountId, $password) {
+        $result = $this->noteRepository->protectedNoteByNoteIdAndAccountId($noteId, $accountId, $password);
+        if (!$result) {
+            return [
+                'status' => false,
+                'message' => 'Set password to this note failed'
+            ];
+        }
+        return [
+            'status' => true,
+            'message' => 'Password for this note have been set'
+        ];
+    }
+
+    public function checkPasswordNoteByNoteIdAndAccountId($noteId, $accountId, $password) {
+        $result = $this->noteRepository->checkPasswordNoteByNoteIdAndAccountId($noteId, $accountId, $password);
+        if (!$result) {
+            return [
+                'status' => false,
+                'message' => 'Wrong note password'
+            ];
+        } else {
+            return [
+                'status' => true,
+                'message' => 'Password for this note is correct'
+            ];
+        }
+    }
+
+    public function deletePasswordNoteByNoteIdAndAccountId($noteId, $accountId, $inputPassword) {
+        $result = $this->noteRepository->deletePasswordNoteByNoteIdAndAccountId($noteId, $accountId, $inputPassword);
+        if (!$result) {
+            return [
+                'status' => false,
+                'message' => 'Delete note password failed'
+            ];
+        } else {
+            return [
+                'status' => true,
+                'message' => 'Note password deleted successfully'
+            ];
+        }
+    }
+
+    public function changeNotePasswordByNoteIdAndAccountId($noteId, $accountId, $password, $newPassword) {
+        $result = $this->noteRepository->changeNotePasswordByNoteIdAndAccountId($noteId, $accountId, $password, $newPassword);
+        if (!$result) {
+            return [
+                'status' => false,
+                'message' => 'Change note password failed'
+            ];
+        } else {
+            return [
+                'status' => true,
+                'message' => 'Note password changed successfully'
+            ];
+        }
     }
 
 }

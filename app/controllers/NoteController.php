@@ -313,10 +313,18 @@ class NoteController {
 
         $notes = $this->noteService->searchNotesByAccountId($accountId, $searchTerm);
 
-        echo json_encode([
-            'status' => true,
-            'data' => $notes
-        ]);
+        if (!$notes) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'No notes found'
+            ]);
+        } else {
+            echo json_encode([
+                'status' => true,
+                'data' => $notes,
+                'message' => 'Search note found'
+            ]);
+        }
     }
 
     public function pinNote_POST($user) {
@@ -691,6 +699,92 @@ class NoteController {
                 'status' => false,
                 'message' => 'Error deleting image: ' . $e->getMessage()
             ]);
+        }
+    }
+
+    public function createNotePassword_POST($user) {
+        $content = trim(file_get_contents("php://input"));
+        $data = json_decode($content, true);
+
+        $accountId = $user['accountId'] ?? null;
+        $noteId = $data['noteId'] ?? null;
+        $password = $data['password'] ?? null;
+        if (empty($accountId) || empty($noteId) || empty($password)) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'AccountId or Note password is missing'
+            ]);
+        } else {
+            $result = $this->noteService->protectedNoteByNoteIdAndAccountId($noteId, $accountId, $password);
+            if ($result['status'] === true) {
+                echo json_encode ([
+                    'status' => true,
+                    'message' => $result['message'],
+                ]);
+            } else {
+                echo json_encode ([
+                    'status' => false,
+                    'message' => $result['message']
+                ]);
+            }
+        }
+    }
+
+    public function deleteNotePassword_DELETE($user) {
+        $content = trim(file_get_contents("php://input"));
+        $data = json_decode($content, true);
+
+        $accountId = $user['accountId'] ?? null;
+        $noteId = $data['noteId'] ?? null;
+        $password = $data['password'] ?? null;
+
+        if (empty($accountId) || empty($noteId) || empty($password)) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'AccountId or NoteId or Password is missing'
+            ]);
+        } else {
+            $result = $this->noteService->deletePasswordNoteByNoteIdAndAccountId($noteId, $accountId, $password);
+            if ($result['status'] === true) {
+                echo json_encode ([
+                    'status' => true,
+                    'message' => $result['message']
+                ]);
+            } else {
+                echo json_encode ([
+                    'status' => false,
+                    'message' => $result['message']
+                ]);
+            }
+        }
+    }
+
+    public function changeNotePassword_PUT($user) {
+        $content = trim(file_get_contents("php://input"));
+        $data = json_decode($content, true);
+
+        $accountId = $user['accountId'] ?? null;
+        $noteId = $data['noteId'] ?? null;
+        $password = $data['password'] ?? null;
+        $newPassword = $data['newPassword'] ?? null;
+        if (empty($accountId) || empty($noteId) || empty($password) || empty($newPassword)) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'AccountId or NoteId or Password is missing'
+            ]);
+        } else {
+            $result = $this->noteService->changeNotePasswordByNoteIdAndAccountId($noteId, $accountId, $password, $newPassword);
+            if ($result['status'] === true) {
+                echo json_encode ([
+                    'status' => true,
+                    'message' => $result['message']
+                ]);
+            } else {
+                echo json_encode ([
+                    'status' => false,
+                    'message' => $result['message']
+                ]);
+            }
         }
     }
 
