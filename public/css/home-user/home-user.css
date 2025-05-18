@@ -330,7 +330,8 @@ body {
     height: fit-content;
     max-height: 200px;
     margin-bottom: 16px;
-    background-color: white;
+    background-color: var(--note-color);
+    color: var(--note-text-color);
     border-radius: 8px;
     box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
     overflow: hidden;
@@ -359,7 +360,8 @@ body {
     height: fit-content;
     max-height: 200px;
     margin-bottom: 16px;
-    background-color: white;
+    background-color: var(--note-color);
+    color: var(--note-text-color);
     border-radius: 8px;
     box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
     overflow: hidden;
@@ -849,7 +851,8 @@ body.dark-mode .modal-body {
     height: fit-content;
     max-height: 900px;
     margin-bottom: 16px;
-    background-color: white;
+    background-color: var(--note-color);
+    color: var(--note-text-color);
     border-radius: 8px;
     box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
     overflow: hidden;
@@ -935,7 +938,7 @@ body.dark-mode .modal-content {
 }
 
 #share--email__input::placeholder {
-        color: black;
+    color: black;
 }
 
 /* ─────── DARK MODE SUPPORT ─────── */
