@@ -76,7 +76,7 @@ $userData = $user['user'];
 
                 <div class="setting-row">
                     <div class="setting-label">Default Note Color</div>
-                    <div class="d-flex align-items-center">
+                    <div class="d-flex align-items-center flex-wrap gap-1">
                         <div class="color-option color-white active" data-color="#ffffff"></div>
                         <div class="color-option" style="background-color: #77172E" data-color="#77172E"></div>
                         <div class="color-option" style="background-color: #692B17" data-color="#692B17"></div>
