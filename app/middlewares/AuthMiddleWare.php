@@ -148,7 +148,14 @@ class AuthMiddleware {
     }
 
     public function accountActivate() {
-        $this->authController->accountActivate();
+        $token = $_GET['token'] ?? null;
+        if (empty($token)) {
+            http_response_code(400);
+            echo json_encode(['status' => false, 'message' => 'Token not provided']);
+            exit();
+        }
+
+        $this->authController->accountActivate($token);
     }
 
     public function forgotPassword() {

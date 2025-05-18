@@ -358,7 +358,7 @@ class LabelNote {
 
     deleteLabel_POST(labelName) {
         fetch('/label/delete', {
-            method: 'POST',
+            method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 labelName
@@ -967,7 +967,7 @@ class LabelNote {
 
     deleteLabelNote_POST(noteId, title, content) {
         fetch(`/note/delete`, {
-            method: 'POST',
+            method: 'DELETE',
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ noteId })
         })
@@ -980,7 +980,7 @@ class LabelNote {
                     const labelNoteGrid = document.querySelector('.label-note__load');
                     labelNoteGrid.innerHTML = '';
                     try {
-                        this.loadLabelNotes();
+                        this.loadNewLabelNote();
                     } catch (e) {
                         console.error("loadLabelNotes() failed:", e);
                     }
