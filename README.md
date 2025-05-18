@@ -25,4 +25,22 @@
 -- .htaccess  
 
 # This project is using composer, please install below library for system behave properly:
--- composer install
+    composer install
+
+# After install required library, run the following command:
+    docker-compose up --build
+
+# Then access the program through following port:
+    http://localhost:8080/
+
+# The system will automatically redirect you to login page (or home page if already login)
+# Prefix account for testing:
+Email: thanhlongduong6a3@gmail.com
+
+Password: @Long123
+
+Email: duongthanhlong220805@gmail.com
+
+Password: @Long123
+
+# If you want to test register function, please use a VALID GMAIL for system behave properly
