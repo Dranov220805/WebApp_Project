@@ -5,10 +5,10 @@ class Notes {
 
     constructor() {
         if (Notes.instance) {
-            console.log('Returning existing Notes instance');
+            // console.log('Returning existing Notes instance');
             return Notes.instance;
         }
-        console.log('Creating new Notes instance');
+        // console.log('Creating new Notes instance');
         Notes.instance = this;
 
         this.currentPage = 1;
@@ -61,44 +61,36 @@ class Notes {
             };
 
             if (labelNote) {
-                console.log('Clicked add label for note:', note);
                 this.expandAddLabelNote(note);
                 return;
             }
 
             if (listLabelNote) {
-                console.log('Clicked list label for note:', note);
                 this.expandListLabelNote(note);
                 return;
             }
 
             if (deleteBtn) {
-                console.log('Clicked delete button:', note);
                 this.expandDeleteNote(note);
                 return;
             }
 
             if (pinBtn) {
-                console.log('Clicked pin button:', note);
                 this.pinNote_POST(note.noteId, note.title, note.content, note.imageLink, note.isProtected);
                 return;
             }
 
             if (unpinBtn) {
-                console.log('Clicked unpin button:', note);
                 this.unpinNote_POST(note.noteId, note.title, note.content, note.imageLink, note.isProtected);
                 return;
             }
 
             if (shareBtn) {
-                console.log('Clicked share button:', note);
                 this.expandShareNote(note);
             }
 
             if (lockBtn) {
-                console.log('Clicked lock button:', note);
                 if (note.isProtected === "1" || note.isProtected === 1 || note.isProtected === true) {
-                    console.log("Note is protected.");
                     this.expandUpdateLockNote(note);
                     return;
                 } else {
@@ -109,9 +101,7 @@ class Notes {
             // Prevent expanding the note when clicking buttons inside .note-sheet__menu
             if (event.target.closest('.note-sheet__menu button')) return;
 
-            console.log('Clicked note:', note);
             if (note.isProtected === "1" || note.isProtected === 1 || note.isProtected === true) {
-                console.log("Note is protected.");
                 this.expandCheckNotePassword(note);
                 return;
             } else {
@@ -134,12 +124,10 @@ class Notes {
         });
 
         document.addEventListener('click', this.handleNoteClick);
-        console.log('Attached note click listener');
         document.addEventListener('click', this.handleDeleteClick);
 
         // Attach scroll event listener
         window.addEventListener('scroll', this.handleScroll.bind(this)); // Add this to attach scroll listener
-        console.log('Attached scroll listener');
 
         const createNoteBtn = document.querySelector(".create-note-btn");
         const noteInput = document.querySelector(".note-post__input");
@@ -228,7 +216,7 @@ class Notes {
                     this.appendNotesToDOM(data.data);
                     this.currentPage++; // Only increment page after successful append
                 } else {
-                    console.log('No more notes to load');
+                    // console.log('No more notes to load');
                 }
             })
             .catch(err => {
@@ -246,7 +234,7 @@ class Notes {
 
         notes.forEach(note => {
             if (document.querySelector(`.note-sheet[data-note-id="${note.noteId}"]`)) {
-                console.log(`Skipping duplicate note: ${note.noteId}`);
+                // console.log(`Skipping duplicate note: ${note.noteId}`);
                 return;
             }
 
@@ -338,7 +326,7 @@ class Notes {
 
         notes.forEach(note => {
             if (document.querySelector(`.note-sheet[data-note-id="${note.noteId}"]`)) {
-                console.log(`Skipping duplicate note: ${note.noteId}`);
+                // console.log(`Skipping duplicate note: ${note.noteId}`);
                 return;
             }
 
@@ -658,7 +646,7 @@ class Notes {
 
                 // Create WebSocket collaborator if note is shared
                 if (isShared === true) {
-                    console.log("Note is shared, establishing WebSocket connection");
+                    // console.log("Note is shared, establishing WebSocket connection");
 
                     // Create collaboration UI elements if they don't exist
                     // this.setupCollaborationUI(modalEl);
@@ -667,7 +655,7 @@ class Notes {
                     this.noteCollaborator = new NoteCollaborator(noteId, titleInput, contentInput);
                     this.noteCollaborator.connect();
                 } else {
-                    console.log("This note is not shared with any users. No WebSocket connection established.");
+                    // console.log("This note is not shared with any users. No WebSocket connection established.");
                 }
 
                 // Clean up when modal is closed
@@ -949,7 +937,6 @@ class Notes {
                 });
 
                 const result = await response.json();
-                console.log(result);
 
                 if (result.status === true) {
                     this.showToast('Image uploaded successfully!', 'success');
@@ -1010,7 +997,7 @@ class Notes {
                     titleInput.classList.add('d-none');
                     contentInput.value = '';
                     const newNote = this.noteSheetModel(noteId, title, content);
-                    console.log(`Prepended note: ${noteId}`);
+                    // console.log(`Prepended note: ${noteId}`);
                     this.initNotePostTrigger();
                 } else {
                     this.showToast(message || 'Failed to create note.', 'danger');
@@ -1248,8 +1235,6 @@ class Notes {
         })
             .then(res => res.json())
             .then(data => {
-                console.log(data);
-
                 if (data.status === false) {
                     this.showToast("An error occurred: " + data.message, "danger");
                     return;
@@ -1264,7 +1249,6 @@ class Notes {
                 // Create and prepend the pinned note
                 const pinNoteGrid = document.querySelector('.pinned-note__load');
                 const otherNoteGrid = document.querySelector('.other-note__load');
-                console.log(noteId, title, content, imageLink);
                 const newPinnedNote = this.pinNoteSheetModel(noteId, title, content, imageLink, isProtected);
                 pinNoteGrid.innerHTML = '';
                 otherNoteGrid.innerHTML = '';
@@ -1286,8 +1270,6 @@ class Notes {
         })
             .then(res => res.json())
             .then(data => {
-                console.log(data);
-
                 if (data.status === false) {
                     this.showToast("An error occurred: " + data.message, "danger");
                     return;
@@ -1302,8 +1284,6 @@ class Notes {
                 // Create and prepend the unpinned note to the 'other notes' section
                 const otherNoteGrid = document.querySelector('.other-note__load');
                 const pinNoteGrid = document.querySelector('.pinned-note__load');
-                console.log(noteId, title, content, imageLink);
-
                 const newOtherNote = this.noteSheetModel(noteId, title, content, imageLink, isProtected);
                 pinNoteGrid.innerHTML = '';
                 this.loadNewPinnedNotes();
@@ -1329,19 +1309,16 @@ class Notes {
                     const otherNoteGrid = document.querySelector('.other-note__load');
                     const pinNoteGrid = document.querySelector('.pinned-note__load');
                     const searchNoteGrid = document.querySelector('.search-note__load');
-                    console.log(noteId, title, content);
                     searchNoteGrid.innerHTML = '';
                     pinNoteGrid.innerHTML = '';
                     otherNoteGrid.innerHTML = '';
                     try {
-                        console.log("Calling loadNewNotes()");
                         this.loadNewNotes();
                     } catch (e) {
                         console.error("loadNewNotes() failed:", e);
                     }
 
                     try {
-                        console.log("Calling loadNewPinnedNotes()");
                         this.loadNewPinnedNotes();
                     } catch (e) {
                         console.error("loadNewPinnedNotes() failed:", e);
@@ -1406,7 +1383,6 @@ class Notes {
             .then(res => res.json())
             .then(data => {
                 if (data.status) {
-                    console.log("Shared successfully.");
                     this.showToast("Note shared successfully!", 'success');
                     $('#share--email__input').val('');
                     this.getSharedEmail(noteId);
@@ -1540,7 +1516,6 @@ class Notes {
     }
 
     expandUpdateLockNote(note) {
-        console.log('open update password');
         const modalEl = document.getElementById('updatePasswordNoteModal');
         const modal = new bootstrap.Modal(modalEl);
 
@@ -1610,7 +1585,6 @@ class Notes {
     }
 
     expandCreateLockNote(note) {
-        console.log('open create password');
         const modalEl = document.getElementById('createPasswordNoteModal');
         const modal = new bootstrap.Modal(modalEl);
 
@@ -1685,7 +1659,6 @@ class Notes {
     }
 
     expandDeleteLockNote(note) {
-        console.log('open delete password');
         const modalEl = document.getElementById('deletePasswordNoteModal');
         const modal = new bootstrap.Modal(modalEl);
 

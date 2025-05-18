@@ -5,11 +5,11 @@ class ShareNotes {
 
     constructor() {
         if (ShareNotes.instance) {
-            console.log('Returning existing ShareNotes instance');
+            // console.log('Returning existing ShareNotes instance');
             return ShareNotes.instance;
         }
 
-        console.log('Creating new ShareNotes instance');
+        // console.log('Creating new ShareNotes instance');
         ShareNotes.instance = this;
 
         this.currentPage = 1;
@@ -46,17 +46,10 @@ class ShareNotes {
 
             if (event.target.closest('.note-sheet-trash__menu button')) return;
 
-            console.log('Clicked note:', note);
             this.expandShareNote(note);
         };
 
         document.addEventListener('click', this.handleNoteClick);
-        console.log('Attached note click listener');
-
-        // window.addEventListener('scroll', this.handleScroll.bind(this));
-        // console.log('Attached scroll listener');
-
-
 
         const myTextarea = document.querySelector('.note-content-input-autosave');
         if (myTextarea) {
@@ -118,7 +111,6 @@ class ShareNotes {
         })
             .then(res => res.json())
             .then(data => {
-                console.log(data);
                 if (data.data?.length > 0) {
                     this.appendTrashedNotesToDOM(data.data);
                     this.currentPage++;
@@ -149,7 +141,7 @@ class ShareNotes {
 
         Object.values(groupedNotes).forEach(note => {
             if (document.querySelector(`.shared-note-card[data-note-id="${note.noteId}"]`)) {
-                console.log(`Skipping duplicate note: ${note.noteId}`);
+                // console.log(`Skipping duplicate note: ${note.noteId}`);
                 return;
             }
 
@@ -208,7 +200,6 @@ class ShareNotes {
     }
 
     expandShareNote(note) {
-        console.log(note);
         const modalEl = document.getElementById('noteShareModal');
         const modal = new bootstrap.Modal(modalEl);
         const noteId = note.noteId;

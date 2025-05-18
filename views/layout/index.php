@@ -9,6 +9,12 @@
      * @var $content
     */
 ?>
+
+<script>
+    const userFontScale = <?= isset($_SESSION['fontSize']) ? json_encode($_SESSION['fontSize']) : 1.0 ?>;
+    const userFontColor = <?= isset($_SESSION['noteColor']) ? json_encode($_SESSION['noteColor']) : 1.0 ?>;
+</script>
+
 <!doctype html>
 <html lang="en">
     <?php

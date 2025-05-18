@@ -474,11 +474,11 @@ class NoteRepository
 
         $sql = "UPDATE `Note` 
             SET `title` = ?, `content` = ?, `createDate` = ?
-            WHERE `accountId` = ? AND `noteId` = ?";
+            WHERE `noteId` = ?";
     
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("sssss", $noteTitle, $noteContent, $modifiedDate, $accountId, $noteId);
+        $stmt->bind_param("ssss", $noteTitle, $noteContent, $modifiedDate, $noteId);
 
         $result = $stmt->execute();
         $stmt->close();

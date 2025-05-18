@@ -57,11 +57,8 @@ class Auth {
                     $('#password-input').val('');
                     if (status === true) {
                         this.showLoginToast(message, 'success');
-                        // Navigate to home page - token will be sent via cookie
+                        // Navigate to home page
                         window.location.href = '/home';
-                        // setTimeout(() => {
-                        //
-                        // }, 100);
                     } else {
                         this.showLoginToast(message, 'danger');
                     }
@@ -130,52 +127,6 @@ class Auth {
     getAuthHeaders() {
         const token = localStorage.getItem('token');
         return token ? { 'Authorization': `Bearer ${token}` } : {};
-    }
-
-    rememberMe() {
-        const emailInput = document.getElementById("email-input");
-        const passwordInput = document.getElementById("password-input");
-        const rememberCheckbox = document.getElementById("remember-me");
-
-        // Pre-fill if saved
-        const savedEmail = localStorage.getItem("rememberedEmail");
-        const savedPassword = localStorage.getItem("rememberedPassword");
-
-        if (savedEmail && savedPassword) {
-            emailInput.value = savedEmail;
-            passwordInput.value = savedPassword;
-            rememberCheckbox.checked = true;
-        }
-
-        // Handle checkbox + email save
-        $('#login-button').on('click', () => {
-            if (rememberCheckbox.checked) {
-                localStorage.setItem("rememberedEmail", emailInput.value);
-                localStorage.setItem("rememberedPassword", passwordInput.value);
-            } else {
-                localStorage.removeItem("rememberedEmail");
-                localStorage.removeItem("rememberedPassword");
-            }
-        });
-    }
-
-    autoLoginIfRemembered() {
-        const savedEmail = localStorage.getItem("rememberedEmail");
-        const rememberMe = localStorage.getItem("rememberMe");
-
-        if (savedEmail && rememberMe === "true") {
-            // Optionally send a request to validate the session or cookie
-            fetch('/auth/auto-login', {
-                method: 'POST',
-                credentials: 'include' // allows sending cookies
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.loggedIn) {
-                        window.location.href = data.redirect || '/home';
-                    }
-                });
-        }
     }
 
     toggleChangePassword() {
@@ -320,25 +271,6 @@ class Auth {
                 return false;
             });
     }
-
-    // Example API call using JWT
-    fetchProtectedData() {
-        fetch('/protected-endpoint', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                ...this.getAuthHeaders()
-            }
-        })
-            .then(res => res.json())
-            .then(data => {
-                console.log('Protected data:', data);
-            })
-            .catch(err => {
-                console.error('Error fetching protected data:', err);
-            });
-    }
-
 }
 
 export default new Auth();

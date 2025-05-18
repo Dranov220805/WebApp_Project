@@ -3,11 +3,11 @@ class TrashNotes {
 
     constructor() {
         if (TrashNotes.instance) {
-            console.log('Returning existing TrashNotes instance');
+            // console.log('Returning existing TrashNotes instance');
             return TrashNotes.instance;
         }
 
-        console.log('Creating new TrashNotes instance');
+        // console.log('Creating new TrashNotes instance');
         TrashNotes.instance = this;
 
         this.currentPage = 1;
@@ -33,16 +33,15 @@ class TrashNotes {
                 noteId: noteEl.dataset.noteId || noteEl.dataset.id,
                 title: noteEl.dataset.noteTitle || noteEl.dataset.title,
                 content: noteEl.dataset.noteContent || noteEl.dataset.content,
+                imageLink: noteEl.dataset.noteImage  || noteEl.dataset.image,
             };
 
             if (deleteBtn) {
-                console.log('Clicked delete button:', note);
                 this.expandDeleteNote(note);
                 return;
             }
 
             if (restoreBtn) {
-                console.log('Clicked restore button:', note);
                 this.expandRestoreNote(note);
                 return;
             }
@@ -50,32 +49,12 @@ class TrashNotes {
             // Prevent expanding the note when clicking buttons inside .note-sheet-trash__menu
             if (event.target.closest('.note-sheet-trash__menu button')) return;
 
-            console.log('Clicked note:', note);
+            this.expandTrashNote(note);
         };
 
         document.addEventListener('click', this.handleNoteClick);
-        console.log('Attached note click listener');
-
-        // window.addEventListener('scroll', this.handleScroll.bind(this));
-        // console.log('Attached scroll listener');
+        // console.log('Attached note click listener');
     }
-
-    // handleScroll() {
-    //     const currentScrollTop = window.scrollY;
-    //
-    //     if (
-    //         currentScrollTop > this.lastScrollTop &&
-    //         window.innerHeight + currentScrollTop >= document.body.offsetHeight - 200
-    //     ) {
-    //         if (!this.scrollThrottle) {
-    //             this.scrollThrottle = true;
-    //             this.loadTrashedNotes();
-    //             setTimeout(() => this.scrollThrottle = false, 300);
-    //         }
-    //     }
-    //
-    //     this.lastScrollTop = Math.max(currentScrollTop, 0);
-    // }
 
     showToast(message, type = 'success') {
         const toastEl = document.getElementById('shareToast');
@@ -110,7 +89,6 @@ class TrashNotes {
         })
             .then(res => res.json())
             .then(data => {
-                console.log(data);
                 if (data.data?.length > 0) {
                     this.appendTrashedNotesToDOM(data.data);
                     this.currentPage++;
@@ -129,7 +107,7 @@ class TrashNotes {
 
         notes.forEach(note => {
             if (document.querySelector(`.note-sheet-trash[data-note-id="${note.noteId}"]`)) {
-                console.log(`Skipping duplicate note: ${note.noteId}`);
+                // console.log(`Skipping duplicate note: ${note.noteId}`);
                 return;
             }
 
@@ -168,7 +146,7 @@ class TrashNotes {
             `;
 
             container.appendChild(div);
-            console.log(`Appended note: ${note.noteId}`);
+            // console.log(`Appended note: ${note.noteId}`);
         });
     }
 
@@ -262,6 +240,34 @@ class TrashNotes {
                 console.error("Delete error:", err);
                 this.showToast("An error occurred while deleting the note", "danger");
             });
+    }
+
+    expandTrashNote(note) {
+        const modalEl = document.getElementById('noteTrashModal');
+        const modal = new bootstrap.Modal(modalEl);
+        const noteId = note.noteId;
+
+        const imageLink = modalEl.querySelector('.note-sheet__image');
+        const titleInput = modalEl.querySelector('.note-title-input-autosave');
+        const contentInput = modalEl.querySelector('.note-content-input-autosave');
+
+        imageLink.innerHTML = note.imageLink ? `<img src="${note.imageLink}" style="width: 100%; height: auto; display: block">` : '';
+        titleInput.value = note.title || '';
+        contentInput.value = note.content || '';
+
+        // Store noteId and image DOM ref on class instance
+        this.currentNoteId = noteId;
+        this.imageLinkRef = imageLink;
+
+        const inputTextarea = modalEl.querySelector('.note-content-input-autosave');
+        inputTextarea.style.height = '100%';
+
+        // Block editing if user doesn't have permission
+        const canEdit = note.canEdit === 'true' || note.canEdit === true;
+
+        titleInput.readOnly = !canEdit;
+        contentInput.readOnly = !canEdit;
+        modal.show();
     }
 }
 

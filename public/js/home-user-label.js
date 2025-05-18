@@ -5,10 +5,10 @@ class LabelNote {
 
     constructor() {
         if (LabelNote.instance) {
-            console.log('Returning existing LabelNotes instance');
+            // console.log('Returning existing LabelNotes instance');
             return LabelNote.instance;
         }
-        console.log('Creating new LabelNotes instance');
+        // console.log('Creating new LabelNotes instance');
         LabelNote.instance = this;
 
         this.currentPage = 1;
@@ -49,32 +49,26 @@ class LabelNote {
             };
 
             if (labelNote) {
-                console.log('Clicked add label for note:', note);
                 this.expandAddLabelNote(note);
                 return;
             }
 
             if (listLabelNote) {
-                console.log('Clicked list label for note:', note);
                 this.expandListLabelNote(note);
                 return;
             }
 
             if (deleteBtn) {
-                console.log('Clicked delete button:', note);
                 this.expandDeleteLabelNote(note);
                 return;
             }
 
             if (shareBtn) {
-                console.log('Clicked share button:', note);
                 this.expandShareLabelNote(note);
             }
 
             if (lockBtn) {
-                console.log('Clicked lock button:', note);
                 if (note.isProtected === "1" || note.isProtected === 1 || note.isProtected === true) {
-                    console.log("Note is protected.");
                     this.expandUpdateLockNote(note);
                     return;
                 } else {
@@ -85,9 +79,7 @@ class LabelNote {
             // Prevent expanding the note when clicking buttons inside .note-sheet__menu
             if (event.target.closest('.note-sheet__menu button')) return;
 
-            console.log('Clicked note:', note);
             if (note.isProtected === "1" || note.isProtected === 1 || note.isProtected === true) {
-                console.log("Note is protected.");
                 this.expandCheckNotePassword(note);
                 return;
             } else {
@@ -112,12 +104,12 @@ class LabelNote {
         }
 
         document.addEventListener('click', this.handleNoteClick);
-        console.log('Attached note click listener');
+        // console.log('Attached note click listener');
         document.addEventListener('click', this.handleDeleteClick);
 
         // Attach scroll event listener
         window.addEventListener('scroll', this.handleScroll.bind(this));
-        console.log('Attached scroll listener');
+        // console.log('Attached scroll listener');
 
         // Rename label
         document.addEventListener('click', (e) => {
@@ -127,7 +119,7 @@ class LabelNote {
                 const oldLabel = e.target.closest('.label-rename-btn').dataset.labelId;
                 const newLabel = input.value.trim();
                 if (oldLabel !== newLabel && newLabel) {
-                    console.log('Renaming:', oldLabel, 'to', newLabel);
+                    // console.log('Renaming:', oldLabel, 'to', newLabel);
                     this.renameLabel_POST(oldLabel, newLabel);
                 }
             }
@@ -206,9 +198,7 @@ class LabelNote {
                 'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
             }
         })
-            // .then(res => res.json())
             .then(data => {
-                console.log(data);
                 if (data.data?.length > 0) {
                     this.appendLabelNotesToDOM(data.data);
                     this.currentPage++;
@@ -237,7 +227,6 @@ class LabelNote {
         })
             .then(res => res.json())
             .then(data => {
-                console.log(data);
                 if (data.data?.length > 0) {
                     this.appendLabelNotesToDOM(data.data);
                     this.currentPage++;
@@ -251,13 +240,12 @@ class LabelNote {
     }
 
     appendLabelNotesToDOM(notes) {
-        console.log(notes);
         const container = document.querySelector(".label-note__load");
         if (!container) return;
 
         notes.forEach(note => {
             if (document.querySelector(`.note-sheet[data-note-id="${note.noteId}"]`)) {
-                console.log(`Skipping duplicate note: ${note.noteId}`);
+                // console.log(`Skipping duplicate note: ${note.noteId}`);
                 return;
             }
 
@@ -284,8 +272,6 @@ class LabelNote {
                     console.error("Failed to parse labels:", e);
                 }
             }
-
-            console.log('All labels: ', labels);
 
             const imageHTML = note.imageLink && note.imageLink.trim() !== ''
                 ? `<div class="note-sheet__image" style="overflow: visible">
@@ -430,7 +416,6 @@ class LabelNote {
         })
             .then(res => res.json())
             .then(data => {
-                console.log(data);
                 if (data) {
                     this.showToast("Label created successfully", "success");
                     this.appendLabel(labelName);
@@ -702,11 +687,11 @@ class LabelNote {
                 this.setupLabelAutoSaveModal(this.currentNoteId, titleInput, contentInput, icon, iconText);
 
                 if (isShared === true) {
-                    console.log("LabelNote is shared, establishing WebSocket connection");
+                    // console.log("LabelNote is shared, establishing WebSocket connection");
                     this.noteCollaborator = new NoteCollaborator(noteId, titleInput, contentInput);
                     this.noteCollaborator.connect();
                 } else {
-                    console.log("LabelNote is not shared.");
+                    // console.log("LabelNote is not shared.");
                 }
 
                 modalEl.addEventListener('hidden.bs.modal', () => {
@@ -846,7 +831,6 @@ class LabelNote {
                     const { status, noteId, title, content, imageLink} = data;
                     if (status === true) {
                         showSavedIcon();
-                        console.log(data);
                         const labelNoteGrid = document.querySelector('.label-note__load');
                         labelNoteGrid.innerHTML = '';
                         this.loadNewLabelNote();
@@ -895,8 +879,6 @@ class LabelNote {
         } else if (Array.isArray(note.labels)) {
             noteLabels = note.labels;
         }
-
-        console.log(note.labels);
 
         const currentLabelNames = noteLabels.map(l => l.labelName);
 
@@ -996,10 +978,8 @@ class LabelNote {
                     const noteEl = document.querySelector(`.note-sheet[id="${noteId}"]`);
                     if (noteEl) noteEl.remove(); // Remove from DOM
                     const labelNoteGrid = document.querySelector('.label-note__load');
-                    console.log(noteId, title, content);
                     labelNoteGrid.innerHTML = '';
                     try {
-                        console.log("Calling loadLabelNotes()");
                         this.loadLabelNotes();
                     } catch (e) {
                         console.error("loadLabelNotes() failed:", e);
@@ -1045,7 +1025,6 @@ class LabelNote {
             .then(res => res.json())
             .then(data => {
                 if (data.status) {
-                    console.log("Shared successfully.");
                     this.showToast("Note shared successfully!", 'success');
                     $('#share--email__input').val('');
                     this.getSharedEmail(noteId);
@@ -1245,7 +1224,6 @@ class LabelNote {
     }
 
     expandUpdateLockNote(note) {
-        console.log('open update password');
         const modalEl = document.getElementById('updatePasswordNoteModal');
         const modal = new bootstrap.Modal(modalEl);
 
@@ -1315,7 +1293,6 @@ class LabelNote {
     }
 
     expandCreateLockNote(note) {
-        console.log('open create password');
         const modalEl = document.getElementById('createPasswordNoteModal');
         const modal = new bootstrap.Modal(modalEl);
 
@@ -1390,7 +1367,6 @@ class LabelNote {
     }
 
     expandDeleteLockNote(note) {
-        console.log('open delete password');
         const modalEl = document.getElementById('deletePasswordNoteModal');
         const modal = new bootstrap.Modal(modalEl);
 

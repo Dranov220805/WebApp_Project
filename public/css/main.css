@@ -28,3 +28,16 @@ html {
 body.dark-mode #overlay-loading {
     background-color: rgba(76, 76, 76, 0.8);
 }
+
+:root {
+    --font-scale: 1;
+    --note-color: #ffffff;
+}
+
+html {
+    font-size: calc(16px * var(--font-scale)); /* base size scales */
+}
+
+body, p, h1, h2, h3, h4, h5, h6, span, div, button, input, textarea {
+    font-size: inherit;
+}

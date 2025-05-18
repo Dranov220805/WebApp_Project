@@ -1,6 +1,54 @@
 class HomeUser {
     constructor() {
         document.addEventListener('DOMContentLoaded', () => this.initialize());
+        if (typeof userFontScale !== "undefined") {
+            document.documentElement.style.setProperty('--font-scale', userFontScale);
+        } else {
+            document.documentElement.style.setProperty('--font-scale', 1.0);
+        }
+
+        if (typeof userFontColor !== "undefined") {
+            document.documentElement.style.setProperty('--note-color', userFontColor);
+        } else {
+            document.documentElement.style.setProperty('--note-color', '#ffffff');
+        }
+
+        document.querySelectorAll('.color-option').forEach(option => {
+            option.addEventListener('click', function () {
+                const color = this.dataset.color;
+                document.documentElement.style.setProperty('--note-color', color);
+                document.documentElement.style.setProperty('--note-text-color', getContrastYIQ(color));
+            });
+        });
+
+        // Font color logic with dark mode
+        const savedColor = typeof userFontColor !== "undefined" ? userFontColor : '#ffffff';
+        const isDarkMode = document.body.classList.contains('dark-mode');
+
+        if (isDarkMode && savedColor.toLowerCase() === '#ffffff') {
+            // Override white with dark note color
+            document.documentElement.style.setProperty('--note-color', '#1c1c1c');
+            document.documentElement.style.setProperty('--note-text-color', '#ffffff');
+        } else {
+            document.documentElement.style.setProperty('--note-color', savedColor);
+            document.documentElement.style.setProperty('--note-text-color', getContrastYIQ(savedColor));
+        }
+
+        function getContrastYIQ(hex){
+            const r = parseInt(hex.substr(1,2),16);
+            const g = parseInt(hex.substr(3,2),16);
+            const b = parseInt(hex.substr(5,2),16);
+            const yiq = (r*299 + g*587 + b*114)/1000;
+            return (yiq >= 128) ? '#000000' : '#ffffff';
+        }
+    }
+
+    getContrastYIQ(hex){
+        const r = parseInt(hex.substr(1,2),16);
+        const g = parseInt(hex.substr(3,2),16);
+        const b = parseInt(hex.substr(5,2),16);
+        const yiq = (r*299 + g*587 + b*114)/1000;
+        return (yiq >= 128) ? '#000000' : '#ffffff';
     }
 
     initialize() {
@@ -121,7 +169,6 @@ class HomeUser {
                 });
 
                 const result = await response.json();
-                console.log(result);
 
                 if (result.status === true) {
                     const userNameTag = document.querySelector('.username--title__modal');
@@ -129,7 +176,8 @@ class HomeUser {
                     userNameTag.innerText = result.userName;
                     userNameTag2.innerText = result.userName;
                     this.showToast('Preferences saved successfully', 'success');
-                    // Optionally apply changes: this.applyPreferences(result.data);
+                    document.documentElement.style.setProperty('--font-scale', result.noteFont);
+                    document.documentElement.style.setProperty('--note-color', result.noteColor);
                 } else {
                     this.showToast('Failed to save preferences', 'danger');
                 }
@@ -171,7 +219,6 @@ class HomeUser {
                 });
 
                 const result = await response.json();
-                console.log(result);
 
                 if (result.status === true) {
                     const {token, picture} = result;

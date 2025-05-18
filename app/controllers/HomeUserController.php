@@ -213,7 +213,7 @@ class HomeUserController extends BaseController{
 
                 $_SESSION['isDarkTheme'] = $data['theme'] == 'dark' ? 1 : 0;
                 $_SESSION['userName'] = $data['userName'];
-                $_SESSION['noteFont'] = $data['noteFont'];
+                $_SESSION['fontSize'] = $data['noteFont'];
                 $_SESSION['noteColor'] = $data['noteColor'];
 
                 echo json_encode([

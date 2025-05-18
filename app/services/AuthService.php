@@ -48,6 +48,8 @@ class AuthService
             'expiredTime' => $user->getExpiredTime(),
             'roleId' => $user->getRoleId(),
             'isDarkTheme' => $userPreference->isDarkTheme(),
+            'fontSize' => $userPreference->getNoteFont(),
+            'noteColor' => $userPreference->getNoteColor(),
             'isVerified' => $user->getIsVerified(),
             'message' => 'Login successfully'
         ];

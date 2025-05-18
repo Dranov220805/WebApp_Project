@@ -30,13 +30,13 @@ export class NoteCollaborator {
             // '/ws/' is the path you configured in your Apache reverse proxy
             const wsUrl = `${protocol}//${hostname}:8082`;
 
-            console.log(`Attempting to connect to WebSocket at: ${wsUrl}`);
+            // console.log(`Attempting to connect to WebSocket at: ${wsUrl}`);
             this.socket = new WebSocket(wsUrl);
             // --- END CORRECTION ---
 
 
             this.socket.onopen = () => {
-                console.log(`WebSocket connected for note: ${this.noteId} via ${wsUrl}`);
+                // console.log(`WebSocket connected for note: ${this.noteId} via ${wsUrl}`);
                 this.isConnected = true;
 
                 // Subscribe to note updates
@@ -63,7 +63,7 @@ export class NoteCollaborator {
             };
 
             this.socket.onclose = () => {
-                console.log('WebSocket connection closed');
+                // console.log('WebSocket connection closed');
                 this.isConnected = false;
                 this.updateConnectionStatus(false);
 
@@ -73,7 +73,7 @@ export class NoteCollaborator {
                 // Attempt to reconnect after 5 seconds
                 setTimeout(() => {
                     if (!this.isConnected) {
-                        console.log('Attempting to reconnect...');
+                        // console.log('Attempting to reconnect...');
                         this.connect();
                     }
                 }, 5000);
@@ -185,7 +185,7 @@ export class NoteCollaborator {
                 break;
 
             default:
-                console.log('Unknown message type:', message.type);
+                // console.log('Unknown message type:', message.type);
         }
     }
 
@@ -193,12 +193,7 @@ export class NoteCollaborator {
         // Only handle updates for the current note
         if (message.noteId !== this.noteId) return;
 
-        // REMOVE THIS LINE:
-        // if (message.editorEmail === this.userEmail) return;
-        // The server already ensures that updates are not sent back to the originator.
-        // Any 'update' message received here is from another editor.
-
-        console.log('Received update from:', message.editorEmail, '(My email:', this.userEmail, ') for note:', message.noteId);
+        // console.log('Received update from:', message.editorEmail, '(My email:', this.userEmail, ') for note:', message.noteId);
 
         // Save selection/cursor position
         const isTitleFocused = document.activeElement === this.titleInput;
@@ -227,22 +222,6 @@ export class NoteCollaborator {
             this.contentInput.selectionStart = contentSelectionStart;
             this.contentInput.selectionEnd = contentSelectionEnd;
         }
-
-        // Dynamically check and refresh note sections
-        // const sections = [
-        //     { className: 'other-note__load', loader: this.loadNewNotes.bind(this) },
-        //     { className: 'pinned-note__load', loader: this.loadNewPinnedNotes.bind(this) },
-        //     { className: 'label-note__load', loader: this.loadNewLabelNote.bind(this) },
-        //     // { className: 'share-note__load', loader: this.loadSharedNotes.bind(this) }
-        // ];
-        //
-        // sections.forEach(section => {
-        //     const element = document.querySelector(`.${section.className}`);
-        //     if (element) {
-        //         element.innerHTML = '';
-        //         section.loader();
-        //     }
-        // });
 
         const noteElement = document.querySelector(`.note-sheet[data-note-id="${message.noteId}"]`);
         if (noteElement) {

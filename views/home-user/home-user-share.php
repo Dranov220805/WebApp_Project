@@ -55,7 +55,7 @@
                                         <?php endif; ?>>
                                         <div class="card-body" style="max-height: 300px">
                                             <div class="d-flex justify-content-start" style="width: 100%; max-width: 100%;">
-                                                <div class="" style="width: 60%">
+                                                <div class="share-card-title-content" style="width: 60%">
                                                     <div class="small mb-1 note--share__by">
                                                         Shared by <strong><?= htmlspecialchars($note['sharedEmail']) ?></strong>
                                                     </div>
@@ -127,7 +127,7 @@
                 </div>
             </div>
             <div class="modal-footer d-flex justify-content-start align-items-center">
-                <div class="save-status-icon d-flex flex-row flex-grow-1">
+                <div class="save-status-icon d-flex flex-row flex-grow-1 align-items-center">
                     <p class="text-success" style="padding-right: 5px; margin-bottom: 0px; align-items: center;">Saved</p>
                     <span>
                         <i class="fa-solid fa-check-circle text-success"></i>

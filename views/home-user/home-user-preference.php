@@ -53,7 +53,7 @@ $userData = $user['user'];
 
                 <div class="setting-row">
                     <div class="setting-label">Theme</div>
-                    <select id="theme-selector" class="form-select dropdown-select" style="width: 30%; justify-content: center">
+                    <select id="theme-selector" class="form-select dropdown-select theme--select__input" style="width: 30%; justify-content: center">
                         <option value="light">Light</option>
                         <option value="dark">Dark</option>
                         <option value="system" selected>System default</option>
@@ -62,10 +62,10 @@ $userData = $user['user'];
 
                 <div class="setting-row">
                     <div class="setting-label">Font Size</div>
-                    <select id="font-size-selector" class="form-select dropdown-select" style="width: 20%">
-                        <option value="14px">Small</option>
-                        <option value="16px">Medium</option>
-                        <option value="18px">Large</option>
+                    <select id="font-size-selector" class="form-select dropdown-select font--select__input" style="width: 20%">
+                        <option value="0.8">Small</option>
+                        <option value="1">Normal</option>
+                        <option value="1.2">Large</option>
                     </select>
                 </div>
 
@@ -78,9 +78,16 @@ $userData = $user['user'];
                     <div class="setting-label">Default Note Color</div>
                     <div class="d-flex align-items-center">
                         <div class="color-option color-white active" data-color="#ffffff"></div>
-                        <div class="color-option color-light" data-color="#f0f0f0"></div>
-                        <div class="color-option color-gray" data-color="#cccccc"></div>
-                        <div class="color-option color-blue" data-color="#007bff"></div>
+                        <div class="color-option" style="background-color: #77172E" data-color="#77172E"></div>
+                        <div class="color-option" style="background-color: #692B17" data-color="#692B17"></div>
+                        <div class="color-option" style="background-color: #7C4A03" data-color="#7C4A03"></div>
+                        <div class="color-option" style="background-color: #264D3B" data-color="#264D3B"></div>
+                        <div class="color-option" style="background-color: #0C625D" data-color="#0C625D"></div>
+                        <div class="color-option" style="background-color: #256377" data-color="#256377"></div>
+                        <div class="color-option" style="background-color: #284255" data-color="#284255"></div>
+                        <div class="color-option" style="background-color: #472E5B" data-color="#472E5B"></div>
+                        <div class="color-option" style="background-color: #6C394F" data-color="#6C394F"></div>
+                        <div class="color-option" style="background-color: #4B443A" data-color="#4B443A"></div>
                     </div>
                 </div>
 

@@ -27,17 +27,18 @@ body {
     max-width: 500px;
     width: 235px;
     min-width: 235px;
-    background-color: white;
+    background-color: var(--note-color);
+    color: var(--note-text-color);
     border-radius: 8px;
     box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
     overflow: hidden;
     max-height: 500px;
     height: 400px;
     align-self: start;
+    color: inherit;
 
     /* Transition for smooth hover effects */
-    transition: box-shadow 0.3s ease, transform 0.2s ease;
-    transition: transform 0.3s ease;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
 
     .note-sheet__image img {
         width: 100%;
@@ -75,13 +76,18 @@ body {
 
 .note-sheet__title {
     margin: 0 0 0.5rem 0;
-    font-size: 18px;
+    background-color: var(--note-color);
+    color: var(--note-text-color);
+    font-size: calc(18px * var(--font-scale));
+    /*font-size: 18px;*/
 }
 
 .note-sheet__content {
     /*max-height: 170px;*/
-    font-size: 14px;
-    color: #444;
+    font-size: calc(14px * var(--font-scale));
+    /*font-size: 14px;*/
+    background-color: var(--note-color);
+    color: var(--note-text-color);
     line-height: 1.4;
     /*overflow-y: auto;*/
     overflow-y: hidden;
@@ -92,8 +98,9 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 8px 12px;
-    border-top: 1px solid #eee;
-    background-color: #f9f9f9;
+    border-top: 1px solid white;
+    background-color: var(--note-color);
+    color: var(--note-text-color);
 }
 
 /* Style for the icon buttons */
@@ -104,7 +111,7 @@ body {
     cursor: pointer;
     border-radius: 6px;
     transition: background-color 0.2s ease, transform 0.2s ease;
-    color: #555;
+    color: var(--note-text-color);
     font-size: 16px;
 }
 
@@ -416,11 +423,15 @@ body {
 }
 
 .note-title-input-autosave {
+    background-color: var(--note-color);
+    color: var(--note-text-color);
     font-size: 18px;
     font-weight: 500;
 }
 
 .note-title-input-autosave:focus {
+    background-color: var(--note-color);
+    color: var(--note-text-color);
     outline: none;
     border: none;
     box-shadow: none;
@@ -428,29 +439,39 @@ body {
 
 .note-content-input-autosave {
     /*height: 500px;*/
+    background-color: var(--note-color);
+    color: var(--note-text-color);
     min-height: 300px;
     resize: none;
     border: none;
 }
 
 .note-content-input-autosave:focus {
+    background-color: var(--note-color);
+    color: var(--note-text-color);
     outline: none;
     border: none;
     box-shadow: none;
 }
 
 .note-label-title-input-autosave {
+    background-color: var(--note-color);
+    color: var(--note-text-color);
     font-size: 18px;
     font-weight: 500;
 }
 
 .note-label-title-input-autosave:focus {
+    background-color: var(--note-color);
+    color: var(--note-text-color);
     outline: none;
     border: none;
     box-shadow: none;
 }
 
 .note-label-content-input-autosave {
+    background-color: var(--note-color);
+    color: var(--note-text-color);
     height: 100%;
     overflow: visible;
     resize: none;
@@ -458,6 +479,8 @@ body {
 }
 
 .note-label-content-input-autosave:focus {
+    background-color: var(--note-color);
+    color: var(--note-text-color);
     outline: none;
     border: none;
     box-shadow: none;
@@ -484,23 +507,10 @@ body {
     overflow-y: auto;
 }
 
-/*@media (max-width: 768px) {*/
-/*    .modal-dialog {*/
-/*        width: 100%;*/
-/*        height: 100%;*/
-/*        margin: 0;*/
-/*    }*/
-
-/*    .modal-content {*/
-/*        height: 100%;*/
-/*        border-radius: 0;*/
-/*    }*/
-
-/*    .modal-body {*/
-/*        flex-grow: 1;*/
-/*        overflow-y: auto;*/
-/*    }*/
-/*}*/
+body.dark-mode .modal-body {
+    background-color: var(--note-color);
+    color: var(--note-text-color);
+}
 
 #noteLabelModal {
     height: 100%;
@@ -691,13 +701,23 @@ body {
 /*    color: white;*/
 /*}*/
 
+/*.shared-note--title, .shared-note--content {*/
+/*    background-color: var(--note-color);*/
+/*    color: var(--note-text-color);*/
+/*}*/
+
+.list-group-item {
+    background-color: var(--note-color);
+    color: var(--note-text-color);
+}
+
 .label-post__input {
     border: none;
     outline: none;
     resize: none;
     overflow-y: hidden;
-    color: black;
-    background-color: white;
+    background-color: var(--note-color);
+    color: var(--note-text-color);
 }
 
 .btn-save-preference {
@@ -717,7 +737,8 @@ body {
     max-width: 500px;
     width: 235px;
     min-width: 235px;
-    background-color: white;
+    background-color: var(--note-color);
+    color: var(--note-text-color);
     border-radius: 8px;
     box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
     overflow: hidden;
@@ -751,7 +772,7 @@ body {
 
 .note-sheet-trash__content {
     font-size: 14px;
-    color: #444;
+    color: inherit;
     line-height: 1.4;
     overflow-y: hidden;
 }
@@ -762,7 +783,8 @@ body {
     align-items: center;
     padding: 8px 12px;
     border-top: 1px solid #eee;
-    background-color: #f9f9f9;
+    background-color: var(--note-color);
+    color: var(--note-text-color);
 }
 
 .note-sheet-trash__menu button {
@@ -772,7 +794,7 @@ body {
     cursor: pointer;
     border-radius: 6px;
     transition: background-color 0.2s ease, transform 0.2s ease;
-    color: #555;
+    color: var(--note-text-color);
     font-size: 16px;
 }
 
@@ -863,33 +885,51 @@ body {
 }
 
 .note--share__by {
-    color: black;
+    color: inherit;
 }
 
 .note--share__time {
-    color: black;
+    color: inherit;
 }
 
 .note--share__title {
-    color: black;
+    color: inherit;
 }
 
 .note--share__content {
-    color: black;
+    color: inherit;
 }
 
 .note--share__image {
     color: black;
 }
 
+.modal-content {
+    background-color: var(--note-color);
+    color: var(--note-text-color);
+
+    .modal-content .modal-title {
+        color: var(--note-text-color);
+    }
+}
+
+body.dark-mode .modal-content {
+    background-color: var(--note-color);
+    color: var(--note-text-color);
+
+    .modal-content .modal-title {
+        color: var(--note-text-color);
+    }
+}
+
 .sidebar__item--input {
-    color: black;
-    background-color: #f9f9f9;
+    background-color: var(--note-color);
+    color: var(--note-text-color);
 }
 
 .share-note__detail {
-    background-color: inherit;
-    color: black;
+    background-color: var(--note-color);
+    color: var(--note-text-color);
     border: 1px solid #dee2e6;
     border-radius: 10px;
 }
@@ -929,7 +969,9 @@ body.dark-mode .sidebar__item--title {
 
 body.dark-mode .note-sheet,
 body.dark-mode .load-list .note-sheet {
-    background-color: #1c1c1c;
+    /*background-color: #1c1c1c;*/
+    background-color: var(--note-color);
+    color: var(--note-text-color);
     box-shadow: 0 1px 3px rgba(255, 255, 255, 0.05);
 }
 
@@ -939,12 +981,13 @@ body.dark-mode .note-sheet:hover {
 
 body.dark-mode .note-sheet__title,
 body.dark-mode .note-sheet__content {
-    color: #dddddd;
+    color: inherit;
 }
 
 body.dark-mode .note-sheet__menu {
-    background-color: #2a2a2a;
-    border-top: 1px solid #444;
+    background-color: var(--note-color);
+    color: var(--note-text-color);
+    border-top: 1px solid #ffffff;
 }
 
 body.dark-mode .note-sheet__menu button {
@@ -962,7 +1005,8 @@ body.dark-mode .note-post__menu {
 
 body.dark-mode .note-sheet-trash,
 body.dark-mode .load-list .note-sheet-trash {
-    background-color: #1c1c1c;
+    background-color: var(--note-color);
+    color: var(--note-text-color);
     box-shadow: 0 1px 3px rgba(255, 255, 255, 0.05);
 }
 
@@ -976,7 +1020,8 @@ body.dark-mode .note-sheet-trash__content {
 }
 
 body.dark-mode .note-sheet-trash__menu {
-    background-color: #2a2a2a;
+    background-color: var(--note-color);
+    color: var(--note-text-color);
     border-top: 1px solid #444;
 }
 
@@ -1093,14 +1138,14 @@ body.dark-mode #share--email__input::placeholder {
 }
 
 .body.dark-mode .note-title-input-autosave {
-    background-color: #2a2a2a;
-    color: white;
+    background-color: var(--note-color);
+    color: var(--note-text-color);
     font-size: 18px;
 }
 
 .body.dark-mode .note-content-input-autosave {
-    background-color: #2a2a2a;
-    color: white;
+    background-color: var(--note-color);
+    color: var(--note-text-color);
 }
 
 .body.dark-mode .btn-save-preference {
@@ -1132,8 +1177,8 @@ body.dark-mode .sidebar__item--input {
 }
 
 body.dark-mode .label-post__input {
-    color: white;
-    background-color: #2a2a2a;
+    background-color: var(--note-color);
+    color: var(--note-text-color);
 }
 
 /*body.dark-mode .btn {*/
@@ -1154,20 +1199,61 @@ body.dark-mode {
     color: #f0f0f0;
 }
 
+.form-control {
+    background-color: var(--note-color);
+    color: var(--note-text-color);
+}
+
+.form-control:focus {
+    background-color: var(--note-color);
+    color: var(--note-text-color);
+}
+
+.username--rename__input, .theme--select__input, .font--select__input {
+    background-color: white;
+    color: black;
+}
+
+.info-navbar__modal {
+    background-color: white;
+    color: black;
+}
+
+.info-navbar__modal-body {
+    background-color: white;
+    color: black;
+}
+
 body.dark-mode .bg-light-subtle,
 body.dark-mode .form-control,
 body.dark-mode .form-select,
 body.dark-mode .list-group-item,
 body.dark-mode .input-group input {
-    background-color: #2b2b2b;
-    color: #ffffff;
+    background-color: var(--note-color);
+    color: var(--note-text-color);
     border-color: #444;
+}
+
+body.dark-mode .username--rename__input, body.dark-mode .theme--select__input, body.dark-mode .font--select__input {
+    background-color: #1c1c1c;
+    color: white;
 }
 
 body.dark-mode .btn-outline-secondary {
     color: #ccc;
     border-color: #555;
 }
+
+body.dark-mode .info-navbar__modal {
+    background-color: black;
+    color: white;
+}
+
+body.dark-mode .info-navbar__modal-body {
+    background-color: black;
+    color: white;
+}
+
 
 /*Dark mode for shared page*/
 
@@ -1183,19 +1269,19 @@ body.dark-mode .btn-outline-secondary {
 }
 
 body.dark-mode .note--share__by {
-    color: #e0e0e0;
+    color: inherit;
 }
 
 body.dark-mode .note--share__time {
-    color: #e0e0e0;
+    color: inherit;
 }
 
 body.dark-mode .note--share__title {
-    color: #e0e0e0;
+    color: inherit;
 }
 
 body.dark-mode .note--share__content {
-    color: #e0e0e0;
+    color: inherit;
 }
 
 body.dark-mode .note--share__image {
@@ -1207,13 +1293,19 @@ body.dark-mode .modal-dialog {
 }
 
 body.dark-mode .share-note__detail {
-    background-color: #2b2b2b;
-    color: white;
+    background-color: var(--note-color);
+    color: var(--note-text-color);
     border: none;
 }
 
 .shared-note-card {
+    background-color: var(--note-color); /* now dynamic */
+    color: var(--note-text-color);
     transition: box-shadow 0.2s ease;
+
+    .shared-note-card .share-card-title-content {
+        color: inherit;
+    }
 }
 
 .shared-note-card:hover {
@@ -1221,6 +1313,8 @@ body.dark-mode .share-note__detail {
 }
 
 body.dark-mode .shared-note-card {
+    background-color: var(--note-color); /* now dynamic */
+    color: var(--note-text-color);
     transition: box-shadow 0.2s ease;
 }
 

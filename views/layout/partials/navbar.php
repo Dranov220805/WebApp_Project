@@ -59,7 +59,7 @@ $showGrid = (
 <!-- The Modal -->
 <div class="modal fade" id="infoModal" data-bs-backdrop="false" data-bs-scroll="true">
     <div class="modal-dialog" style="">
-        <div class="modal-content" style="width: 100%">
+        <div class="modal-content info-navbar__modal" style="width: 100%">
 
             <div class="modal-header">
                 <h4 class="modal-title username--title__modal" style="flex-grow: 1">Hello, <?= $userData['userName'] ?></h4>
@@ -74,7 +74,7 @@ $showGrid = (
                 <i class="fa-solid fa-xmark close-info-modal" data-bs-dismiss="modal" style="width: 40px; height: 40px; margin-left: 10px"></i>
             </div>
 
-            <div class="modal-body">
+            <div class="modal-body info-navbar__modal-body">
                 <strong style="margin-bottom: 0px;">Username: <span class="username--title__modal-2" style="font-weight: 500"><?= $userData['userName'] ?></span></strong>
                 <br>
                 <strong>Email: </strong> <?= $userData['email'] ?>
@@ -92,7 +92,7 @@ $showGrid = (
 
             <div class="modal-footer f-flex justify-content-space-between">
                 <?php if ($userData['isVerified'] == false) { ?>
-                    <button id="btn-send-verification">Send Verification Link</button>
+                    <button id="btn-send-verification" class="btn btn-success">Send Verification Link</button>
                 <?php } ?>
                 <a href="/log/logout" type="button" class="btn btn-danger">Log out</a>
             </div>

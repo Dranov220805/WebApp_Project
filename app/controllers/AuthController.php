@@ -30,6 +30,8 @@ class AuthController extends BaseController {
                 $_SESSION['expiredTime'] = $result['expiredTime'];
                 $_SESSION['roleId'] = $result['roleId'];
                 $_SESSION['isDarkTheme'] = $result['isDarkTheme'];
+                $_SESSION['fontSize'] = $result['fontSize'];
+                $_SESSION['noteColor'] = $result['noteColor'];
                 $_SESSION['isVerified'] = $result['isVerified'];
 
                 echo json_encode([

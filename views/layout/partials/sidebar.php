@@ -8,7 +8,7 @@ $labelList = $homeUserController->getUserLabel($user['user']);
 ?>
 
 <!-- Sidebar -->
-<div id="sidebar" class="sidebar collapsed">
+<div id="sidebar" class="sidebar collapsed" style="top: 60px">
     <div class="sidebar-content" style="padding: 8px 0;">
         <!-- Notes item -->
         <a href="/home" class="sidebar-item" title="All notes">

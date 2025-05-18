@@ -30,12 +30,6 @@ class Reg {
         const hideTimeout = setTimeout(() => {
             toast.classList.add("d-none");
         }, duration);
-
-        // Allow manual close
-        // closeBtn.onclick = () => {
-        //     toast.classList.add("d-none");
-        //     clearTimeout(hideTimeout);
-        // };
     }
 
     checkRegister = () => {

@@ -97,7 +97,7 @@ $showDiv = (count($segments) === 1 && $segments[0] === 'home');
                     </div>
                 </div>
                 <div class="modal-footer d-flex justify-content-start align-items-center">
-                    <div class="save-status-icon d-flex flex-row flex-grow-1">
+                    <div class="save-status-icon d-flex flex-row flex-grow-1 align-items-center">
                         <p class="text-success" style="padding-right: 5px; margin-bottom: 0px; align-items: center;">Saved</p>
                         <span>
                             <i class="fa-solid fa-check-circle text-success"></i>
