@@ -101,3 +101,5 @@ function deleteImageByImageUrl(string $imageUrl) {
 
     return deleteImageFromCloudinary($publicId);
 }
+
+// :D

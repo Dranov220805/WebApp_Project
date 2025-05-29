@@ -35,3 +35,5 @@ function sendEmail($to, $subject, $body) {
     }
 }
 ?>
+
+// :D
