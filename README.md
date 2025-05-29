@@ -41,10 +41,10 @@
 
 # The system will automatically redirect you to login page (or home page if already login)
 # Prefix account for testing:
-Email: thanhlongduong6a3@gmail.com
+Email: example2@gmail.com
 Password: @Long123
 
-Email: duongthanhlong220805@gmail.com
+Email: example1@gmail.com
 Password: @Long123
 
 # If you want to test register function, please use a VALID GMAIL for system behave properly
