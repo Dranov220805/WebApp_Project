@@ -49,14 +49,14 @@ CREATE TABLE `Account` (
 --
 
 INSERT INTO `Account` (`accountId`, `userName`, `password`, `isDeleted`, `activation_token`, `refresh_token`, `expired_time`, `email`, `profilePicture`, `roleId`, `isVerified`) VALUES
-('1d84c8f9-a722-4e4a-99d0-ac8fac2cb5c6', 'Dranov 2', '$2y$10$AhazMEBDLZRs6IyXVf/pZ.ExY1p1929gLtrCFP1Jpk0R4k8XXnrF2', 0, 'b8b124efd76384af19af22daef4ae5f0', '9d7e881ae752c1334920e87c7e511a63', '2025-05-20 16:27:12', 'thanhlongduong6a3@gmail.com', 'https://res.cloudinary.com/dydpf7z8u/image/upload/v1747074353/Pernote/user-icon/v0j2wx9nfx24w9x5vlj9.png', 1, 1),
-('6ee779e1-4abe-4cb1-934c-175ef09fc3d6', 'CheetoBuri', '$2y$10$WW9ro3zch1aoZt9D9CxTr.yApVeBWPHB843zgXXczJfMlfu3ffGZy', 0, '41897b1a76693a8ecdbf8fed97f7ffdb', '7beb9eedde6c431a27995ebf18fba78b', '2025-05-19 05:41:55', '523K0010@student.tdtu.edu.vn', '', 1, 1),
+('1d84c8f9-a722-4e4a-99d0-ac8fac2cb5c6', 'Dranov 2', '$2y$10$AhazMEBDLZRs6IyXVf/pZ.ExY1p1929gLtrCFP1Jpk0R4k8XXnrF2', 0, 'b8b124efd76384af19af22daef4ae5f0', '9d7e881ae752c1334920e87c7e511a63', '2025-05-20 16:27:12', 'example3@gmail.com', NULL, 1, 1),
+('6ee779e1-4abe-4cb1-934c-175ef09fc3d6', 'CheetoBuri', '$2y$10$WW9ro3zch1aoZt9D9CxTr.yApVeBWPHB843zgXXczJfMlfu3ffGZy', 0, '41897b1a76693a8ecdbf8fed97f7ffdb', '7beb9eedde6c431a27995ebf18fba78b', '2025-05-19 05:41:55', 'example2@gmail.com', '', 1, 1),
 ('aeae6450-2a94-11f0-ab83-0242ac150002', 'john_doe', '$2y$10$0lTiUI79Y2XYyKjMpo1S2uoNLjY3w1aozxqFXry9RCNWGDIYup8ga', 0, NULL, 'test token', NULL, 'john@example.com', NULL, 1, 0),
 ('aeae689e-2a94-11f0-ab83-0242ac150002', 'jane_smith', '$2y$10$0lTiUI79Y2XYyKjMpo1S2uoNLjY3w1aozxqFXry9RCNWGDIYup8ga', 0, NULL, 'test token', NULL, 'jane@example.com', NULL, 2, 0),
 ('aeae6c5b-2a94-11f0-ab83-0242ac150002', 'michael_adams', '$2y$10$0lTiUI79Y2XYyKjMpo1S2uoNLjY3w1aozxqFXry9RCNWGDIYup8ga', 0, NULL, 'test token', NULL, 'michael@example.com', NULL, 3, 0),
 ('aeae7103-2a94-11f0-ab83-0242ac150002', 'emily_jones', '$2y$10$0lTiUI79Y2XYyKjMpo1S2uoNLjY3w1aozxqFXry9RCNWGDIYup8ga', 0, NULL, 'test token', NULL, 'emily@example.com', NULL, 4, 0),
 ('aeae7c2b-2a94-11f0-ab83-0242ac150002', 'alex_brown', '$2y$10$0lTiUI79Y2XYyKjMpo1S2uoNLjY3w1aozxqFXry9RCNWGDIYup8ga', 0, NULL, 'test token', NULL, 'alex@example.com', NULL, 2, 0),
-('d2ba9f70-91b1-4957-b9e7-2674d484ba8f', 'Dranov Original', '$2y$10$JHnJ9.yeJ298vWuCMeKnSOcqHbZAlo5fTIn3bI2in8TKkhwbvJSse', 0, 'cb7f4959455c4f7d629a63f8fd68fc54', 'f9b04e35c37873d93b743ad1cf877613', '2025-05-20 10:42:19', 'duongthanhlong220805@gmail.com', 'https://res.cloudinary.com/dydpf7z8u/image/upload/v1747018395/Pernote/user-icon/cjtrnqpks0x3csnjztvk.png', 1, 1),
+('d2ba9f70-91b1-4957-b9e7-2674d484ba8f', 'Dranov Original', '$2y$10$JHnJ9.yeJ298vWuCMeKnSOcqHbZAlo5fTIn3bI2in8TKkhwbvJSse', 0, 'cb7f4959455c4f7d629a63f8fd68fc54', 'f9b04e35c37873d93b743ad1cf877613', '2025-05-20 10:42:19', 'example1@gmail.com', null, 1, 1),
 ('df2c7a1c-fc81-42f0-b6a3-16ee310d0d81', 'minh', '$2y$10$z8xjOQcp1pf9wdXaPuXVH.hoOwWp3ehsluGc6hJIUevHScfWje3Xa', 0, '9d0b8caddea0deed42e037b0a1c75909', '055c11060c38ea5d85723721f2c24f7d', '2025-05-19 11:32:15', 'admin@gmail.com', '', 1, 1);
 
 -- --------------------------------------------------------
@@ -78,18 +78,11 @@ CREATE TABLE `Image` (
 --
 
 INSERT INTO `Image` (`imageId`, `noteId`, `title`, `imageLink`, `isDeleted`) VALUES
-('07e603ef-0137-4f13-8198-3e11d483e27f', '00694ac0-65cb-4aad-b038-c53eeddcf53c', 'vr3gas9399rkhrhhkdnu.png', 'https://res.cloudinary.com/dydpf7z8u/image/upload/v1747109776/Pernote/user-image/vr3gas9399rkhrhhkdnu.png', 0),
-('5536066a-d80b-4a62-843a-e834e93d0a2b', '1bc971c5-68f0-4d02-a7f0-e6a61177a1eb', 't73iyoxdvkfy0thoyrml.png', 'https://res.cloudinary.com/dydpf7z8u/image/upload/v1747192530/Pernote/user-image/t73iyoxdvkfy0thoyrml.png', 0),
-('7f308acf-c8b9-4649-a719-b177559ffdb3', '82bd8335-9390-4f98-93ee-0144246ee597', 'hp3rgpc6nz9tmzhebkzv.png', 'https://res.cloudinary.com/dydpf7z8u/image/upload/v1747109826/Pernote/user-image/hp3rgpc6nz9tmzhebkzv.png', 0),
-('8617826a-ed37-42a1-b2b8-ed3bd593a688', '7d239de5-318f-41d5-93c3-41dff53c8c61', 'crpzvmai7xp5af1gb1pr.png', 'https://res.cloudinary.com/dydpf7z8u/image/upload/v1747147506/Pernote/user-image/crpzvmai7xp5af1gb1pr.png', 0),
-('a99d4d25-6afe-41ef-b383-1d38d2923ef7', 'f7cf33b9-c2c9-465e-9a4f-51d84354050a', 'tlyztp33zbjruy6jmdpd.png', 'https://res.cloudinary.com/dydpf7z8u/image/upload/v1747132632/Pernote/user-image/tlyztp33zbjruy6jmdpd.png', 0),
 ('aeb6101d-2a94-11f0-ab83-0242ac150002', 'aeae6450-2a94-11f0-ab83-0242ac150002', 'Shopping List Image', 'grocery_list.png', 0),
 ('aeb61167-2a94-11f0-ab83-0242ac150002', 'aeae689e-2a94-11f0-ab83-0242ac150002', 'Project Diagram', 'project_diagram.png', 0),
 ('aeb612e2-2a94-11f0-ab83-0242ac150002', 'aeae6c5b-2a94-11f0-ab83-0242ac150002', 'Meeting Screenshot', 'meeting_notes.png', 0),
 ('aeb6136f-2a94-11f0-ab83-0242ac150002', 'aeae7103-2a94-11f0-ab83-0242ac150002', 'Workout Poster', 'workout_plan.png', 0),
 ('aeb613b1-2a94-11f0-ab83-0242ac150002', 'aeae7c2b-2a94-11f0-ab83-0242ac150002', 'Italy Travel Map', 'vacation_map.png', 0),
-('c58985e2-1f27-4363-9343-060ce8f090d0', 'e773219d-d30b-4d6a-90d9-133662f25387', 'qh2bfsqihincb5jvjgxp.png', 'https://res.cloudinary.com/dydpf7z8u/image/upload/v1747062012/Pernote/user-image/qh2bfsqihincb5jvjgxp.png', 0),
-('c929b37f-4e37-4331-a6a7-1536d97eb6e4', 'af0f9b7d-3373-405b-a9a5-171f095bf540', 'ndjlq5flu9chrjdnooav.png', 'https://res.cloudinary.com/dydpf7z8u/image/upload/v1746678296/Pernote/user-image/ndjlq5flu9chrjdnooav.png', 0);
 
 -- --------------------------------------------------------
 
@@ -337,11 +330,7 @@ CREATE TABLE `NoteSharing` (
 --
 
 INSERT INTO `NoteSharing` (`noteSharingId`, `noteId`, `sharedEmail`, `receivedEmail`, `timeShared`, `canEdit`) VALUES
-('877f1aa0-11bd-45bd-8b94-51c4cc7df8f7', 'f7cf33b9-c2c9-465e-9a4f-51d84354050a', 'duongthanhlong220805@gmail.com', 'thanhlongduong6a3@gmail.com', '2025-05-13 09:04:53', 0),
-('ea3ffb8c-63fc-4a4a-86a3-70732d6f3f6a', '1bc971c5-68f0-4d02-a7f0-e6a61177a1eb', 'thanhlongduong6a3@gmail.com', 'duongthanhlong220805@gmail.com', '2025-05-13 05:01:55', 1),
-('f044d0f1-c5d0-45b2-845a-ffad207a9770', '82bd8335-9390-4f98-93ee-0144246ee597', 'duongthanhlong220805@gmail.com', 'thanhlongduong6a3@gmail.com', '2025-05-13 07:53:00', 1),
-('f88223de-94d1-4f85-9760-54860ad24d57', '7d239de5-318f-41d5-93c3-41dff53c8c61', 'thanhlongduong6a3@gmail.com', 'duongthanhlong220805@gmail.com', '2025-05-13 05:01:28', 0);
-
+('877f1aa0-11bd-45bd-8b94-51c4cc7df8f7', 'f7cf33b9-c2c9-465e-9a4f-51d84354050a', 'example2@gmail.com', 'example1@gmail.com', '2025-05-13 09:04:53', 0),
 -- --------------------------------------------------------
 
 --

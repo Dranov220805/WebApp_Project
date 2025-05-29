@@ -3,9 +3,6 @@ require 'vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-//thanhlongduong6a3@gmail.com
-//khbijbyipibbhplv
-
 function sendEmail($to, $subject, $body) {
     $mail = new PHPMailer(true);
 
@@ -14,13 +11,13 @@ function sendEmail($to, $subject, $body) {
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'thanhlongduong6a3@gmail.com'; // My email
-        $mail->Password = 'khbijbyipibbhplv'; // App password (GG Account -> Search -> App password -> Create one)
+        $mail->Username = 'example@gmail.com'; // Your email
+        $mail->Password = 'password'; // App password (GG Account -> Search -> App password -> Create one)
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
         // Sender and Receiver
-        $mail->setFrom('thanhlongduong6a3@gmail.com', 'Pernote');
+        $mail->setFrom('example@gmail.com', 'Pernote');
         $mail->addAddress($to);
 
         // Nội dung email

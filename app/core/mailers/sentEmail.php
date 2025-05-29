@@ -4,7 +4,7 @@ require 'app/core/mailers/mailVerification.php';
 
 function sendActivationEmail($to, $activation_token) {
     $subject = "Verify your Note account";
-    $activation_link = "https://pernote.id.vn/auth/activate?token=" . $activation_token;
+    $activation_link = "http://localhost:8080/auth/activate?token=" . $activation_token;
 
     // Using heredoc for better readability
     $body = <<<EOD
